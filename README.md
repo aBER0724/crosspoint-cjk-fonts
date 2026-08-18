@@ -59,7 +59,7 @@ https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b
 https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/<Family>_<size>.cpfont
 ```
 
-The repository can be created and pushed only after explicit owner approval. Until that happens, the firmware's local test override can point to a LAN HTTP server serving an already verified `release-assets/` directory.
+The public repository and Release are the production distribution channel. For local development, the firmware's test override can instead point to a LAN HTTP server serving an already verified `release-assets/` directory.
 
 ## Generated asset policy
 
