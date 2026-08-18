@@ -63,7 +63,7 @@ def main() -> int:
     extras = sorted(
         path.name
         for path in args.directory.iterdir()
-        if path.is_file() and path.name not in expected
+        if path.is_file() and path.name not in expected and path.name != ".gitkeep"
     )
     if extras:
         errors.append("unlisted files: " + ", ".join(extras))
