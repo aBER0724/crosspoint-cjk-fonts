@@ -1,0 +1,141 @@
+name: Build font catalog
+
+on:
+  pull_request:
+    paths:
+      - config/**
+      - scripts/**
+      - requirements.txt
+      - .github/workflows/build-fonts.yml
+  push:
+    branches: [main]
+    paths:
+      - config/**
+      - scripts/**
+      - requirements.txt
+      - .github/workflows/build-fonts.yml
+  workflow_dispatch:
+    inputs:
+      smoke_family:
+        description: "Optional single family for a faster manual smoke build"
+        required: false
+        default: ""
+  workflow_call:
+    inputs:
+      smoke_family:
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fonts-build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUTF8: "1"
+  FONT_BASE_URL: https://github.com/aBER0724/crosspoint-fonts/releases/download/sd-fonts-m2-b4/
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      families: ${{ steps.catalog.outputs.families }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - run: python scripts/validate_config.py
+      - run: python -m py_compile scripts/*.py
+      - id: catalog
+        name: Select build matrix
+        env:
+          SMOKE_FAMILY: ${{ inputs.smoke_family }}
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          import os
+          import yaml
+
+          with open("config/fonts.yaml", encoding="utf-8") as source:
+              names = [family["name"] for family in yaml.safe_load(source)["families"]]
+          smoke = os.environ.get("SMOKE_FAMILY", "").strip()
+          if smoke:
+              if smoke not in names:
+                  raise SystemExit(f"Unknown smoke family: {smoke}")
+              names = [smoke]
+          print("families=" + json.dumps(names, separators=(",", ":")))
+          PY
+
+  build:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        family: ${{ fromJson(needs.validate.outputs.families) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: sudo apt-get update && sudo apt-get install --yes libfreetype6-dev
+      - run: python -m pip install -r requirements.txt
+      - run: python scripts/fetch_fallback.py
+      - name: Restore locked source and variable-instance cache
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: font-source-${{ runner.os }}-${{ matrix.family }}-${{ hashFiles('config/fonts.yaml', 'scripts/fetch_fallback.py') }}
+      - run: python scripts/build_fonts.py --clean --only "${{ matrix.family }}" --base-url "$FONT_BASE_URL"
+      - run: python scripts/verify_release.py dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: font-${{ matrix.family }}
+          path: dist/*.cpfont
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+  catalog:
+    if: github.event_name != 'pull_request'
+    needs: [validate, build]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: font-*
+          path: dist
+          merge-multiple: true
+      - run: >-
+          python scripts/generate_manifest.py
+          --input dist
+          --base-url "$FONT_BASE_URL"
+          --output dist/fonts.json
+          --descriptions-from config/fonts.yaml
+      - run: python scripts/verify_release.py dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crosspoint-fonts
+          path: dist/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14

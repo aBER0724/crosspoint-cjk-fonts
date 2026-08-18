@@ -1,0 +1,51 @@
+name: Publish font release
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_tag:
+        description: "Type sd-fonts-m2-b4 to publish or replace the release assets"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-sd-fonts-m2-b4
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: sd-fonts-m2-b4
+
+jobs:
+  build:
+    if: inputs.confirm_tag == 'sd-fonts-m2-b4'
+    uses: ./.github/workflows/build-fonts.yml
+    with:
+      smoke_family: ""
+
+  publish:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: crosspoint-fonts
+          path: dist
+      - name: Prepare notices
+        run: |
+          cp LICENSES.md dist/FONT-LICENSES.md
+          cp OFL-1.1.txt dist/OFL-1.1.txt
+      - name: Replace versioned release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release delete "$RELEASE_TAG" --cleanup-tag --yes
+          fi
+          gh release create "$RELEASE_TAG" dist/* \
+            --title "CrossPoint CJK fonts (manifest 2 / cpfont 4)" \
+            --notes-file RELEASE_NOTES.md

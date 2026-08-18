@@ -1,0 +1,197 @@
+families:
+  - name: NotoSansSC
+    description: "Simplified Chinese sans-serif with Japanese kana"
+    license: OFL-1.1
+    license_url: "https://github.com/google/fonts/blob/main/ofl/notosanssc/OFL.txt"
+    source_url: "https://github.com/google/fonts/tree/main/ofl/notosanssc"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    source:
+      url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf"
+      filename: "NotoSansSC-variable.ttf"
+      sha256: a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da
+      variable: {wght: 400}
+
+  - name: NotoSansTC
+    description: "Traditional Chinese sans-serif with Japanese kana"
+    license: OFL-1.1
+    license_url: "https://github.com/google/fonts/blob/main/ofl/notosanstc/OFL.txt"
+    source_url: "https://github.com/google/fonts/tree/main/ofl/notosanstc"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    source:
+      url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanstc/NotoSansTC%5Bwght%5D.ttf"
+      filename: "NotoSansTC-variable.ttf"
+      sha256: 864727d210d54f2537bbe23b3a839436c3992af72de9322af5270897246bd44f
+      variable: {wght: 400}
+
+  - name: NotoSansJP
+    description: "Japanese sans-serif with kanji and kana"
+    license: OFL-1.1
+    license_url: "https://github.com/google/fonts/blob/main/ofl/notosansjp/OFL.txt"
+    source_url: "https://github.com/google/fonts/tree/main/ofl/notosansjp"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    source:
+      url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf"
+      filename: "NotoSansJP-variable.ttf"
+      sha256: c2f3b4d463500a2ddcd3849cded1fceeb9fd6d1c32e6cbecd568453ba50fc68f
+      variable: {wght: 400}
+
+  - name: NotoSerifSC
+    description: "Simplified Chinese Song-style serif with Japanese kana"
+    license: OFL-1.1
+    license_url: "https://github.com/google/fonts/blob/main/ofl/notoserifsc/OFL.txt"
+    source_url: "https://github.com/google/fonts/tree/main/ofl/notoserifsc"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    source:
+      url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifsc/NotoSerifSC%5Bwght%5D.ttf"
+      filename: "NotoSerifSC-variable.ttf"
+      sha256: 050080d9255a86808f2945bffac582b31ef32bc36411ce29563b4961670c66f9
+      variable: {wght: 400}
+
+  - name: NotoSerifTC
+    description: "Traditional Chinese Ming-style serif with Japanese kana"
+    license: OFL-1.1
+    license_url: "https://github.com/google/fonts/blob/main/ofl/notoseriftc/OFL.txt"
+    source_url: "https://github.com/google/fonts/tree/main/ofl/notoseriftc"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    source:
+      url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notoseriftc/NotoSerifTC%5Bwght%5D.ttf"
+      filename: "NotoSerifTC-variable.ttf"
+      sha256: 0077e18f57c6908f4a000969880940bdb0dad057c0e8d98b49dc364c3d1b09c6
+      variable: {wght: 400}
+
+  - name: NotoSerifJP
+    description: "Japanese Mincho-style serif with kanji and kana"
+    license: OFL-1.1
+    license_url: "https://github.com/google/fonts/blob/main/ofl/notoserifjp/OFL.txt"
+    source_url: "https://github.com/google/fonts/tree/main/ofl/notoserifjp"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    source:
+      url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifjp/NotoSerifJP%5Bwght%5D.ttf"
+      filename: "NotoSerifJP-variable.ttf"
+      sha256: 2fd527ba12b6a44ec30d796d633360da0aeba6c5d4af1304ce12bb4dc15a7dfc
+      variable: {wght: 400}
+
+  - name: WenKaiCJK
+    description: "Readable CJK handwriting-style typeface derived from LXGW WenKai"
+    license: OFL-1.1
+    license_url: "https://github.com/lxgw/LxgwWenKai/blob/main/OFL.txt"
+    source_url: "https://github.com/lxgw/LxgwWenKai/tree/main"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/lxgw/LxgwWenKai/main/fonts/TTF/LXGWWenKai-Regular.ttf"
+      filename: "LXGWWenKai-Regular.ttf"
+      sha256: 39ad71264b588165b469e35e6afb162a378dacd1f95348160240ba9038ac3009
+
+  - name: ChironGoRoundTC
+    description: "Traditional Chinese rounded sans-serif with Japanese kana"
+    license: OFL-1.1
+    license_url: "https://github.com/chiron-fonts/chiron-go-round-tc/blob/release/LICENSE.md"
+    source_url: "https://github.com/chiron-fonts/chiron-go-round-tc/tree/release"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    source:
+      url: "https://raw.githubusercontent.com/chiron-fonts/chiron-go-round-tc/release/STATIC_OTF/ChironGoRoundTC-400R.otf"
+      filename: "ChironGoRoundTC-400R.otf"
+      sha256: 519253233cbca3c2b97b818949e803ccf08f937d75431bedf59e167b00bf4b65
+
+  - name: JoyDisplaySC
+    description: "Narrow oblique Simplified Chinese display face derived from Smiley Sans"
+    license: OFL-1.1
+    license_url: "https://github.com/atelier-anchor/smiley-sans/blob/v2.0.1/LICENSE"
+    source_url: "https://github.com/atelier-anchor/smiley-sans/tree/v2.0.1"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    force_autohint: true
+    source:
+      url: "https://github.com/atelier-anchor/smiley-sans/releases/download/v2.0.1/smiley-sans-v2.0.1.zip"
+      filename: "smiley-sans-v2.0.1.zip"
+      sha256: 299c0be6c960ae37361762eca76f7d0cd516615435bb96c0d4b98a1e70178a07
+      archive_member: "SmileySans-Oblique.ttf"
+
+  - name: VermilionFangsong
+    description: "Bookish Simplified Chinese Fangsong face derived from Zhuque Fangsong"
+    license: OFL-1.1
+    license_url: "https://github.com/TrionesType/zhuque/blob/v0.212/LICENSE.txt"
+    source_url: "https://github.com/TrionesType/zhuque/tree/v0.212"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    force_autohint: true
+    source:
+      url: "https://github.com/TrionesType/zhuque/releases/download/v0.212/ZhuqueFangsong-v0.212.zip"
+      filename: "ZhuqueFangsong-v0.212.zip"
+      sha256: bb8b661a7643d2296a72d9d10530a00949419c4e527fb61783f73c2ba1a8c062
+      archive_member: "ZhuqueFangsong-Regular.ttf"
+
+  - name: BrightReadingSC
+    description: "Print-inspired Simplified Chinese reading face derived from LXGW Bright GB"
+    license: OFL-1.1
+    license_url: "https://github.com/lxgw/LxgwBright/blob/f9e978f4944cb36b081941a001e92a02e7dcc3d3/OFL.txt"
+    source_url: "https://github.com/lxgw/LxgwBright/tree/f9e978f4944cb36b081941a001e92a02e7dcc3d3"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/lxgw/LxgwBright/f9e978f4944cb36b081941a001e92a02e7dcc3d3/LXGWBrightGB/LXGWBrightGB-Regular.ttf"
+      filename: "LXGWBrightGB-Regular.ttf"
+      sha256: cd78eb7d99b2f8cbf2a1bed52ab998ff1e76e18048d9b925ce2799aa6310e72d
+
+  - name: BrightReadingTC
+    description: "Print-inspired Traditional Chinese reading face derived from LXGW Bright TC"
+    license: OFL-1.1
+    license_url: "https://github.com/lxgw/LxgwBright/blob/f9e978f4944cb36b081941a001e92a02e7dcc3d3/OFL.txt"
+    source_url: "https://github.com/lxgw/LxgwBright/tree/f9e978f4944cb36b081941a001e92a02e7dcc3d3"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/lxgw/LxgwBright/f9e978f4944cb36b081941a001e92a02e7dcc3d3/LXGWBrightTC/LXGWBrightTC-Regular.ttf"
+      filename: "LXGWBrightTC-Regular.ttf"
+      sha256: 3eabaf8741a44609b19b819d1c420cf8bf0c20c6f44aceaaf60223bc9088a0ba
+
+  - name: IansuiTC
+    description: "Traditional Chinese handwriting-style face derived from Klee One"
+    license: OFL-1.1
+    license_url: "https://github.com/ButTaiwan/iansui/blob/v1.020/OFL.txt"
+    source_url: "https://github.com/ButTaiwan/iansui/tree/v1.020"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    force_autohint: true
+    source:
+      url: "https://github.com/ButTaiwan/iansui/releases/download/v1.020/iansui.zip"
+      filename: "iansui.zip"
+      sha256: 28d58aef9b7a21c137945a4fd14138d6284a8573c0c1b123f6e5b708423348a6
+      archive_member: "Iansui-Regular.ttf"
+
+  - name: GenWanSerifTC
+    description: "Warm Traditional Chinese Ming-style face with an ink-bleed print texture"
+    license: OFL-1.1
+    license_url: "https://github.com/ButTaiwan/genwan-font/blob/25e718615173a3b51099ecc9a6bf4fa558c03fbc/SIL_Open_Font_License_1.1.txt"
+    source_url: "https://github.com/ButTaiwan/genwan-font/tree/25e718615173a3b51099ecc9a6bf4fa558c03fbc"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/ButTaiwan/genwan-font/25e718615173a3b51099ecc9a6bf4fa558c03fbc/otf/TC/GenWanMin2TC-R.otf"
+      filename: "GenWanMin2TC-R.otf"
+      sha256: 028e19001e7d580f44e145eda751674528b8bb5e421887804469ae3c74fa66a6
+
+  - name: GenYoGothicTC
+    description: "Traditional Chinese sans-serif with classic print-oriented glyph forms"
+    license: OFL-1.1
+    license_url: "https://github.com/ButTaiwan/genyog-font/blob/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91/SIL_Open_Font_License_1.1.txt"
+    source_url: "https://github.com/ButTaiwan/genyog-font/tree/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91"
+    intervals: latin-ext,cjk
+    sizes: [8, 10, 12, 14, 16, 18]
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/ButTaiwan/genyog-font/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91/otf/TC/GenYoGothic2TC-R.otf"
+      filename: "GenYoGothic2TC-R.otf"
+      sha256: 8f49bf82d2f47148eb54696c5c91dbe9d98d7f97f25e5a591dafab5ef8243f80

@@ -1,42 +1,62 @@
-# CrossPoint Fonts
+# CrossPoint CJK Fonts
 
-Release hosting metadata for optional CrossPoint Reader `.cpfont` files.
+Reproducible build and GitHub Release hosting for optional CrossPoint Reader CJK `.cpfont` files.
 
-The firmware downloads `fonts.json` and individual font sizes from a GitHub
-Release named `sd-fonts-m2-b4`. Generated font binaries are release assets and
-are deliberately excluded from Git history. The current prepared release has
-15 CJK families, six sizes per family (8, 10, 12, 14, 16, and 18 pt), and 90
-`.cpfont` files.
+The generated binaries are deliberately excluded from Git history. GitHub Actions downloads SHA-256-locked upstream font sources, converts them into device-native files, generates `fonts.json`, verifies every asset, and publishes the catalog as the `sd-fonts-m2-b4` Release.
 
-## Source Of Truth
+## Catalog
 
-Font selection, source URLs, conversion settings, and public license metadata
-live in the firmware repository:
+The current catalog contains 15 OFL-1.1 families for Simplified Chinese, Traditional Chinese, and Japanese. Each family is pre-rendered at 8, 10, 12, 14, 16, and 18 pt.
 
-- `lib/EpdFont/scripts/sd-fonts.yaml`
-- `lib/EpdFont/scripts/build-sd-fonts.py`
-- `scripts/generate-font-manifest.py`
+- 8/10/12 pt can provide CJK UI fallback glyphs.
+- 12/14/16/18 pt map to the reader's four size slots.
+- The firmware selects an installed physical file; it never scales a CJK font on the device.
 
-This repository stores release documentation and verification tooling. It does
-not replace those build sources.
+See [LICENSES.md](LICENSES.md) for exact upstream sources and attribution.
 
-## Preparing A Release
+## Reproducibility
 
-1. Build the font assets from the firmware repository with its pinned source
-   definitions.
-2. Generate `fonts.json` with the final GitHub Release download URL.
-3. Put `fonts.json` and all `.cpfont` files in `release-assets/`.
-4. Run `python scripts/verify_release.py release-assets`.
-5. Create the `sd-fonts-m2-b4` GitHub Release and upload the verified files.
+Source URLs and expected SHA-256 digests live in [config/fonts.yaml](config/fonts.yaml). A build stops before conversion if a downloaded source does not match its lock.
 
-Do not commit generated `.cpfont` files to this repository. A release must
-contain the license notices referenced by `LICENSES.md`, either as release
-notes or as an accompanying notice file.
+The Latin fallback used to fill punctuation and basic Latin glyphs is also SHA-256 locked by [scripts/fetch_fallback.py](scripts/fetch_fallback.py).
 
-## Licensing
+## Local build
 
-The generated `.cpfont` files are converted and subsetted derivatives of their
-upstream fonts. Their upstream font licenses continue to apply. See
-`LICENSES.md` for the exact source and license links used by the current CJK
-catalog.
+Requirements:
 
+- Python 3.11
+- FreeType development/runtime libraries
+
+```bash
+python -m pip install -r requirements.txt
+python scripts/validate_config.py
+python scripts/fetch_fallback.py
+python scripts/build_fonts.py --clean
+python scripts/verify_release.py dist
+```
+
+For a quick smoke test:
+
+```bash
+python scripts/build_fonts.py --clean --only NotoSansSC
+```
+
+Generated files are written under `dist/` and are ignored by Git.
+
+## GitHub Actions
+
+- **Build font catalog** validates every pull request. A manually dispatched run can build either the full catalog or one smoke-test family and stores the result as a short-lived Actions artifact.
+- **Publish font release** is manual and requires typing `sd-fonts-m2-b4`. It performs a clean full build, verification, and replacement of the versioned Release assets.
+
+The stable device endpoints are:
+
+```text
+https://github.com/aBER0724/crosspoint-fonts/releases/download/sd-fonts-m2-b4/fonts.json
+https://github.com/aBER0724/crosspoint-fonts/releases/download/sd-fonts-m2-b4/<Family>_<size>.cpfont
+```
+
+The repository can be created and pushed only after explicit owner approval. Until that happens, the firmware's local test override can point to a LAN HTTP server serving an already verified `release-assets/` directory.
+
+## Generated asset policy
+
+Do not commit `.cpfont`, downloaded source fonts, caches, or `fonts.json`. Release assets and temporary Actions artifacts are the binary distribution channel.
