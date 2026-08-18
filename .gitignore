@@ -1,0 +1,5 @@
+release-assets/*
+!release-assets/.gitkeep
+*.cpfont
+__pycache__/
+
