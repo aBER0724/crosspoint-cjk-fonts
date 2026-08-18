@@ -11,7 +11,9 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config" / "fonts.yaml"
-EXPECTED_SIZES = [8, 10, 12, 14, 16, 18]
+EXPECTED_UI_SIZES = [8, 10, 12]
+EXPECTED_READER_SIZES = [14, 16, 18, 22]
+EXPECTED_PREVIEW_SIZES = [14, 18, 22]
 NAME_RE = re.compile(r"^[A-Za-z0-9_-]{1,31}$")
 SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 
@@ -21,6 +23,22 @@ def main() -> int:
     families = document.get("families", [])
     errors: list[str] = []
     names: set[str] = set()
+
+    ui_sizes = document.get("ui_sizes")
+    reader_sizes = document.get("reader_sizes")
+    preview_sizes = document.get("preview_sizes")
+    if ui_sizes != EXPECTED_UI_SIZES:
+        errors.append(f"ui_sizes must be {EXPECTED_UI_SIZES}")
+    if reader_sizes != EXPECTED_READER_SIZES:
+        errors.append(f"reader_sizes must be {EXPECTED_READER_SIZES}")
+    if preview_sizes != EXPECTED_PREVIEW_SIZES:
+        errors.append(f"preview_sizes must be {EXPECTED_PREVIEW_SIZES}")
+    if (
+        isinstance(preview_sizes, list)
+        and isinstance(reader_sizes, list)
+        and not set(preview_sizes).issubset(reader_sizes)
+    ):
+        errors.append("preview_sizes must be a subset of reader_sizes")
 
     for family in families:
         name = str(family.get("name", ""))
@@ -34,8 +52,8 @@ def main() -> int:
                 errors.append(f"{name}: missing {key}")
         if family.get("license") != "OFL-1.1":
             errors.append(f"{name}: only the reviewed OFL-1.1 catalog is accepted")
-        if family.get("sizes") != EXPECTED_SIZES:
-            errors.append(f"{name}: sizes must be {EXPECTED_SIZES}")
+        if "sizes" in family:
+            errors.append(f"{name}: sizes are catalog-wide; remove the family override")
         source = family.get("source", {})
         for key in ("url", "filename", "sha256"):
             if not source.get(key):

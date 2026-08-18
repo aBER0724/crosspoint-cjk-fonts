@@ -1,3 +1,7 @@
+ui_sizes: [8, 10, 12]
+reader_sizes: [14, 16, 18, 22]
+preview_sizes: [14, 18, 22]
+
 families:
   - name: NotoSansSC
     description: "Simplified Chinese sans-serif with Japanese kana"
@@ -5,7 +9,6 @@ families:
     license_url: "https://github.com/google/fonts/blob/main/ofl/notosanssc/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notosanssc"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     source:
       url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf"
       filename: "NotoSansSC-variable.ttf"
@@ -18,7 +21,6 @@ families:
     license_url: "https://github.com/google/fonts/blob/main/ofl/notosanstc/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notosanstc"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     source:
       url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanstc/NotoSansTC%5Bwght%5D.ttf"
       filename: "NotoSansTC-variable.ttf"
@@ -31,7 +33,6 @@ families:
     license_url: "https://github.com/google/fonts/blob/main/ofl/notosansjp/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notosansjp"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     source:
       url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf"
       filename: "NotoSansJP-variable.ttf"
@@ -44,7 +45,6 @@ families:
     license_url: "https://github.com/google/fonts/blob/main/ofl/notoserifsc/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notoserifsc"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     source:
       url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifsc/NotoSerifSC%5Bwght%5D.ttf"
       filename: "NotoSerifSC-variable.ttf"
@@ -57,7 +57,6 @@ families:
     license_url: "https://github.com/google/fonts/blob/main/ofl/notoseriftc/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notoseriftc"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     source:
       url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notoseriftc/NotoSerifTC%5Bwght%5D.ttf"
       filename: "NotoSerifTC-variable.ttf"
@@ -70,7 +69,6 @@ families:
     license_url: "https://github.com/google/fonts/blob/main/ofl/notoserifjp/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notoserifjp"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     source:
       url: "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserifjp/NotoSerifJP%5Bwght%5D.ttf"
       filename: "NotoSerifJP-variable.ttf"
@@ -83,7 +81,6 @@ families:
     license_url: "https://github.com/lxgw/LxgwWenKai/blob/main/OFL.txt"
     source_url: "https://github.com/lxgw/LxgwWenKai/tree/main"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     force_autohint: true
     source:
       url: "https://raw.githubusercontent.com/lxgw/LxgwWenKai/main/fonts/TTF/LXGWWenKai-Regular.ttf"
@@ -96,7 +93,6 @@ families:
     license_url: "https://github.com/chiron-fonts/chiron-go-round-tc/blob/release/LICENSE.md"
     source_url: "https://github.com/chiron-fonts/chiron-go-round-tc/tree/release"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     source:
       url: "https://raw.githubusercontent.com/chiron-fonts/chiron-go-round-tc/release/STATIC_OTF/ChironGoRoundTC-400R.otf"
       filename: "ChironGoRoundTC-400R.otf"
@@ -108,7 +104,6 @@ families:
     license_url: "https://github.com/atelier-anchor/smiley-sans/blob/v2.0.1/LICENSE"
     source_url: "https://github.com/atelier-anchor/smiley-sans/tree/v2.0.1"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     force_autohint: true
     source:
       url: "https://github.com/atelier-anchor/smiley-sans/releases/download/v2.0.1/smiley-sans-v2.0.1.zip"
@@ -122,7 +117,6 @@ families:
     license_url: "https://github.com/TrionesType/zhuque/blob/v0.212/LICENSE.txt"
     source_url: "https://github.com/TrionesType/zhuque/tree/v0.212"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     force_autohint: true
     source:
       url: "https://github.com/TrionesType/zhuque/releases/download/v0.212/ZhuqueFangsong-v0.212.zip"
@@ -136,7 +130,6 @@ families:
     license_url: "https://github.com/lxgw/LxgwBright/blob/f9e978f4944cb36b081941a001e92a02e7dcc3d3/OFL.txt"
     source_url: "https://github.com/lxgw/LxgwBright/tree/f9e978f4944cb36b081941a001e92a02e7dcc3d3"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     force_autohint: true
     source:
       url: "https://raw.githubusercontent.com/lxgw/LxgwBright/f9e978f4944cb36b081941a001e92a02e7dcc3d3/LXGWBrightGB/LXGWBrightGB-Regular.ttf"
@@ -149,7 +142,6 @@ families:
     license_url: "https://github.com/lxgw/LxgwBright/blob/f9e978f4944cb36b081941a001e92a02e7dcc3d3/OFL.txt"
     source_url: "https://github.com/lxgw/LxgwBright/tree/f9e978f4944cb36b081941a001e92a02e7dcc3d3"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     force_autohint: true
     source:
       url: "https://raw.githubusercontent.com/lxgw/LxgwBright/f9e978f4944cb36b081941a001e92a02e7dcc3d3/LXGWBrightTC/LXGWBrightTC-Regular.ttf"
@@ -162,7 +154,6 @@ families:
     license_url: "https://github.com/ButTaiwan/iansui/blob/v1.020/OFL.txt"
     source_url: "https://github.com/ButTaiwan/iansui/tree/v1.020"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     force_autohint: true
     source:
       url: "https://github.com/ButTaiwan/iansui/releases/download/v1.020/iansui.zip"
@@ -176,7 +167,6 @@ families:
     license_url: "https://github.com/ButTaiwan/genwan-font/blob/25e718615173a3b51099ecc9a6bf4fa558c03fbc/SIL_Open_Font_License_1.1.txt"
     source_url: "https://github.com/ButTaiwan/genwan-font/tree/25e718615173a3b51099ecc9a6bf4fa558c03fbc"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     force_autohint: true
     source:
       url: "https://raw.githubusercontent.com/ButTaiwan/genwan-font/25e718615173a3b51099ecc9a6bf4fa558c03fbc/otf/TC/GenWanMin2TC-R.otf"
@@ -189,7 +179,6 @@ families:
     license_url: "https://github.com/ButTaiwan/genyog-font/blob/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91/SIL_Open_Font_License_1.1.txt"
     source_url: "https://github.com/ButTaiwan/genyog-font/tree/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91"
     intervals: latin-ext,cjk
-    sizes: [8, 10, 12, 14, 16, 18]
     force_autohint: true
     source:
       url: "https://raw.githubusercontent.com/ButTaiwan/genyog-font/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91/otf/TC/GenYoGothic2TC-R.otf"

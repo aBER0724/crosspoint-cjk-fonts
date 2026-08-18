@@ -36,7 +36,7 @@ concurrency:
 
 env:
   PYTHONUTF8: "1"
-  FONT_BASE_URL: https://github.com/aBER0724/crosspoint-fonts/releases/download/sd-fonts-m2-b4/
+  FONT_BASE_URL: https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/
 
 jobs:
   validate:
@@ -134,7 +134,7 @@ jobs:
       - run: python scripts/verify_release.py dist
       - uses: actions/upload-artifact@v4
         with:
-          name: crosspoint-fonts
+          name: crosspoint-cjk-fonts
           path: dist/
           if-no-files-found: error
           compression-level: 0

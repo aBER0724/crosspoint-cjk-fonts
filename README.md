@@ -6,10 +6,14 @@ The generated binaries are deliberately excluded from Git history. GitHub Action
 
 ## Catalog
 
-The current catalog contains 15 OFL-1.1 families for Simplified Chinese, Traditional Chinese, and Japanese. Each family is pre-rendered at 8, 10, 12, 14, 16, and 18 pt.
+The current catalog contains 15 OFL-1.1 families for Simplified Chinese,
+Traditional Chinese, and Japanese. Each family is pre-rendered at the seven
+catalog sizes defined once in [config/fonts.yaml](config/fonts.yaml): UI
+fallback at 8/10/12 pt and reader text at 14/16/18/22 pt.
 
-- 8/10/12 pt can provide CJK UI fallback glyphs.
-- 12/14/16/18 pt map to the reader's four size slots.
+- 8/10/12 pt provide CJK UI fallback glyphs.
+- 14/16/18/22 pt map to the reader's four persisted size slots and show roughly
+  16/14/12/10 full-width CJK characters per line at the default portrait margin.
 - The firmware selects an installed physical file; it never scales a CJK font on the device.
 
 See [LICENSES.md](LICENSES.md) for exact upstream sources and attribution.
@@ -51,8 +55,8 @@ Generated files are written under `dist/` and are ignored by Git.
 The stable device endpoints are:
 
 ```text
-https://github.com/aBER0724/crosspoint-fonts/releases/download/sd-fonts-m2-b4/fonts.json
-https://github.com/aBER0724/crosspoint-fonts/releases/download/sd-fonts-m2-b4/<Family>_<size>.cpfont
+https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/fonts.json
+https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/<Family>_<size>.cpfont
 ```
 
 The repository can be created and pushed only after explicit owner approval. Until that happens, the firmware's local test override can point to a LAN HTTP server serving an already verified `release-assets/` directory.

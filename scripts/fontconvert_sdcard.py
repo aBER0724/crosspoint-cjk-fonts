@@ -13,7 +13,7 @@ Usage:
       NotoSans-Regular.ttf \\
       -o NotoSansExt_14.cpfont
 
-    # All 4 sizes at once
+    # All catalog sizes at once
     python fontconvert_sdcard.py \\
       --intervals cjk \\
       --sizes 12,14,16,18 --style regular \\

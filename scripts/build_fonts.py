@@ -23,7 +23,7 @@ FALLBACK_FONT = ROOT / "vendor" / "NotoSans-Regular.ttf"
 DOWNLOAD_DIR = ROOT / ".cache" / "sources"
 INSTANCE_DIR = ROOT / ".cache" / "instances"
 DEFAULT_OUTPUT = ROOT / "dist"
-DEFAULT_BASE_URL = "https://github.com/aBER0724/crosspoint-fonts/releases/download/sd-fonts-m2-b4/"
+DEFAULT_BASE_URL = "https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/"
 
 
 def sha256(path: Path) -> str:
@@ -128,7 +128,12 @@ def resolve_source(family: dict) -> Path:
     return resolved
 
 
-def build_family(family: dict, output: Path) -> None:
+def catalog_sizes(document: dict) -> list[int]:
+    """Return the ordered physical files shared by every catalog family."""
+    return list(dict.fromkeys([*document["ui_sizes"], *document["reader_sizes"]]))
+
+
+def build_family(family: dict, output: Path, sizes: list[int]) -> None:
     source = resolve_source(family)
     output.mkdir(parents=True, exist_ok=True)
     command = [
@@ -142,7 +147,7 @@ def build_family(family: dict, output: Path) -> None:
         "--intervals",
         family["intervals"],
         "--sizes",
-        ",".join(str(size) for size in family["sizes"]),
+        ",".join(str(size) for size in sizes),
         "--name",
         family["name"],
         "--output-dir",
@@ -182,6 +187,7 @@ def main() -> int:
 
     config = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
     families = config.get("families", [])
+    sizes = catalog_sizes(config)
     if args.only:
         selected = {name.strip() for name in args.only.split(",") if name.strip()}
         families = [family for family in families if family["name"] in selected]
@@ -197,7 +203,7 @@ def main() -> int:
         shutil.rmtree(args.output, ignore_errors=True)
     args.output.mkdir(parents=True, exist_ok=True)
     for family in families:
-        build_family(family, args.output)
+        build_family(family, args.output, sizes)
     run_manifest(args.output, args.base_url)
     return 0
 
