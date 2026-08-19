@@ -457,7 +457,7 @@ def command_plan(args: argparse.Namespace) -> int:
                 "has_builds": str(bool(plan["build"])).lower(),
                 "has_previous_release": str(plan["hasPreviousRelease"]).lower(),
                 "needs_font_publish": str(bool(plan["build"] or plan["remove"])).lower(),
-                "needs_release_update": str(plan["needsReleaseUpdate"]).lower(),
+                "release_update_needed": str(plan["needsReleaseUpdate"]).lower(),
             },
         )
     print(
