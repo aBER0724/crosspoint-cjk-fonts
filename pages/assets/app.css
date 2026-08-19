@@ -347,26 +347,31 @@ main {
   white-space: nowrap;
 }
 
+.preview-frame {
+  display: flex;
+  width: 100%;
+  min-height: 120px;
+  align-items: center;
+  margin: 16px 0 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--preview-paper);
+}
+
+.preview-frame.preview-frame--dark {
+  border-color: #404040;
+  background: var(--preview-dark-paper);
+}
+
 .preview {
   display: block;
   width: 100%;
-  min-height: 120px;
-  margin: 16px 0 12px;
-  border: 1px solid var(--border);
-  background: var(--preview-paper);
   image-rendering: auto;
   object-fit: contain;
 }
 
-.preview:not(.preview--dark) {
+.preview.preview--light {
   filter: invert(1);
-}
-
-.preview.preview--dark {
-  border-color: #404040;
-  background: var(--preview-dark-paper);
-  filter: none;
-  mix-blend-mode: normal;
 }
 
 .preview.is-broken {

@@ -60,7 +60,8 @@ function resolvedTheme() {
 }
 
 function updatePreviewAppearance(preview, dark) {
-  preview.classList.toggle("preview--dark", dark);
+  preview.classList.toggle("preview--light", !dark);
+  preview.closest(".preview-frame")?.classList.toggle("preview-frame--dark", dark);
 }
 
 function applyTheme() {
