@@ -50,6 +50,11 @@ def main() -> int:
         for key in ("description", "category", "license", "license_url", "source_url", "intervals"):
             if not family.get(key):
                 errors.append(f"{name}: missing {key}")
+        display_names = family.get("display_names")
+        if not isinstance(display_names, dict) or set(display_names) != {"en", "zh", "ja"}:
+            errors.append(f"{name}: display_names must define exactly en, zh, and ja")
+        elif not all(isinstance(value, str) and value.strip() for value in display_names.values()):
+            errors.append(f"{name}: display_names values must be non-empty strings")
         languages = family.get("languages")
         if not isinstance(languages, list) or not languages or not all(isinstance(value, str) and value for value in languages):
             errors.append(f"{name}: languages must be a non-empty string list")

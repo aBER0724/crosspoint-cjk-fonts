@@ -73,6 +73,11 @@ class PagesCatalogTest(unittest.TestCase):
             "families": [
                 {
                     "name": "ExampleCJK",
+                    "display_names": {
+                        "en": "Example CJK",
+                        "zh": "示例字体",
+                        "ja": "サンプル書体",
+                    },
                     "description": "Example catalog font",
                     "category": "sans-serif",
                     "languages": ["zh-Hans", "ja"],
@@ -142,6 +147,11 @@ class PagesCatalogTest(unittest.TestCase):
         self.assertEqual(catalog["manifestVersion"], 2)
         self.assertEqual(catalog["previewSizes"], [14, 18, 22])
         family = catalog["families"][0]
+        self.assertEqual(family["name"], "ExampleCJK")
+        self.assertEqual(
+            family["displayNames"],
+            {"en": "Example CJK", "zh": "示例字体", "ja": "サンプル書体"},
+        )
         self.assertEqual(family["licenseStatus"], "verified")
         self.assertEqual(family["languages"], ["zh-Hans", "ja"])
         self.assertEqual(family["category"], "sans-serif")
@@ -199,6 +209,19 @@ class PagesCatalogTest(unittest.TestCase):
         self.manifest_path.write_text(json.dumps(self.manifest), encoding="utf-8")
         (self.fonts_dir / "ExampleCJK_18.cpfont").unlink()
         with self.assertRaisesRegex(CatalogBuildError, "preview file"):
+            self.build()
+
+    def test_rejects_missing_or_invalid_localized_display_names(self):
+        missing = yaml.safe_load(self.config_path.read_text(encoding="utf-8"))
+        del missing["families"][0]["display_names"]["zh"]
+        self.config_path.write_text(yaml.safe_dump(missing, sort_keys=False, allow_unicode=True), encoding="utf-8")
+        with self.assertRaisesRegex(CatalogBuildError, "localized display names"):
+            self.build()
+
+        invalid = yaml.safe_load(yaml.safe_dump(self.config, sort_keys=False, allow_unicode=True))
+        invalid["families"][0]["display_names"]["ja"] = ""
+        self.config_path.write_text(yaml.safe_dump(invalid, sort_keys=False, allow_unicode=True), encoding="utf-8")
+        with self.assertRaisesRegex(CatalogBuildError, "localized display names"):
             self.build()
 
     def test_rejects_unsafe_urls_and_unexpected_size_set(self):

@@ -260,6 +260,16 @@ main {
   letter-spacing: -0.015em;
 }
 
+.family-id {
+  margin: 3px 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 .description {
   margin: 4px 0 0;
   color: var(--muted-foreground);

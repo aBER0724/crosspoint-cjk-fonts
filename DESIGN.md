@@ -34,11 +34,22 @@ preview_sizes: [14, 18, 22]
 
 Every family builds the ordered union `8/10/12/14/16/18/22`.
 
+Every family also declares localized reader-facing names without changing its stable build ID:
+
+```yaml
+- name: WenKaiCJK
+  display_names: {en: "LXGW WenKai", zh: "霞鹜文楷", ja: "LXGW WenKai"}
+```
+
+The ASCII `name` continues to define filenames such as `WenKaiCJK_14.cpfont`; Pages uses `display_names` for card titles and search.
+
 ## GitHub Pages catalog
 
 - Public URL: `https://aber0724.github.io/crosspoint-cjk-fonts/`
 - Web catalog endpoint: `https://aber0724.github.io/crosspoint-cjk-fonts/catalog.json`
 - Editorial card layout with Simplified Chinese, Traditional Chinese, Japanese, and English UI.
+- Each family keeps its stable ASCII `name` for `.cpfont` filenames and firmware compatibility, while `display_names` provides the reader-facing `en` / `zh` / `ja` title used by Pages.
+- The current locale selects the card title; the stable ID remains visible below it, and search matches both localized titles and the ID.
 - Preview PNGs are rendered from actual built `.cpfont v4` 2-bit bitmap data at 14/18/22 pt.
 - The preview renderer uses stored intervals, glyph metrics, fp4 advances, kerning, ligatures, baseline, and fallback behavior. It does not render the source TTF/OTF.
 - Browser-language default with a `localStorage` override.
