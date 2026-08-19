@@ -10,7 +10,7 @@ from pathlib import Path
 import yaml
 from PIL import Image
 
-from scripts.build_pages import CatalogBuildError, build_site
+from scripts.build_pages import CatalogBuildError, build_site, preview_text_for_languages
 from scripts.fetch_release_previews import download_preview_assets
 
 
@@ -52,7 +52,15 @@ class PagesCatalogTest(unittest.TestCase):
         (self.source_dir / "assets" / "app.js").write_text("fetch('catalog.json')", encoding="utf-8")
         (self.source_dir / "assets" / "app.css").write_text("body { color: #111; }", encoding="utf-8")
         (self.source_dir / "samples.json").write_text(
-            json.dumps({"schemaVersion": 1, "default": "A"}), encoding="utf-8"
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "byLanguage": {"zh-Hans": "A", "ja": "A"},
+                    "symbols": "A",
+                    "latin": "A",
+                }
+            ),
+            encoding="utf-8",
         )
 
         self.font_bytes = tiny_cpfont()
@@ -147,6 +155,27 @@ class PagesCatalogTest(unittest.TestCase):
         preview = Image.open(self.output_dir / "previews" / "ExampleCJK_14.png")
         self.assertEqual(preview.mode, "L")
         self.assertEqual(preview.getextrema()[0], 0)
+
+    def test_preview_sample_follows_declared_languages_and_adds_symbols(self):
+        samples = {
+            "schemaVersion": 1,
+            "byLanguage": {"zh-Hans": "简体", "zh-Hant": "繁體", "ja": "日本語"},
+            "symbols": "，。！？—…· @#$%&*+-=/",
+            "latin": "CrossPoint Reader · 1234567890",
+        }
+
+        self.assertEqual(
+            preview_text_for_languages(samples, ["zh-Hans", "ja"]),
+            "简体\n日本語\n，。！？—…· @#$%&*+-=/\nCrossPoint Reader · 1234567890",
+        )
+        self.assertEqual(
+            preview_text_for_languages(samples, ["zh-Hant"]),
+            "繁體\n，。！？—…· @#$%&*+-=/\nCrossPoint Reader · 1234567890",
+        )
+        with self.assertRaisesRegex(CatalogBuildError, "at least one preview language"):
+            preview_text_for_languages(samples, [])
+        with self.assertRaisesRegex(CatalogBuildError, "no sample for language ko"):
+            preview_text_for_languages(samples, ["ko"])
 
     def test_pages_artifact_contains_no_font_or_archive_payloads(self):
         self.build()

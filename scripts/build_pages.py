@@ -30,6 +30,28 @@ class CatalogBuildError(RuntimeError):
     pass
 
 
+def preview_text_for_languages(samples: dict, languages: list[str]) -> str:
+    by_language = samples.get("byLanguage")
+    symbols = samples.get("symbols")
+    latin = samples.get("latin")
+    if not isinstance(by_language, dict) or not isinstance(symbols, str) or not symbols:
+        raise CatalogBuildError("pages/samples.json must define non-empty byLanguage and symbols samples")
+    if not isinstance(latin, str) or not latin:
+        raise CatalogBuildError("pages/samples.json must define a non-empty latin sample")
+
+    if not isinstance(languages, list) or not languages:
+        raise CatalogBuildError("font family must declare at least one preview language")
+
+    lines = []
+    for language in languages:
+        line = by_language.get(language)
+        if not isinstance(line, str) or not line:
+            raise CatalogBuildError(f"pages/samples.json has no sample for language {language}")
+        if line not in lines:
+            lines.append(line)
+    return "\n".join([*lines, symbols, latin])
+
+
 def _load_yaml(path: Path) -> dict:
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -119,8 +141,8 @@ def build_site(
     samples = _load_json(source_dir / "samples.json")
     if manifest.get("version") != MANIFEST_VERSION:
         raise CatalogBuildError(f"release manifest version must be {MANIFEST_VERSION}")
-    if samples.get("schemaVersion") != 1 or not isinstance(samples.get("default"), str):
-        raise CatalogBuildError("pages/samples.json must contain schemaVersion 1 and default text")
+    if samples.get("schemaVersion") != 1:
+        raise CatalogBuildError("pages/samples.json must use schemaVersion 1")
 
     base_url = _https_url(manifest.get("baseUrl"), "release base URL", trailing_slash=True)
     site_url = _https_url(site_url, "site URL", trailing_slash=True)
@@ -162,6 +184,8 @@ def build_site(
             if [entry["physicalSize"] for entry in files] != all_sizes:
                 raise CatalogBuildError(f"{family_name}: manifest physical sizes do not match catalog")
 
+            languages = editorial.get("languages", [])
+            preview_text = preview_text_for_languages(samples, languages)
             previews = {}
             entries_by_size = {entry["physicalSize"]: entry for entry in files}
             for size in preview_sizes:
@@ -173,7 +197,7 @@ def build_site(
                     raise CatalogBuildError(f"{family_name}: preview file disagrees with manifest metadata")
                 try:
                     font = CpfontFile.from_path(font_path)
-                    result = render_text(font, samples["default"], canvas_width=880, padding=24)
+                    result = render_text(font, preview_text, canvas_width=880, padding=24)
                 except (CpfontError, ValueError) as error:
                     raise CatalogBuildError(f"{family_name}: cannot render {entry['name']}: {error}") from error
                 preview_name = f"{family_name}_{size}.png"
@@ -185,7 +209,7 @@ def build_site(
                     "name": family_name,
                     "description": editorial["description"],
                     "category": editorial.get("category", "other"),
-                    "languages": editorial.get("languages", []),
+                    "languages": languages,
                     "styles": published.get("styles", []),
                     "license": editorial["license"],
                     "licenseStatus": editorial.get("license_status", "verified"),
