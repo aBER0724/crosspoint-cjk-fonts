@@ -15,9 +15,28 @@
   --radius: 1rem;
   --font-sans: "DM Sans", ui-sans-serif, sans-serif, system-ui;
   --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --preview-paper: #ffffff;
+  --preview-dark-paper: #111111;
   font-family: var(--font-sans);
   background: var(--background);
   color: var(--foreground);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #171717;
+  --foreground: #fafafa;
+  --card: #0f0f0f;
+  --card-foreground: #fafafa;
+  --primary: #e5e5e5;
+  --primary-foreground: #171717;
+  --muted: #262626;
+  --muted-foreground: #a1a1a1;
+  --accent: #404040;
+  --border: #262626;
+  --input: #262626;
+  --ring: #737373;
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.35), 0 1px 2px -1px rgb(0 0 0 / 0.35);
 }
 
 * {
@@ -119,7 +138,15 @@ h1 {
   background: var(--muted);
 }
 
-.locale-switcher {
+.masthead__controls {
+  display: grid;
+  flex: none;
+  justify-items: end;
+  gap: 8px;
+}
+
+.locale-switcher,
+.theme-switcher {
   display: inline-flex;
   flex: none;
   align-items: center;
@@ -131,7 +158,8 @@ h1 {
   white-space: nowrap;
 }
 
-.locale-switcher button {
+.locale-switcher button,
+.theme-switcher button {
   border: 0;
   border-radius: 999px;
   padding: 6px 12px;
@@ -142,11 +170,13 @@ h1 {
   transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
 }
 
-.locale-switcher button:hover {
+.locale-switcher button:hover,
+.theme-switcher button:hover {
   color: var(--foreground);
 }
 
-.locale-switcher button[aria-pressed="true"] {
+.locale-switcher button[aria-pressed="true"],
+.theme-switcher button[aria-pressed="true"] {
   background: var(--background);
   color: var(--foreground);
   font-weight: 500;
@@ -319,9 +349,14 @@ main {
   min-height: 120px;
   margin: 16px 0 12px;
   border: 1px solid var(--border);
-  background: #ffffff;
+  background: var(--preview-paper);
   image-rendering: auto;
   object-fit: contain;
+}
+
+.preview.preview--dark {
+  border-color: #404040;
+  background: var(--preview-dark-paper);
 }
 
 .preview.is-broken {
@@ -443,7 +478,12 @@ main {
     padding: 14px 0 16px;
   }
 
-  .locale-switcher {
+  .masthead__controls {
+    width: 100%;
+  }
+
+  .locale-switcher,
+  .theme-switcher {
     justify-self: end;
     max-width: 100%;
   }

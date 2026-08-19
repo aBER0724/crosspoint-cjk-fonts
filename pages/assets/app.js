@@ -3,7 +3,7 @@ const COPY = {
     title: "CJK font catalog",
     intro: "Preview the actual 2-bit device bitmaps, then download verified physical font files from GitHub Release.",
     searchLabel: "Search fonts", searchPlaceholder: "Name or description", languageLabel: "Language", categoryLabel: "Category", previewLabel: "Preview size", all: "All",
-    downloads: "Download physical sizes", source: "Source", license: "License", manifest: "Release manifest", maker: "Make a custom font",
+    downloads: "Download physical sizes", source: "Source", license: "License", manifest: "Release manifest", maker: "Make a custom font", theme: "Theme", themeLight: "Light", themeDark: "Dark", themeSystem: "System",
     footer: "Pages hosts only this catalog and compact PNG previews. Font binaries remain on GitHub Release.",
     verified: "Verified", loading: "Loading catalog…", empty: "No matching fonts.", error: "Catalog unavailable. Try again later.", families: count => `${count} font ${count === 1 ? "family" : "families"}`,
   },
@@ -11,7 +11,7 @@ const COPY = {
     title: "CJK 字体目录",
     intro: "预览设备实际使用的 2-bit 点阵，并从 GitHub Release 下载已校验的物理字号字体。",
     searchLabel: "搜索字体", searchPlaceholder: "名称或简介", languageLabel: "语言", categoryLabel: "类型", previewLabel: "预览字号", all: "全部",
-    downloads: "下载物理字号", source: "字体来源", license: "授权", manifest: "Release 清单", maker: "制作自制字体",
+    downloads: "下载物理字号", source: "字体来源", license: "授权", manifest: "Release 清单", maker: "制作自制字体", theme: "主题", themeLight: "浅色", themeDark: "深色", themeSystem: "跟随系统",
     footer: "Pages 只托管目录和轻量 PNG 预览；字体二进制仍由 GitHub Release 分发。",
     verified: "已核验", loading: "正在加载字体目录…", empty: "没有匹配的字体。", error: "字体目录暂时不可用，请稍后重试。", families: count => `${count} 个字体家族`,
   },
@@ -19,16 +19,18 @@ const COPY = {
     title: "CJK フォントカタログ",
     intro: "端末で使われる実際の 2-bit ビットマップを確認し、検証済みの物理サイズを GitHub Release から取得できます。",
     searchLabel: "フォント検索", searchPlaceholder: "名前または説明", languageLabel: "言語", categoryLabel: "分類", previewLabel: "プレビューサイズ", all: "すべて",
-    downloads: "物理サイズをダウンロード", source: "出典", license: "ライセンス", manifest: "Release マニフェスト", maker: "個人用フォントを作成",
+    downloads: "物理サイズをダウンロード", source: "出典", license: "ライセンス", manifest: "Release マニフェスト", maker: "個人用フォントを作成", theme: "テーマ", themeLight: "ライト", themeDark: "ダーク", themeSystem: "システム",
     footer: "Pages はカタログと軽量 PNG のみを配信し、フォント本体は GitHub Release に置かれます。",
     verified: "確認済み", loading: "カタログを読み込み中…", empty: "該当するフォントはありません。", error: "カタログを読み込めませんでした。", families: count => `${count} ファミリー`,
   },
 };
 
-const state = { catalog: null, locale: "en", query: "", language: "", category: "", previewSize: "14" };
+const THEME_STORAGE_KEY = "crosspoint-font-catalog-theme";
+const THEME_MODES = ["light", "dark", "system"];
+const state = { catalog: null, locale: "en", themeMode: "system", prefersDark: false, query: "", language: "", category: "", previewSize: "14" };
 const nodes = {
   catalog: document.querySelector("#catalog"), status: document.querySelector("#status"), search: document.querySelector("#search"),
-  language: document.querySelector("#language-filter"), category: document.querySelector("#category-filter"), previewSize: document.querySelector("#preview-size"),
+  language: document.querySelector("#language-filter"), category: document.querySelector("#category-filter"), previewSize: document.querySelector("#preview-size"), theme: document.querySelector("#theme-switcher"),
   template: document.querySelector("#font-card-template"), manifest: document.querySelector("#manifest-link"),
 };
 
@@ -41,12 +43,62 @@ function preferredLocale() {
   return "en";
 }
 
+function preferredThemeMode() {
+  const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  return THEME_MODES.includes(stored) ? stored : "system";
+}
+
+function resolvedTheme() {
+  return state.themeMode === "system" ? (state.prefersDark ? "dark" : "light") : state.themeMode;
+}
+
+function updatePreviewAppearance(preview, dark) {
+  preview.classList.toggle("preview--dark", dark);
+  preview.style.filter = dark ? "invert(93.3%)" : "";
+}
+
+function applyTheme() {
+  const theme = resolvedTheme();
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
+  nodes.theme.querySelectorAll("button").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.theme === state.themeMode));
+  });
+  document.querySelectorAll(".preview").forEach(preview => {
+    updatePreviewAppearance(preview, theme === "dark");
+  });
+}
+
+function populateThemeSwitcher() {
+  const copy = COPY[state.locale];
+  nodes.theme.setAttribute("aria-label", copy.theme);
+  nodes.theme.replaceChildren(...[
+    ["light", copy.themeLight],
+    ["dark", copy.themeDark],
+    ["system", copy.themeSystem],
+  ].map(([mode, label]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.theme = mode;
+    button.textContent = label;
+    button.title = copy.theme;
+    button.addEventListener("click", () => {
+      state.themeMode = mode;
+      localStorage.setItem(THEME_STORAGE_KEY, mode);
+      applyTheme();
+    });
+    return button;
+  }));
+}
+
 function applyCopy() {
   const copy = COPY[state.locale];
   document.documentElement.lang = state.locale;
   document.querySelectorAll("[data-copy]").forEach(node => { const value = copy[node.dataset.copy]; if (typeof value === "string") node.textContent = value; });
   document.querySelectorAll("[data-copy-placeholder]").forEach(node => { node.placeholder = copy[node.dataset.copyPlaceholder]; });
   document.querySelectorAll("[data-locale]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.locale === state.locale)));
+  populateThemeSwitcher();
+  applyTheme();
   render();
 }
 
@@ -120,6 +172,7 @@ function render() {
     const preview = fragment.querySelector(".preview");
     preview.src = family.previews[state.previewSize];
     preview.alt = `${displayName}, ${state.previewSize} pt`;
+    updatePreviewAppearance(preview, resolvedTheme() === "dark");
     preview.addEventListener("error", () => preview.classList.add("is-broken"), { once: true });
     fragment.querySelector(".tags").textContent = [...family.languages, family.category].filter(Boolean).join(" · ");
     fragment.querySelector(".license").textContent = family.license;
@@ -166,6 +219,16 @@ nodes.search.addEventListener("input", event => { state.query = event.target.val
 nodes.language.addEventListener("change", event => { state.language = event.target.value; render(); });
 nodes.category.addEventListener("change", event => { state.category = event.target.value; render(); });
 
+const colorScheme = window.matchMedia("(prefers-color-scheme: dark)");
+state.prefersDark = colorScheme.matches;
+const handleColorSchemeChange = event => {
+  state.prefersDark = event.matches;
+  if (state.themeMode === "system") applyTheme();
+};
+if (typeof colorScheme.addEventListener === "function") colorScheme.addEventListener("change", handleColorSchemeChange);
+else colorScheme.addListener(handleColorSchemeChange);
+
 state.locale = preferredLocale();
+state.themeMode = preferredThemeMode();
 applyCopy();
 loadCatalog();

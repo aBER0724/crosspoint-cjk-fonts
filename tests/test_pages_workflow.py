@@ -98,6 +98,24 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertEqual(html.count('id="maker-link"'), 1)
         self.assertNotIn("nodes.maker.href = state.catalog.fontMakerUrl;", script)
 
+    def test_theme_switcher_matches_maker_dark_mode_and_inverts_device_previews(self):
+        html = PAGE_HTML.read_text(encoding="utf-8")
+        css = PAGE_CSS.read_text(encoding="utf-8")
+        script = PAGE_JS.read_text(encoding="utf-8")
+
+        self.assertIn('<div id="theme-switcher" class="theme-switcher" role="group"', html)
+        self.assertIn('themeLight: "浅色"', script)
+        self.assertIn('themeDark: "深色"', script)
+        self.assertIn('themeSystem: "跟随系统"', script)
+        self.assertIn('window.matchMedia("(prefers-color-scheme: dark)")', script)
+        self.assertIn('document.documentElement.dataset.theme = theme;', script)
+        self.assertIn('localStorage.setItem(THEME_STORAGE_KEY, mode);', script)
+        self.assertIn('updatePreviewAppearance(preview, theme === "dark");', script)
+        self.assertIn('preview.style.filter = dark ? "invert(93.3%)" : "";', script)
+        self.assertIn(':root[data-theme="dark"]', css)
+        self.assertIn('--preview-dark-paper: #111111;', css)
+        self.assertIn('.preview.preview--dark', css)
+
     def test_font_cards_show_direct_download_buttons_without_an_expander(self):
         html = PAGE_HTML.read_text(encoding="utf-8")
         css = PAGE_CSS.read_text(encoding="utf-8")
