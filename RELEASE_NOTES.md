@@ -9,6 +9,6 @@ This release contains optional `.cpfont` assets for CrossPoint Reader firmware u
 
 The device downloads one selected point size at a time for preview or installation. Fonts are never scaled on the device. Every asset is size-checked, SHA-256 verified, and structurally validated before publication.
 
-See `FONT-LICENSES.md` and `OFL-1.1.txt` in the release assets for source attribution and redistribution terms.
+See `FONT-SOURCES.md` in the release assets for the recorded source links.
 
 A separate GitHub Pages catalog presents these Release assets with compact 14/18/22 pt PNG previews decoded from the actual `.cpfont v4` 2-bit glyph data. Pages does not duplicate the font binaries; every download link continues to target this Release.

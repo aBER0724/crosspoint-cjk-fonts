@@ -57,6 +57,10 @@ class IncrementalReleaseWorkflowTest(unittest.TestCase):
         self.assertIn("--clobber", text)
         self.assertIn("dist/fonts.json", text)
         self.assertIn("dist/build-index.json", text)
+        self.assertIn("dist/FONT-SOURCES.md", text)
+        self.assertIn("needs_release_update", text)
+        self.assertIn("Remove obsolete Release metadata assets", text)
+        self.assertIn("FONT-LICENSES.md OFL-1.1.txt", text)
         self.assertIn("verify-assets", text)
 
 

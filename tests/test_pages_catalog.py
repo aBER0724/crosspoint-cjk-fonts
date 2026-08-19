@@ -81,8 +81,6 @@ class PagesCatalogTest(unittest.TestCase):
                     "description": "Example catalog font",
                     "category": "sans-serif",
                     "languages": ["zh-Hans", "ja"],
-                    "license_type": "commercial-use",
-                    "license_url": "https://example.com/license",
                     "source_url": "https://example.com/source",
                     "intervals": "latin-ext,cjk",
                     "source": {
@@ -115,10 +113,6 @@ class PagesCatalogTest(unittest.TestCase):
                     "name": "ExampleCJK",
                     "description": "Example catalog font",
                     "styles": ["regular"],
-                    "license": "commercial-use",
-                    "licenseType": "commercial-use",
-                    "licenseStatus": "declared",
-                    "licenseUrl": "https://example.com/license",
                     "sourceUrl": "https://example.com/source",
                     "files": files,
                 }
@@ -154,8 +148,10 @@ class PagesCatalogTest(unittest.TestCase):
             family["displayNames"],
             {"en": "Example CJK", "zh": "示例字体", "ja": "サンプル書体"},
         )
-        self.assertEqual(family["licenseStatus"], "declared")
-        self.assertEqual(family["licenseType"], "commercial-use")
+        self.assertNotIn("license", family)
+        self.assertNotIn("licenseStatus", family)
+        self.assertNotIn("licenseType", family)
+        self.assertEqual(family["sourceUrl"], "https://example.com/source")
         self.assertEqual(family["languages"], ["zh-Hans", "ja"])
         self.assertEqual(family["category"], "sans-serif")
         self.assertEqual([entry["physicalSize"] for entry in family["files"]], [8, 10, 12, 14, 16, 18, 22])

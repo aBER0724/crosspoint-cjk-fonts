@@ -2,76 +2,69 @@
 
 [English](CONTRIBUTING.md) | [简体中文](CONTRIBUTING.zh-CN.md) | [日本語](CONTRIBUTING.ja.md)
 
-Thanks for helping expand the CrossPoint Reader CJK font catalog. A font submission may include one uploaded TTF, OTF, or ZIP source file. The repository converts it into the seven physical `.cpfont v4` sizes after merge.
+A font PR adds, updates, or removes one CJK font family. Upload one TTF, OTF, or ZIP file; after merge, GitHub Actions builds the seven `.cpfont v4` sizes.
 
 ## Before you start
 
-A submission must meet these technical requirements:
+- The font must cover `zh-Hans`, `zh-Hant`, or `ja`.
+- Use the normal Regular/400 face. For a variable font, set the axes used to make that face.
+- Keep the PR to one family.
+- Put the file under `community-fonts/<FamilyId>/`. Do not use Git LFS.
+- You may add the font's homepage or source repository. This link is optional.
 
-- The font covers Simplified Chinese, Traditional Chinese, or Japanese text.
-- Upload the normal Regular/400 face. Variable fonts must declare the static axes used for the build.
-- One pull request adds, updates, or removes one font family.
-- The submitter must have permission to upload and redistribute the submitted file.
+## 1. Add the font file
 
-The catalog accepts proprietary fonts, personal-use-only fonts, non-commercial fonts, fonts with unclear terms, and files obtained from third-party download indexes. An original upstream repository and OFL license are not required.
-
-The optional `license_type` field supports:
-
-- `commercial-use` — **Commercial use allowed**;
-- `personal-use` — **Personal use only**;
-- omitted — **Unknown / not provided**.
-
-This field is the submitter's declaration, not a repository verification or legal review. Include a `license_url` or note when available, but it may be omitted.
-
-## 1. Fork and create a branch
-
-Fork this repository on GitHub, clone your fork, and create one branch for one family:
-
-```bash
-git clone https://github.com/<your-name>/crosspoint-cjk-fonts.git
-cd crosspoint-cjk-fonts
-git switch -c font/<FamilyId>
-```
-
-`FamilyId` is the stable build ID and filename prefix. It must contain only ASCII letters, digits, `_`, or `-`, with at most 31 characters. Use a readable identifier such as `ZenMaruGothicJP`; do not use spaces or localized characters.
-
-## 2. Upload the font file
-
-Create a directory for the family and copy exactly one TTF, OTF, or ZIP source into it:
+Create a directory with the same name as the family ID:
 
 ```text
 community-fonts/<FamilyId>/
 ```
 
-Example:
+For example:
 
 ```text
 community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 ```
 
-A direct font file may use any clear filename. For ZIP sources, include only the needed package and set `archive_member` to the exact `.ttf` or `.otf` path inside it. Each uploaded file must stay below GitHub's 100 MiB repository file limit. Do not use Git LFS.
+The file may be TTF, OTF, or ZIP and must be smaller than 100 MiB. A ZIP entry needs an `archive_member` pointing to the exact `.ttf` or `.otf` inside the archive.
 
-## 3. Add the catalog entry
+`FamilyId` becomes the build ID and filename prefix. It may contain ASCII letters, digits, `_`, and `-`, up to 31 characters. `ZenMaruGothicJP` is a valid example.
 
-Add one family to `config/fonts.yaml`. Do not change the catalog-wide size lists.
+## 2. Add the catalog entry
 
-Uploaded TTF/OTF example:
+Add one item to `config/fonts.yaml`. Do not change the shared size lists.
 
 ```yaml
   - name: ExampleSansJP
     display_names: {en: "Example Sans", zh: "Example Sans", ja: "Example Sans"}
-    description: "Short English description of coverage and style"
+    description: "Japanese sans-serif with kana and kanji"
     category: sans-serif
     languages: [ja]
-    license_type: commercial-use
-    license_url: "https://example.com/license" # optional
-    source_url: "https://example.com/download-page" # optional
+    source_url: "https://example.com/example-sans" # optional
     intervals: latin-ext,cjk
     source:
       path: community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 ```
 
-Variable font example:
+### Fields you enter
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `name` | Yes | Stable ASCII family ID. It must match `community-fonts/<FamilyId>/` and is used in `.cpfont` filenames. |
+| `display_names.en` | Yes | English display name. Use the known font name if there is no separate English name. |
+| `display_names.zh` | Yes | Chinese display name. Repeating the known font name is fine. |
+| `display_names.ja` | Yes | Japanese display name. Repeating the known font name is fine. |
+| `description` | Yes | Short English description of the font's style and coverage. Keep it factual. |
+| `category` | Yes | One of `sans-serif`, `serif`, `rounded-sans`, `handwriting`, `fangsong`, or `display`. |
+| `languages` | Yes | Any supported languages the file actually covers: `zh-Hans`, `zh-Hant`, `ja`. |
+| `source_url` | No | Font homepage, project page, or source repository. Omit it if you do not have a link. |
+| `intervals` | Yes | Usually `latin-ext,cjk`. |
+| `force_autohint` | No | Set to `true` only when the normal render is clearly poor. Explain why in the PR. |
+| `source.path` | Yes for uploads | Path to the uploaded TTF, OTF, or ZIP under `community-fonts/<FamilyId>/`. |
+| `source.archive_member` | ZIP only | Exact `.ttf` or `.otf` path inside the ZIP. |
+| `source.variable` | Variable fonts only | Static axes used for the build, for example `variable: {wght: 400}`. |
+
+For a variable font:
 
 ```yaml
     source:
@@ -79,7 +72,7 @@ Variable font example:
       variable: {wght: 400}
 ```
 
-ZIP example:
+For a ZIP:
 
 ```yaml
     source:
@@ -87,65 +80,22 @@ ZIP example:
       archive_member: "fonts/ExampleSans-Regular.ttf"
 ```
 
-Use only these current catalog values:
+Older entries may still use `source.url`, `source.filename`, and `source.sha256`. New PRs should use `source.path`.
 
-- `languages`: `zh-Hans`, `zh-Hant`, `ja` — include only languages the file actually covers.
-- `category`: `sans-serif`, `serif`, `rounded-sans`, `handwriting`, `fangsong`, or `display`.
-- `license_type`: optional `commercial-use` or `personal-use`.
-- `intervals`: normally `latin-ext,cjk`.
-- `force_autohint: true`: optional; use only when normal rasterization is visibly poor and explain it in the pull request.
+## 3. Open the pull request
 
-`display_names` must contain non-empty `en`, `zh`, and `ja` values. Repeating the known font name is acceptable when no established localized name exists. These are reader-facing labels; `name` remains the stable ASCII ID.
-
-Existing URL-based catalog entries may continue to use `url`, `filename`, and `sha256`. New community submissions should normally use `source.path` so the PR contains the exact font file to build.
-
-## 4. Record the license declaration
-
-Add one row to `LICENSES.md` containing:
-
-- the stable family ID;
-- the declared license type: Commercial use allowed, Personal use only, or Not provided;
-- the download page, license link, author, copyright holder, or other attribution when known.
-
-Do not describe an unknown license as verified. The repository displays the submitted declaration as-is.
-
-## 5. Validate locally
-
-Configuration-only validation is quick:
+Commit the uploaded file and the catalog entry:
 
 ```bash
-python -m pip install -r requirements.txt
-python scripts/validate_config.py
-python -m py_compile scripts/*.py
-python -m unittest discover -s tests -v
-```
-
-A full single-family build additionally requires FreeType development/runtime libraries:
-
-```bash
-python scripts/fetch_fallback.py
-python scripts/build_fonts.py --clean --only <FamilyId>
-python scripts/verify_release.py dist
-```
-
-Expected output is seven `.cpfont v4` files at 8, 10, 12, 14, 16, 18, and 22 pt. Do not add `dist/` or generated `.cpfont` files to Git.
-
-If you cannot run FreeType locally, submit a draft PR after the configuration tests pass and say so in the checklist. A maintainer can trigger the single-family build.
-
-## 6. Open the pull request
-
-Push the branch and open a PR against `main`:
-
-```bash
-git add community-fonts/<FamilyId> config/fonts.yaml LICENSES.md
+git add community-fonts/<FamilyId> config/fonts.yaml
 git commit -m "feat: add <font display name>"
 git push -u origin font/<FamilyId>
 ```
 
-The PR template asks for the uploaded file path, language coverage, optional license declaration, and validation results. Complete every applicable field. Keep the PR limited to one font family.
+In the PR, include the family ID, uploaded file path, supported languages, category, and the optional source link. If the font is variable or packed in a ZIP, include the axes or archive member as well.
 
-Pull requests from forks run read-only validation without Release credentials. Merging into `main` triggers the incremental Release workflow; unchanged families are reused, and only the submitted family is built and uploaded.
+Pull requests from forks run read-only checks without Release credentials. After merge, the release workflow builds the changed family and reuses unchanged files.
 
 ## Updating or removing a family
 
-Use the same one-family PR rule. For an update, replace the uploaded source file and explain what changed. For removal, delete the `community-fonts/<FamilyId>/` directory, its `config/fonts.yaml` entry, and its `LICENSES.md` row. The Release workflow publishes the complete new manifest before cleaning obsolete assets.
+An update also uses one PR for one family. Replace the uploaded file, update `config/fonts.yaml`, and note what changed. To remove a family, delete its `community-fonts/<FamilyId>/` directory and its config entry.

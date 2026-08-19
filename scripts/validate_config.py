@@ -16,7 +16,6 @@ EXPECTED_READER_SIZES = [14, 16, 18, 22]
 EXPECTED_PREVIEW_SIZES = [14, 18, 22]
 ALLOWED_LANGUAGES = {"zh-Hans", "zh-Hant", "ja"}
 ALLOWED_CATEGORIES = {"sans-serif", "serif", "rounded-sans", "handwriting", "fangsong", "display"}
-ALLOWED_LICENSE_TYPES = {"commercial-use", "personal-use"}
 ALLOWED_SOURCE_SUFFIXES = {".ttf", ".otf", ".zip"}
 MAX_UPLOADED_SOURCE_BYTES = 100 * 1024 * 1024
 NAME_RE = re.compile(r"^[A-Za-z0-9_-]{1,31}$")
@@ -81,13 +80,12 @@ def validate_document(document: dict, *, root: Path = ROOT) -> list[str]:
             errors.append(f"{name}: languages must be a non-empty string list")
         elif any(value not in ALLOWED_LANGUAGES for value in languages):
             errors.append(f"{name}: unsupported language")
-        license_type = family.get("license_type")
-        if license_type is not None and license_type not in ALLOWED_LICENSE_TYPES:
-            errors.append(f"{name}: license_type must be commercial-use or personal-use when provided")
-        for key in ("license_url", "source_url"):
-            value = family.get(key)
-            if value is not None and (not isinstance(value, str) or not value.strip()):
-                errors.append(f"{name}: {key} must be a non-empty string when provided")
+        for unsupported_key in ("license_type", "license_url"):
+            if unsupported_key in family:
+                errors.append(f"{name}: {unsupported_key} is no longer used; keep only source_url")
+        value = family.get("source_url")
+        if value is not None and (not isinstance(value, str) or not value.strip()):
+            errors.append(f"{name}: source_url must be a non-empty string when provided")
         if "sizes" in family:
             errors.append(f"{name}: sizes are catalog-wide; remove the family override")
 

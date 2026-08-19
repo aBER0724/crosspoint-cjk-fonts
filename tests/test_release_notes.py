@@ -70,7 +70,9 @@ class ReleaseNotesTest(unittest.TestCase):
         self.assertIn("### Added", notes)
         self.assertIn("**ZenMaruGothicJP** — Japanese rounded sans-serif", notes)
         self.assertIn("### Installation", notes)
-        self.assertIn("### Verification and licensing", notes)
+        self.assertIn("### Verification", notes)
+        self.assertNotIn("licens", notes.lower())
+        self.assertIn("Source links", notes)
         self.assertNotIn("### Updated", notes)
         self.assertNotIn("### Removed", notes)
 

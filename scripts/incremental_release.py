@@ -238,7 +238,8 @@ def plan_release(
     current_families = current_document.get("families", [])
     current_by_name = {family["name"]: family for family in current_families}
     previous_fingerprints = (previous_index or {}).get("families", {})
-    previous_manifest_names = set(manifest_family_map(previous_manifest))
+    previous_manifest_by_name = manifest_family_map(previous_manifest)
+    previous_manifest_names = set(previous_manifest_by_name)
     if previous_index and previous_manifest:
         validate_previous_release(previous_manifest, previous_index)
 
@@ -261,32 +262,41 @@ def plan_release(
     remove = sorted(previous_names - set(current_by_name))
     changed_existing = [name for name in build if name in previous_manifest_names]
     new = [name for name in build if name not in previous_manifest_names]
+    metadata_changed = [
+        name
+        for name in reuse
+        if normalized_public_family(previous_manifest_by_name.get(name, {}))
+        != public_family_metadata(current_by_name[name])
+    ]
+    needs_release_update = bool(build or remove or metadata_changed)
     return {
         "schemaVersion": 1,
         "build": build,
         "reuse": reuse,
         "new": new,
         "changedExisting": changed_existing,
+        "metadataChanged": metadata_changed,
         "remove": remove,
         "fingerprints": fingerprints,
         "forceAll": force_all,
         "hasPreviousRelease": previous_manifest is not None,
+        "needsReleaseUpdate": needs_release_update,
     }
 
 
 def public_family_metadata(config_family: dict) -> dict:
-    license_type = config_family.get("license_type")
-    result = {
-        "description": config_family["description"],
-        "license": license_type or "not-provided",
-        "licenseStatus": "declared" if license_type else "not-provided",
-    }
-    if license_type:
-        result["licenseType"] = license_type
-    if config_family.get("license_url"):
-        result["licenseUrl"] = config_family["license_url"]
+    result = {"description": config_family["description"]}
     if config_family.get("source_url"):
         result["sourceUrl"] = config_family["source_url"]
+    return result
+
+
+def normalized_public_family(family: dict) -> dict:
+    result = {"description": family.get("description")}
+    if family.get("sourceUrl"):
+        result["sourceUrl"] = family["sourceUrl"]
+    if any(key in family for key in ("license", "licenseType", "licenseStatus", "licenseUrl")):
+        result["legacyLicenseMetadata"] = True
     return result
 
 
@@ -447,6 +457,7 @@ def command_plan(args: argparse.Namespace) -> int:
                 "has_builds": str(bool(plan["build"])).lower(),
                 "has_previous_release": str(plan["hasPreviousRelease"]).lower(),
                 "needs_font_publish": str(bool(plan["build"] or plan["remove"])).lower(),
+                "needs_release_update": str(plan["needsReleaseUpdate"]).lower(),
             },
         )
     print(

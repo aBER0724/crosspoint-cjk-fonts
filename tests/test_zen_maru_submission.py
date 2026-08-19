@@ -7,11 +7,11 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config" / "fonts.yaml"
-LICENSES = ROOT / "LICENSES.md"
+SOURCES = ROOT / "SOURCES.md"
 
 
 class ZenMaruSubmissionTest(unittest.TestCase):
-    def test_zen_maru_gothic_submission_is_locked_and_attributed(self):
+    def test_zen_maru_gothic_submission_is_locked_and_has_a_source(self):
         document = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
         family = next((entry for entry in document["families"] if entry["name"] == "ZenMaruGothicJP"), None)
 
@@ -28,8 +28,6 @@ class ZenMaruSubmissionTest(unittest.TestCase):
                 "description": "Soft Japanese rounded sans-serif with kanji and kana",
                 "category": "rounded-sans",
                 "languages": ["ja"],
-                "license_type": "commercial-use",
-                "license_url": "https://github.com/google/fonts/blob/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic/OFL.txt",
                 "source_url": "https://github.com/google/fonts/tree/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic",
                 "intervals": "latin-ext,cjk",
                 "source": {
@@ -40,9 +38,9 @@ class ZenMaruSubmissionTest(unittest.TestCase):
             },
         )
 
-        licenses = LICENSES.read_text(encoding="utf-8")
-        self.assertIn("| ZenMaruGothicJP |", licenses)
-        self.assertIn("92503f07b74eab956c1abf4956fbf46170716caa", licenses)
+        sources = SOURCES.read_text(encoding="utf-8")
+        self.assertIn("| ZenMaruGothicJP |", sources)
+        self.assertIn("92503f07b74eab956c1abf4956fbf46170716caa", sources)
 
 
 if __name__ == "__main__":
