@@ -1,5 +1,7 @@
 # CrossPoint CJK Fonts
 
+[English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
+
 Reproducible build and GitHub Release hosting for optional CrossPoint Reader CJK `.cpfont` files.
 
 The generated binaries are deliberately excluded from Git history. GitHub Actions downloads SHA-256-locked upstream font sources, converts them into device-native files, generates `fonts.json`, verifies every asset, and publishes the catalog as the `sd-fonts-m2-b4` Release.

@@ -1,5 +1,7 @@
 # Contributing a font
 
+[English](CONTRIBUTING.md) | [简体中文](CONTRIBUTING.zh-CN.md) | [日本語](CONTRIBUTING.ja.md)
+
 Thanks for helping expand the CrossPoint Reader CJK font catalog. A font submission is a **metadata-only pull request**: do not commit the source font or generated `.cpfont` files. The trusted Release workflow downloads the locked upstream source, builds seven physical sizes, verifies them, and updates the fixed Release after merge.
 
 ## Before you start
