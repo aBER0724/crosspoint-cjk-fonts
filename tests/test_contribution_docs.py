@@ -105,6 +105,22 @@ class ContributionDocsTest(unittest.TestCase):
             self.assertIn("hint", text.lower())
             self.assertIn("false", text)
 
+    def test_intervals_are_explained_as_glyph_coverage(self):
+        guides = {
+            "en": CONTRIBUTING.read_text(encoding="utf-8"),
+            "zh": CONTRIBUTING_ZH.read_text(encoding="utf-8"),
+            "ja": CONTRIBUTING_JA.read_text(encoding="utf-8"),
+        }
+        for text in guides.values():
+            self.assertIn("Unicode", text)
+            self.assertIn("latin-ext,cjk", text)
+            self.assertIn(".cpfont", text)
+            self.assertIn("U+FFFD", text)
+            self.assertIn("(0x2100-0x214F)", text)
+        self.assertIn("does not describe the font's language or style", guides["en"])
+        self.assertIn("不是字体语言或风格标签", guides["zh"])
+        self.assertIn("言語や書体の分類ラベルではありません", guides["ja"])
+
     def test_contribution_guide_documents_the_complete_one_family_flow(self):
         text = CONTRIBUTING.read_text(encoding="utf-8")
         for expected in (

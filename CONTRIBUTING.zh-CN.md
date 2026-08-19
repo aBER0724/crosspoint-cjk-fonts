@@ -58,7 +58,7 @@ community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 | `category` | 是 | 可选值：`sans-serif`、`serif`、`rounded-sans`、`handwriting`、`fangsong`、`display`。 |
 | `languages` | 是 | 字体实际覆盖的语言，可选 `zh-Hans`、`zh-Hant`、`ja`。可以填写多个。 |
 | `source_url` | 否 | 字体来源官网、项目页或源仓库地址。没有可靠地址时直接省略。 |
-| `intervals` | 是 | 通常填写 `latin-ext,cjk`。 |
+| `intervals` | 是 | 选择每个 `.cpfont` 实际栅格化并收录的 Unicode 范围，不是字体语言或风格标签。CJK 投稿使用 `latin-ext,cjk`：`latin-ext` 加入拉丁字母、数字和常用标点；`cjk` 加入 CJK 标点、平假名、片假名、常用汉字、兼容汉字及全角字符。转换器只保留投稿字体或 fallback 中存在的字形，并始终加入 U+FFFD。多个预设用逗号连接；高级用法可加入 `(0x2100-0x214F)` 这样的范围。范围越大，构建越慢，文件也越大。 |
 | `force_autohint` | 否 | 控制生成点阵时使用的 FreeType hint（像素对齐）方式。不填或设为 `false` 时保留字体原有 hint；小字号笔画明显不齐或粗细不均时，可设为 `true`，让 FreeType 自动生成 hint。 |
 | `source.path` | 上传文件时必填 | TTF、OTF 或 ZIP 在仓库中的路径，必须位于 `community-fonts/<FamilyId>/`。 |
 | `source.archive_member` | ZIP 必填 | ZIP 内实际使用的 `.ttf` 或 `.otf` 路径。 |

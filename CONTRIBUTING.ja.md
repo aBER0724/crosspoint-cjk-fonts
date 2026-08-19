@@ -58,7 +58,7 @@ community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 | `category` | 必須 | `sans-serif`、`serif`、`rounded-sans`、`handwriting`、`fangsong`、`display` のいずれか。 |
 | `languages` | 必須 | 実際に収録する言語。`zh-Hans`、`zh-Hant`、`ja` から選びます。複数指定できます。 |
 | `source_url` | 任意 | フォント公式サイト、プロジェクトページ、またはソースリポジトリ。URL がなければ省略します。 |
-| `intervals` | 必須 | 通常は `latin-ext,cjk`。 |
+| `intervals` | 必須 | 各 `.cpfont` にラスタライズして収録する Unicode 範囲を指定する項目で、言語や書体の分類ラベルではありません。CJK 投稿では `latin-ext,cjk` を使います。`latin-ext` はラテン文字、数字、一般的な句読点を、`cjk` は CJK 句読点、ひらがな、カタカナ、一般的な漢字、互換漢字、全角文字を追加します。変換時には投稿フォントまたは fallback に存在するグリフだけが残り、U+FFFD は常に追加されます。複数のプリセットはカンマで連結でき、上級者向けには `(0x2100-0x214F)` のような範囲も追加できます。範囲を広げるほどビルド時間とファイルサイズが増えます。 |
 | `force_autohint` | 任意 | ビットマップ生成時の FreeType hint（ピクセル位置の調整）を制御します。省略または `false` ではフォント本来の hint を使います。小サイズで線の位置や太さが明らかに不揃いな場合は `true` にして、FreeType に hint を自動生成させます。 |
 | `source.path` | アップロード時は必須 | `community-fonts/<FamilyId>/` 以下に置いた TTF、OTF、ZIP のパス。 |
 | `source.archive_member` | ZIP の場合は必須 | ZIP 内で使用する `.ttf` または `.otf` の正確なパス。 |
