@@ -70,6 +70,8 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn('.locale-switcher button[aria-pressed="true"]', css)
         self.assertNotIn("font-family: Georgia", css)
         self.assertNotIn("#f4f1e8", css)
+        self.assertIn('<div id="preview-size" class="preview-size-switch" role="group"', html)
+        self.assertNotIn('<select id="preview-size"', html)
 
     def test_every_family_declares_filter_metadata(self):
         document = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))

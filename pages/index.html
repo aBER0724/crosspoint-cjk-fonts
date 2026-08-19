@@ -36,10 +36,10 @@
           <span data-copy="categoryLabel">Category</span>
           <select id="category-filter"><option value="" data-copy="all">All</option></select>
         </label>
-        <label>
-          <span data-copy="previewLabel">Preview size</span>
-          <select id="preview-size"></select>
-        </label>
+        <div class="preview-size-field">
+          <span id="preview-size-label" data-copy="previewLabel">Preview size</span>
+          <div id="preview-size" class="preview-size-switch" role="group" aria-labelledby="preview-size-label"></div>
+        </div>
       </section>
 
       <p id="status" class="status" role="status" aria-live="polite"></p>
