@@ -54,7 +54,7 @@ jobs:
       has_builds: ${{ steps.plan.outputs.has_builds }}
       has_previous_release: ${{ steps.plan.outputs.has_previous_release }}
       needs_font_publish: ${{ steps.plan.outputs.needs_font_publish }}
-      needs_release_update: ${{ steps.plan.outputs.needs_release_update }}
+      needs_release_update: ${{ steps.plan.outputs.release_update_needed }}
       release_exists: ${{ steps.release.outputs.exists }}
     steps:
       - uses: actions/checkout@v4
