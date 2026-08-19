@@ -11,7 +11,7 @@ const COPY = {
     title: "CJK 字体目录",
     intro: "预览设备实际使用的 2-bit 点阵，并从 GitHub Release 下载已校验的物理字号字体。",
     searchLabel: "搜索字体", searchPlaceholder: "名称或简介", languageLabel: "语言", categoryLabel: "类型", previewLabel: "预览字号", all: "全部",
-    downloads: "下载物理字号", source: "字体来源", license: "授权", manifest: "Release 清单", maker: "制作私人字体",
+    downloads: "下载物理字号", source: "字体来源", license: "授权", manifest: "Release 清单", maker: "制作自制字体",
     footer: "Pages 只托管目录和轻量 PNG 预览；字体二进制仍由 GitHub Release 分发。",
     verified: "已核验", loading: "正在加载字体目录…", empty: "没有匹配的字体。", error: "字体目录暂时不可用，请稍后重试。", families: count => `${count} 个字体家族`,
   },

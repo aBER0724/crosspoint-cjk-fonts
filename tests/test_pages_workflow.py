@@ -84,6 +84,12 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn("const displayName = familyDisplayName(family);", script)
         self.assertIn("preview.alt = `${displayName}, ${state.previewSize} pt`;", script)
 
+    def test_maker_link_uses_requested_chinese_copy(self):
+        script = PAGE_JS.read_text(encoding="utf-8")
+
+        self.assertIn('maker: "制作自制字体"', script)
+        self.assertNotIn("制作私人字体", script)
+
     def test_font_cards_show_direct_download_buttons_without_an_expander(self):
         html = PAGE_HTML.read_text(encoding="utf-8")
         css = PAGE_CSS.read_text(encoding="utf-8")
