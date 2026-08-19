@@ -105,7 +105,7 @@ jobs:
   build:
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_call' && inputs.families_json != '[]')
+      (inputs.families_json != '' && inputs.families_json != '[]')
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 180

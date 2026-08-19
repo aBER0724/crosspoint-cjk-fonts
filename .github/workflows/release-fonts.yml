@@ -10,6 +10,7 @@ on:
       - scripts/cpfont_version.py
       - scripts/fetch_fallback.py
       - scripts/incremental_release.py
+      - scripts/generate_release_notes.py
       - requirements.txt
       - LICENSES.md
       - OFL-1.1.txt
@@ -128,7 +129,7 @@ jobs:
     uses: ./.github/workflows/build-fonts.yml
     with:
       families_json: ${{ needs.plan.outputs.families_json }}
-      publish_catalog: true
+      publish_catalog: false
 
   assemble:
     needs: [plan, build]
@@ -152,8 +153,9 @@ jobs:
       - uses: actions/download-artifact@v4
         if: needs.plan.outputs.has_builds == 'true'
         with:
-          name: crosspoint-cjk-fonts
+          pattern: font-*
           path: built
+          merge-multiple: true
       - name: Assemble complete manifest and build index
         env:
           HAS_PREVIOUS_RELEASE: ${{ needs.plan.outputs.has_previous_release }}
@@ -171,6 +173,11 @@ jobs:
             args+=(--previous-manifest state/previous/fonts.json)
           fi
           if [[ "$HAS_BUILDS" == "true" ]]; then
+            python scripts/generate_manifest.py \
+              --input built \
+              --base-url "$FONT_BASE_URL" \
+              --output built/fonts.json \
+              --descriptions-from config/fonts.yaml
             args+=(--built-manifest built/fonts.json)
           fi
           python scripts/incremental_release.py "${args[@]}"
@@ -192,6 +199,12 @@ jobs:
               --directory dist \
               --families-json "$FAMILIES_JSON"
           fi
+          python scripts/generate_release_notes.py \
+            --previous-manifest state/previous/fonts.json \
+            --current-manifest dist/fonts.json \
+            --plan state/plan.json \
+            --output dist/RELEASE_NOTES.md \
+            --tag "$RELEASE_TAG"
           cp LICENSES.md dist/FONT-LICENSES.md
           cp OFL-1.1.txt dist/OFL-1.1.txt
       - uses: actions/upload-artifact@v4
@@ -225,7 +238,7 @@ jobs:
             gh release create "$RELEASE_TAG" dist/*.cpfont \
               --target "$GITHUB_SHA" \
               --title "CrossPoint CJK fonts (manifest 2 / cpfont 4)" \
-              --notes-file RELEASE_NOTES.md
+              --notes-file dist/RELEASE_NOTES.md
             exit 0
           fi
 
@@ -317,7 +330,7 @@ jobs:
             --clobber
           gh release edit "$RELEASE_TAG" \
             --title "CrossPoint CJK fonts (manifest 2 / cpfont 4)" \
-            --notes-file RELEASE_NOTES.md
+            --notes-file dist/RELEASE_NOTES.md
       - name: Remove assets no longer listed by the complete manifest
         env:
           GH_TOKEN: ${{ github.token }}
