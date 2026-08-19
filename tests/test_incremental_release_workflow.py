@@ -51,6 +51,13 @@ class IncrementalReleaseWorkflowTest(unittest.TestCase):
         self.assertIn("### Updated", template)
         self.assertIn("### Removed", template)
 
+    def test_metadata_publish_runs_after_a_skipped_font_build(self):
+        text = RELEASE_WORKFLOW.read_text(encoding="utf-8")
+        publish_block = text.split("  publish-metadata:\n", 1)[1]
+        self.assertIn("if: always()", publish_block)
+        self.assertIn("needs.verify-fonts.result == 'success'", publish_block)
+        self.assertIn("needs.verify-fonts.result == 'skipped'", publish_block)
+
     def test_release_updates_changed_assets_and_metadata_only(self):
         text = RELEASE_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn('gh release upload "$RELEASE_TAG"', text)
