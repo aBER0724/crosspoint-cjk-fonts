@@ -4,6 +4,7 @@ preview_sizes: [14, 18, 22]
 
 families:
   - name: NotoSansSC
+    display_names: {en: "Noto Sans SC", zh: "Noto Sans SC", ja: "Noto Sans SC"}
     description: "Simplified Chinese sans-serif with Japanese kana"
     category: sans-serif
     languages: [zh-Hans, ja]
@@ -18,6 +19,7 @@ families:
       variable: {wght: 400}
 
   - name: NotoSansTC
+    display_names: {en: "Noto Sans TC", zh: "Noto Sans TC", ja: "Noto Sans TC"}
     description: "Traditional Chinese sans-serif with Japanese kana"
     category: sans-serif
     languages: [zh-Hant, ja]
@@ -32,6 +34,7 @@ families:
       variable: {wght: 400}
 
   - name: NotoSansJP
+    display_names: {en: "Noto Sans JP", zh: "Noto Sans JP", ja: "Noto Sans JP"}
     description: "Japanese sans-serif with kanji and kana"
     category: sans-serif
     languages: [ja]
@@ -46,6 +49,7 @@ families:
       variable: {wght: 400}
 
   - name: NotoSerifSC
+    display_names: {en: "Noto Serif SC", zh: "Noto Serif SC", ja: "Noto Serif SC"}
     description: "Simplified Chinese Song-style serif with Japanese kana"
     category: serif
     languages: [zh-Hans, ja]
@@ -60,6 +64,7 @@ families:
       variable: {wght: 400}
 
   - name: NotoSerifTC
+    display_names: {en: "Noto Serif TC", zh: "Noto Serif TC", ja: "Noto Serif TC"}
     description: "Traditional Chinese Ming-style serif with Japanese kana"
     category: serif
     languages: [zh-Hant, ja]
@@ -74,6 +79,7 @@ families:
       variable: {wght: 400}
 
   - name: NotoSerifJP
+    display_names: {en: "Noto Serif JP", zh: "Noto Serif JP", ja: "Noto Serif JP"}
     description: "Japanese Mincho-style serif with kanji and kana"
     category: serif
     languages: [ja]
@@ -88,6 +94,7 @@ families:
       variable: {wght: 400}
 
   - name: WenKaiCJK
+    display_names: {en: "LXGW WenKai", zh: "霞鹜文楷", ja: "LXGW WenKai"}
     description: "Readable CJK handwriting-style typeface derived from LXGW WenKai"
     category: handwriting
     languages: [zh-Hans, zh-Hant, ja]
@@ -102,6 +109,7 @@ families:
       sha256: 39ad71264b588165b469e35e6afb162a378dacd1f95348160240ba9038ac3009
 
   - name: ChironGoRoundTC
+    display_names: {en: "Chiron GoRound TC", zh: "昭源環方", ja: "Chiron GoRound TC"}
     description: "Traditional Chinese rounded sans-serif with Japanese kana"
     category: rounded-sans
     languages: [zh-Hant, ja]
@@ -115,6 +123,7 @@ families:
       sha256: 519253233cbca3c2b97b818949e803ccf08f937d75431bedf59e167b00bf4b65
 
   - name: JoyDisplaySC
+    display_names: {en: "Smiley Sans", zh: "得意黑", ja: "Smiley Sans"}
     description: "Narrow oblique Simplified Chinese display face derived from Smiley Sans"
     category: display
     languages: [zh-Hans]
@@ -130,6 +139,7 @@ families:
       archive_member: "SmileySans-Oblique.ttf"
 
   - name: VermilionFangsong
+    display_names: {en: "Zhuque Fangsong", zh: "朱雀仿宋", ja: "朱雀宋朝"}
     description: "Bookish Simplified Chinese Fangsong face derived from Zhuque Fangsong"
     category: fangsong
     languages: [zh-Hans]
@@ -145,6 +155,7 @@ families:
       archive_member: "ZhuqueFangsong-Regular.ttf"
 
   - name: BrightReadingSC
+    display_names: {en: "LXGW Bright GB", zh: "LXGW Bright GB", ja: "LXGW Bright GB"}
     description: "Print-inspired Simplified Chinese reading face derived from LXGW Bright GB"
     category: serif
     languages: [zh-Hans]
@@ -159,6 +170,7 @@ families:
       sha256: cd78eb7d99b2f8cbf2a1bed52ab998ff1e76e18048d9b925ce2799aa6310e72d
 
   - name: BrightReadingTC
+    display_names: {en: "LXGW Bright TC", zh: "LXGW Bright TC", ja: "LXGW Bright TC"}
     description: "Print-inspired Traditional Chinese reading face derived from LXGW Bright TC"
     category: serif
     languages: [zh-Hant]
@@ -173,6 +185,7 @@ families:
       sha256: 3eabaf8741a44609b19b819d1c420cf8bf0c20c6f44aceaaf60223bc9088a0ba
 
   - name: IansuiTC
+    display_names: {en: "Iansui", zh: "芫荽", ja: "Iansui"}
     description: "Traditional Chinese handwriting-style face derived from Klee One"
     category: handwriting
     languages: [zh-Hant]
@@ -188,6 +201,7 @@ families:
       archive_member: "Iansui-Regular.ttf"
 
   - name: GenWanSerifTC
+    display_names: {en: "GenWan Serif TC", zh: "源雲明體 TC", ja: "源雲明體 TC"}
     description: "Warm Traditional Chinese Ming-style face with an ink-bleed print texture"
     category: serif
     languages: [zh-Hant]
@@ -202,6 +216,7 @@ families:
       sha256: 028e19001e7d580f44e145eda751674528b8bb5e421887804469ae3c74fa66a6
 
   - name: GenYoGothicTC
+    display_names: {en: "GenYo Gothic TC", zh: "源樣黑體 TC", ja: "源様ゴシック TC"}
     description: "Traditional Chinese sans-serif with classic print-oriented glyph forms"
     category: sans-serif
     languages: [zh-Hant]

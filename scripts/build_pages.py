@@ -23,6 +23,7 @@ except ImportError:
 WEB_CATALOG_VERSION = 1
 MANIFEST_VERSION = 2
 EXPECTED_ALL_SIZES = [8, 10, 12, 14, 16, 18, 22]
+EXPECTED_DISPLAY_NAME_LOCALES = {"en", "zh", "ja"}
 DISALLOWED_SUFFIXES = {".cpfont", ".ttf", ".otf", ".zip", ".rar", ".7z"}
 
 
@@ -116,6 +117,14 @@ def _file_entry(entry: dict, family_name: str, base_url: str) -> dict:
     }
 
 
+def _localized_display_names(value: object, family_name: str) -> dict[str, str]:
+    if not isinstance(value, dict) or set(value) != EXPECTED_DISPLAY_NAME_LOCALES:
+        raise CatalogBuildError(f"{family_name}: localized display names must define en, zh, and ja")
+    if not all(isinstance(name, str) and name.strip() for name in value.values()):
+        raise CatalogBuildError(f"{family_name}: localized display names must be non-empty strings")
+    return {locale: value[locale].strip() for locale in ("en", "zh", "ja")}
+
+
 def _copy_static_source(source_dir: Path, output_dir: Path) -> None:
     if output_dir.exists():
         shutil.rmtree(output_dir)
@@ -185,6 +194,7 @@ def build_site(
                 raise CatalogBuildError(f"{family_name}: manifest physical sizes do not match catalog")
 
             languages = editorial.get("languages", [])
+            display_names = _localized_display_names(editorial.get("display_names"), family_name)
             preview_text = preview_text_for_languages(samples, languages)
             previews = {}
             entries_by_size = {entry["physicalSize"]: entry for entry in files}
@@ -207,6 +217,7 @@ def build_site(
             catalog_families.append(
                 {
                     "name": family_name,
+                    "displayNames": display_names,
                     "description": editorial["description"],
                     "category": editorial.get("category", "other"),
                     "languages": languages,

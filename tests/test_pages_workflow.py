@@ -60,7 +60,7 @@ class PagesWorkflowTest(unittest.TestCase):
             'id="maker-link"',
         ):
             self.assertIn(hook, html)
-        for selector in ('class="description"', 'class="license-status"', 'class="preview"', 'class="tags"', 'class="license"', 'class="downloads"', 'class="source-link"', 'class="license-link"'):
+        for selector in ('class="description"', 'class="family-id"', 'class="license-status"', 'class="preview"', 'class="tags"', 'class="license"', 'class="downloads"', 'class="source-link"', 'class="license-link"'):
             self.assertIn(selector, html)
 
         self.assertIn('--font-sans: "DM Sans", ui-sans-serif, sans-serif, system-ui;', css)
@@ -73,6 +73,16 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertNotIn("#f4f1e8", css)
         self.assertIn('<div id="preview-size" class="preview-size-switch" role="group"', html)
         self.assertNotIn('<select id="preview-size"', html)
+
+    def test_font_cards_localize_display_names_and_keep_stable_ids_searchable(self):
+        script = PAGE_JS.read_text(encoding="utf-8")
+
+        self.assertIn("function familyDisplayName(family)", script)
+        self.assertIn("family.displayNames[state.locale]", script)
+        self.assertIn('fragment.querySelector(".family-id").textContent = family.name;', script)
+        self.assertIn("Object.values(family.displayNames)", script)
+        self.assertIn("const displayName = familyDisplayName(family);", script)
+        self.assertIn("preview.alt = `${displayName}, ${state.previewSize} pt`;", script)
 
     def test_font_cards_show_direct_download_buttons_without_an_expander(self):
         html = PAGE_HTML.read_text(encoding="utf-8")
@@ -96,6 +106,9 @@ class PagesWorkflowTest(unittest.TestCase):
         document = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
 
         for family in document["families"]:
+            self.assertIsInstance(family.get("display_names"), dict, family["name"])
+            self.assertEqual(set(family["display_names"]), {"en", "zh", "ja"}, family["name"])
+            self.assertTrue(all(isinstance(value, str) and value.strip() for value in family["display_names"].values()), family["name"])
             self.assertIsInstance(family.get("languages"), list, family["name"])
             self.assertTrue(family["languages"], family["name"])
             self.assertIsInstance(family.get("category"), str, family["name"])

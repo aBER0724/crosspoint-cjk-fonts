@@ -93,13 +93,18 @@ function humanBytes(value) {
   return `${size.toFixed(unit === 0 ? 0 : 1)} ${units[unit]}`;
 }
 
+function familyDisplayName(family) {
+  return family.displayNames[state.locale] || family.displayNames.en || family.name;
+}
+
 function render() {
   if (!state.catalog) return;
   const copy = COPY[state.locale];
   populateFilters();
   const query = state.query.trim().toLocaleLowerCase();
   const families = state.catalog.families.filter(family => {
-    const matchesText = !query || `${family.name} ${family.description}`.toLocaleLowerCase().includes(query);
+    const searchableNames = Object.values(family.displayNames).join(" ");
+    const matchesText = !query || `${family.name} ${searchableNames} ${family.description}`.toLocaleLowerCase().includes(query);
     const matchesLanguage = !state.language || family.languages.includes(state.language);
     const matchesCategory = !state.category || family.category === state.category;
     return matchesText && matchesLanguage && matchesCategory;
@@ -107,12 +112,14 @@ function render() {
   nodes.catalog.replaceChildren();
   families.forEach(family => {
     const fragment = nodes.template.content.cloneNode(true);
-    fragment.querySelector("h2").textContent = family.name;
+    const displayName = familyDisplayName(family);
+    fragment.querySelector("h2").textContent = displayName;
+    fragment.querySelector(".family-id").textContent = family.name;
     fragment.querySelector(".description").textContent = family.description;
     fragment.querySelector(".license-status").textContent = family.licenseStatus === "verified" ? copy.verified : family.licenseStatus;
     const preview = fragment.querySelector(".preview");
     preview.src = family.previews[state.previewSize];
-    preview.alt = `${family.name}, ${state.previewSize} pt`;
+    preview.alt = `${displayName}, ${state.previewSize} pt`;
     preview.addEventListener("error", () => preview.classList.add("is-broken"), { once: true });
     fragment.querySelector(".tags").textContent = [...family.languages, family.category].filter(Boolean).join(" · ");
     fragment.querySelector(".license").textContent = family.license;
