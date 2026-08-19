@@ -79,7 +79,7 @@ jobs:
           PY
 
   build:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.event_name != 'push'
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 180
@@ -112,7 +112,7 @@ jobs:
           retention-days: 7
 
   catalog:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.event_name != 'push'
     needs: [validate, build]
     runs-on: ubuntu-24.04
     timeout-minutes: 15

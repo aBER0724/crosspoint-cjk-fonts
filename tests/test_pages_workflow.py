@@ -38,6 +38,7 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn("pages/**", pull_request_block)
         self.assertIn("tests/**", pull_request_block)
         self.assertNotIn("pages/**", push_block.split("  workflow_dispatch:", 1)[0])
+        self.assertIn("github.event_name != 'push'", text)
         self.assertIn("python -m unittest discover -s tests -v", text)
 
     def test_every_family_declares_filter_metadata(self):

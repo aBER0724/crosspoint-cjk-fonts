@@ -76,7 +76,7 @@ Open `site-dist/index.html` through a local static HTTP server. The generated `c
 
 ## GitHub Actions
 
-- **Build font catalog** validates configuration, Python code, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on every relevant pull request. Font binaries are built only on `main`, reusable workflow calls, or manual dispatches.
+- **Build font catalog** validates configuration, Python code, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on every relevant pull request and `main` push. Font binaries are built only by manual dispatch or reusable workflow calls, so a normal `main` validation does not duplicate the Release build.
 - **Publish font release** is manual and requires typing `sd-fonts-m2-b4`. It performs a clean full build, verification, and replacement of the versioned Release assets.
 - **Deploy font catalog** runs manually or after a successful font release. It downloads and verifies only the 14/18/22 pt files, generates 45 PNG previews, and deploys a font-free Pages artifact.
 
