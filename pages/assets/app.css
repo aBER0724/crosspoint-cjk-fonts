@@ -481,12 +481,15 @@ main {
   }
 
   .masthead__controls {
+    grid-template-columns: minmax(0, auto) minmax(0, auto);
     width: 100%;
+    align-items: center;
+    justify-content: end;
   }
 
   .locale-switcher,
   .theme-switcher {
-    justify-self: end;
+    min-width: 0;
     max-width: 100%;
   }
 
