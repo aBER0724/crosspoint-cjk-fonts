@@ -229,7 +229,7 @@ A release smoke test downloads one known published file and compares the generat
 ## Acceptance criteria
 
 - The deployed URL loads without a build tool in the browser.
-- All 15 current families appear.
+- All current families appear.
 - Every family exposes exactly seven Release downloads.
 - Every family exposes real previews at 14, 18, and 22 pt.
 - Preview pixels are decoded from `.cpfont v4`, not rendered from source fonts.

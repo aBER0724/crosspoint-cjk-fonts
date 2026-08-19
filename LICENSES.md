@@ -1,6 +1,6 @@
 # Font Sources And Licenses
 
-All 15 CJK families in release `sd-fonts-m2-b4` are derived from fonts licensed
+All 16 CJK families in release `sd-fonts-m2-b4` are derived from fonts licensed
 under the SIL Open Font License 1.1 (`OFL-1.1`). The `.cpfont` conversion does
 not relicense the font software. Redistribution must retain the upstream
 copyright notice and OFL text, and must respect any Reserved Font Names.
@@ -25,6 +25,7 @@ font declares a Reserved Font Name.
 | IansuiTC | [Iansui v1.020](https://github.com/ButTaiwan/iansui/tree/v1.020) | [OFL-1.1](https://github.com/ButTaiwan/iansui/blob/v1.020/OFL.txt) |
 | GenWanSerifTC | [GenWan font, pinned commit](https://github.com/ButTaiwan/genwan-font/tree/25e718615173a3b51099ecc9a6bf4fa558c03fbc) | [OFL-1.1](https://github.com/ButTaiwan/genwan-font/blob/25e718615173a3b51099ecc9a6bf4fa558c03fbc/SIL_Open_Font_License_1.1.txt) |
 | GenYoGothicTC | [GenYoG font, pinned commit](https://github.com/ButTaiwan/genyog-font/tree/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91) | [OFL-1.1](https://github.com/ButTaiwan/genyog-font/blob/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91/SIL_Open_Font_License_1.1.txt) |
+| ZenMaruGothicJP | [Google Fonts: Zen Maru Gothic, pinned commit](https://github.com/google/fonts/tree/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic) | [OFL-1.1](https://github.com/google/fonts/blob/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic/OFL.txt) |
 
 The [free-font catalog](https://github.com/jaywcjlove/free-font) can be used to
 discover future candidates. It is not the licensing authority: every added

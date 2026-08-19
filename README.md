@@ -14,7 +14,7 @@ Pages contains only HTML, JSON metadata, and compact PNG previews decoded from t
 
 ## Catalog
 
-The current catalog contains 15 OFL-1.1 families for Simplified Chinese,
+The current catalog contains 16 OFL-1.1 families for Simplified Chinese,
 Traditional Chinese, and Japanese. Pages shows each family's original/localized
 name for the selected UI language and keeps the stable ASCII build ID below it;
 search accepts either form. Each family is pre-rendered at the seven
@@ -80,7 +80,7 @@ Open `site-dist/index.html` through a local static HTTP server. The generated `c
 
 - **Build font catalog** validates configuration, Python code, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on every relevant pull request and `main` push. Font binaries are built only by manual dispatch or reusable workflow calls, so a normal `main` validation does not duplicate the Release build.
 - **Publish font release** is manual and requires typing `sd-fonts-m2-b4`. It performs a clean full build, verification, and replacement of the versioned Release assets.
-- **Deploy font catalog** runs manually or after a successful font release. It downloads and verifies only the 14/18/22 pt files, generates 45 PNG previews, and deploys a font-free Pages artifact.
+- **Deploy font catalog** runs manually or after a successful font release. It downloads and verifies only the 14/18/22 pt files, generates three PNG previews per published family, and deploys a font-free Pages artifact.
 
 The stable device endpoints are:
 
