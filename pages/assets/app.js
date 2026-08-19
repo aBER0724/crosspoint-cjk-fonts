@@ -3,6 +3,8 @@ const COPY = {
     title: "CJK font catalog",
     intro: "Preview the actual 2-bit device bitmaps, then download verified physical font files from GitHub Release.",
     searchLabel: "Search fonts", searchPlaceholder: "Name or description", languageLabel: "Language", categoryLabel: "Category", previewLabel: "Preview size", all: "All",
+    languages: { "zh-Hans": "Simplified Chinese", "zh-Hant": "Traditional Chinese", ja: "Japanese" },
+    categories: { "sans-serif": "Sans serif", serif: "Serif", handwriting: "Handwriting", "rounded-sans": "Rounded sans", display: "Display", fangsong: "Fangsong" },
     downloads: "Download physical sizes", source: "Source", license: "License", manifest: "Release manifest", maker: "Make a custom font", theme: "Theme", themeLight: "Light", themeDark: "Dark", themeSystem: "System",
     footer: "Pages hosts only this catalog and compact PNG previews. Font binaries remain on GitHub Release.",
     verified: "Verified", loading: "Loading catalog…", empty: "No matching fonts.", error: "Catalog unavailable. Try again later.", families: count => `${count} font ${count === 1 ? "family" : "families"}`,
@@ -11,6 +13,8 @@ const COPY = {
     title: "CJK 字体目录",
     intro: "预览设备实际使用的 2-bit 点阵，并从 GitHub Release 下载已校验的物理字号字体。",
     searchLabel: "搜索字体", searchPlaceholder: "名称或简介", languageLabel: "语言", categoryLabel: "类型", previewLabel: "预览字号", all: "全部",
+    languages: { "zh-Hans": "简体中文", "zh-Hant": "繁体中文", ja: "日语" },
+    categories: { "sans-serif": "无衬线体", serif: "衬线体", handwriting: "手写体", "rounded-sans": "圆体", display: "展示体", fangsong: "仿宋体" },
     downloads: "下载物理字号", source: "字体来源", license: "授权", manifest: "Release 清单", maker: "制作自制字体", theme: "主题", themeLight: "浅色", themeDark: "深色", themeSystem: "跟随系统",
     footer: "Pages 只托管目录和轻量 PNG 预览；字体二进制仍由 GitHub Release 分发。",
     verified: "已核验", loading: "正在加载字体目录…", empty: "没有匹配的字体。", error: "字体目录暂时不可用，请稍后重试。", families: count => `${count} 个字体家族`,
@@ -19,6 +23,8 @@ const COPY = {
     title: "CJK フォントカタログ",
     intro: "端末で使われる実際の 2-bit ビットマップを確認し、検証済みの物理サイズを GitHub Release から取得できます。",
     searchLabel: "フォント検索", searchPlaceholder: "名前または説明", languageLabel: "言語", categoryLabel: "分類", previewLabel: "プレビューサイズ", all: "すべて",
+    languages: { "zh-Hans": "簡体字中国語", "zh-Hant": "繁体字中国語", ja: "日本語" },
+    categories: { "sans-serif": "ゴシック体", serif: "明朝体", handwriting: "手書き体", "rounded-sans": "丸ゴシック体", display: "ディスプレイ体", fangsong: "仿宋体" },
     downloads: "物理サイズをダウンロード", source: "出典", license: "ライセンス", manifest: "Release マニフェスト", maker: "個人用フォントを作成", theme: "テーマ", themeLight: "ライト", themeDark: "ダーク", themeSystem: "システム",
     footer: "Pages はカタログと軽量 PNG のみを配信し、フォント本体は GitHub Release に置かれます。",
     verified: "確認済み", loading: "カタログを読み込み中…", empty: "該当するフォントはありません。", error: "カタログを読み込めませんでした。", families: count => `${count} ファミリー`,
@@ -112,11 +118,18 @@ function optionValues(key) {
   return [...values].sort((a, b) => a.localeCompare(b));
 }
 
+function filterOptionLabel(kind, value) {
+  return COPY[state.locale][kind]?.[value] || value;
+}
+
 function populateFilters() {
   const allText = COPY[state.locale].all;
-  for (const [node, values] of [[nodes.language, optionValues("languages")], [nodes.category, optionValues("category")]]) {
+  for (const [node, kind, values] of [
+    [nodes.language, "languages", optionValues("languages")],
+    [nodes.category, "categories", optionValues("category")],
+  ]) {
     const selected = node.value;
-    node.replaceChildren(new Option(allText, ""), ...values.map(value => new Option(value, value)));
+    node.replaceChildren(new Option(allText, ""), ...values.map(value => new Option(filterOptionLabel(kind, value), value)));
     node.value = values.includes(selected) ? selected : "";
   }
   const selectedSize = state.previewSize;

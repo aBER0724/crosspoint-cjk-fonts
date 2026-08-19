@@ -92,6 +92,21 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn("const displayName = familyDisplayName(family);", script)
         self.assertIn("preview.alt = `${displayName}, ${state.previewSize} pt`;", script)
 
+    def test_filter_options_localize_labels_without_changing_catalog_values(self):
+        script = PAGE_JS.read_text(encoding="utf-8")
+
+        self.assertIn('languages: { "zh-Hans": "Simplified Chinese", "zh-Hant": "Traditional Chinese", ja: "Japanese" }', script)
+        self.assertIn('categories: { "sans-serif": "Sans serif", serif: "Serif", handwriting: "Handwriting", "rounded-sans": "Rounded sans", display: "Display", fangsong: "Fangsong" }', script)
+        self.assertIn('languages: { "zh-Hans": "简体中文", "zh-Hant": "繁体中文", ja: "日语" }', script)
+        self.assertIn('categories: { "sans-serif": "无衬线体", serif: "衬线体", handwriting: "手写体", "rounded-sans": "圆体", display: "展示体", fangsong: "仿宋体" }', script)
+        self.assertIn('languages: { "zh-Hans": "簡体字中国語", "zh-Hant": "繁体字中国語", ja: "日本語" }', script)
+        self.assertIn('categories: { "sans-serif": "ゴシック体", serif: "明朝体", handwriting: "手書き体", "rounded-sans": "丸ゴシック体", display: "ディスプレイ体", fangsong: "仿宋体" }', script)
+        self.assertIn('function filterOptionLabel(kind, value)', script)
+        self.assertIn('new Option(filterOptionLabel(kind, value), value)', script)
+        self.assertIn('const selected = node.value;', script)
+        self.assertIn('node.value = values.includes(selected) ? selected : "";', script)
+        self.assertNotIn('values.map(value => new Option(value, value))', script)
+
     def test_maker_link_uses_requested_chinese_copy_and_deployed_instance(self):
         html = PAGE_HTML.read_text(encoding="utf-8")
         script = PAGE_JS.read_text(encoding="utf-8")
