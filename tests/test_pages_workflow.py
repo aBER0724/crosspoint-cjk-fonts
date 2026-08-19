@@ -21,6 +21,8 @@ class PagesWorkflowTest(unittest.TestCase):
 
         self.assertIn("workflow_dispatch:", text)
         self.assertIn("workflow_run:", text)
+        self.assertIn("release:", text)
+        self.assertIn("types: [published]", text)
         self.assertIn('workflows: ["Publish font release"]', text)
         self.assertIn("contents: read", text)
         self.assertIn("pages: write", text)
@@ -43,7 +45,9 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn("pages/**", pull_request_block)
         self.assertIn("tests/**", pull_request_block)
         self.assertNotIn("pages/**", push_block.split("  workflow_dispatch:", 1)[0])
-        self.assertIn("github.event_name != 'push'", text)
+        self.assertIn("github.event_name == 'workflow_dispatch'", text)
+        self.assertIn("github.event_name == 'workflow_call'", text)
+        self.assertNotIn("github.event_name == 'push' ||", text)
         self.assertIn("python -m unittest discover -s tests -v", text)
 
     def test_pages_source_keeps_runtime_hooks_and_font_maker_visual_tokens(self):
