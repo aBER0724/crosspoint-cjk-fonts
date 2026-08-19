@@ -65,16 +65,28 @@ def validate_document(document: dict, *, root: Path = ROOT) -> list[str]:
         if name in names:
             errors.append(f"duplicate family: {name}")
         names.add(name)
-        for key in ("description", "category", "intervals"):
+        for key in ("category", "intervals"):
             if not family.get(key):
                 errors.append(f"{name}: missing {key}")
+        if "description" in family and (
+            not isinstance(family["description"], str) or not family["description"].strip()
+        ):
+            errors.append(f"{name}: description must be a non-empty string when provided")
         if family.get("category") not in ALLOWED_CATEGORIES:
             errors.append(f"{name}: invalid category")
         display_names = family.get("display_names")
-        if not isinstance(display_names, dict) or set(display_names) != {"en", "zh", "ja"}:
-            errors.append(f"{name}: display_names must define exactly en, zh, and ja")
-        elif not all(isinstance(value, str) and value.strip() for value in display_names.values()):
-            errors.append(f"{name}: display_names values must be non-empty strings")
+        if not isinstance(display_names, dict):
+            errors.append(f"{name}: display_names must be an object with display_names.en")
+        else:
+            unsupported_locales = set(display_names) - {"en", "zh", "ja"}
+            if unsupported_locales:
+                errors.append(f"{name}: display_names contains unsupported locales")
+            if not isinstance(display_names.get("en"), str) or not display_names["en"].strip():
+                errors.append(f"{name}: display_names.en must be a non-empty string")
+            for locale in ("zh", "ja"):
+                value = display_names.get(locale)
+                if value is not None and (not isinstance(value, str) or not value.strip()):
+                    errors.append(f"{name}: display_names.{locale} must be a non-empty string when provided")
         languages = family.get("languages")
         if not isinstance(languages, list) or not languages or not all(isinstance(value, str) and value for value in languages):
             errors.append(f"{name}: languages must be a non-empty string list")

@@ -205,7 +205,9 @@ class PagesWorkflowTest(unittest.TestCase):
 
         for family in document["families"]:
             self.assertIsInstance(family.get("display_names"), dict, family["name"])
-            self.assertEqual(set(family["display_names"]), {"en", "zh", "ja"}, family["name"])
+            self.assertTrue(set(family["display_names"]).issubset({"en", "zh", "ja"}), family["name"])
+            self.assertIsInstance(family["display_names"].get("en"), str, family["name"])
+            self.assertTrue(family["display_names"]["en"].strip(), family["name"])
             self.assertTrue(all(isinstance(value, str) and value.strip() for value in family["display_names"].values()), family["name"])
             self.assertIsInstance(family.get("languages"), list, family["name"])
             self.assertTrue(family["languages"], family["name"])

@@ -179,6 +179,11 @@ class IncrementalReleaseTest(unittest.TestCase):
         for entry in manifest["families"]:
             self.assertTrue({"license", "licenseType", "licenseStatus", "licenseUrl"}.isdisjoint(entry))
 
+    def test_optional_description_is_omitted_from_manifest_metadata(self):
+        family = json.loads(json.dumps(self.family))
+        family.pop("description")
+        self.assertNotIn("description", self.module.public_family_metadata(family))
+
     def test_verify_remote_metadata_checks_every_manifest_file_without_downloading(self):
         manifest = {
             "version": 2,

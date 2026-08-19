@@ -170,7 +170,7 @@ function render() {
   const query = state.query.trim().toLocaleLowerCase();
   const families = state.catalog.families.filter(family => {
     const searchableNames = Object.values(family.displayNames).join(" ");
-    const matchesText = !query || `${family.name} ${searchableNames} ${family.description}`.toLocaleLowerCase().includes(query);
+    const matchesText = !query || `${family.name} ${searchableNames} ${family.description || ""}`.toLocaleLowerCase().includes(query);
     const matchesLanguage = !state.language || family.languages.includes(state.language);
     const matchesCategory = !state.category || family.category === state.category;
     return matchesText && matchesLanguage && matchesCategory;
@@ -181,7 +181,9 @@ function render() {
     const displayName = familyDisplayName(family);
     fragment.querySelector("h2").textContent = displayName;
     fragment.querySelector(".family-id").textContent = family.name;
-    fragment.querySelector(".description").textContent = family.description;
+    const description = fragment.querySelector(".description");
+    description.textContent = family.description || "";
+    description.hidden = !family.description;
     const preview = fragment.querySelector(".preview");
     preview.src = family.previews[state.previewSize];
     preview.alt = `${displayName}, ${state.previewSize} pt`;

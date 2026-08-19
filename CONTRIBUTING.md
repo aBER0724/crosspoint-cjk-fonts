@@ -36,8 +36,8 @@ Add one item to `config/fonts.yaml`. Do not change the shared size lists.
 
 ```yaml
   - name: ExampleSansJP
-    display_names: {en: "Example Sans", zh: "Example Sans", ja: "Example Sans"}
-    description: "Japanese sans-serif with kana and kanji"
+    display_names: {en: "Example Sans"}
+    # Optional: add zh/ja display names and a description when available.
     category: sans-serif
     languages: [ja]
     source_url: "https://example.com/example-sans" # optional
@@ -52,14 +52,14 @@ Add one item to `config/fonts.yaml`. Do not change the shared size lists.
 | --- | --- | --- |
 | `name` | Yes | Stable ASCII family ID. It must match `community-fonts/<FamilyId>/` and is used in `.cpfont` filenames. |
 | `display_names.en` | Yes | English display name. Use the known font name if there is no separate English name. |
-| `display_names.zh` | Yes | Chinese display name. Repeating the known font name is fine. |
-| `display_names.ja` | Yes | Japanese display name. Repeating the known font name is fine. |
-| `description` | Yes | Short English description of the font's style and coverage. Keep it factual. |
+| `display_names.zh` | No | Chinese display name. If omitted, the site uses `display_names.en`. |
+| `display_names.ja` | No | Japanese display name. If omitted, the site uses `display_names.en`. |
+| `description` | No | Short English description of the font's style or coverage. Omit it if you do not need one. |
 | `category` | Yes | One of `sans-serif`, `serif`, `rounded-sans`, `handwriting`, `fangsong`, or `display`. |
 | `languages` | Yes | Any supported languages the file actually covers: `zh-Hans`, `zh-Hant`, `ja`. |
 | `source_url` | No | Font homepage, project page, or source repository. Omit it if you do not have a link. |
 | `intervals` | Yes | Usually `latin-ext,cjk`. |
-| `force_autohint` | No | Set to `true` only when the normal render is clearly poor. Explain why in the PR. |
+| `force_autohint` | No | Controls FreeType hinting during bitmap generation. Omit it or use `false` to keep the font's normal hinting; use `true` to make FreeType generate its own hints when small text has visibly uneven strokes or poor alignment. |
 | `source.path` | Yes for uploads | Path to the uploaded TTF, OTF, or ZIP under `community-fonts/<FamilyId>/`. |
 | `source.archive_member` | ZIP only | Exact `.ttf` or `.otf` path inside the ZIP. |
 | `source.variable` | Variable fonts only | Static axes used for the build, for example `variable: {wght: 400}`. |

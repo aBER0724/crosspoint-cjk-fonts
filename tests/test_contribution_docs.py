@@ -90,6 +90,21 @@ class ContributionDocsTest(unittest.TestCase):
         self.assertIn("来源官网或源仓库", guides["zh"])
         self.assertIn("配布元サイトまたはソースリポジトリ", guides["ja"])
 
+    def test_optional_metadata_and_autohint_are_explained(self):
+        guides = [
+            CONTRIBUTING.read_text(encoding="utf-8"),
+            CONTRIBUTING_ZH.read_text(encoding="utf-8"),
+            CONTRIBUTING_JA.read_text(encoding="utf-8"),
+        ]
+        for text in guides:
+            self.assertRegex(text, r"`display_names\.en`\s*\|\s*(Yes|是|必須)")
+            self.assertRegex(text, r"`display_names\.zh`\s*\|\s*(No|否|任意)")
+            self.assertRegex(text, r"`display_names\.ja`\s*\|\s*(No|否|任意)")
+            self.assertRegex(text, r"`description`\s*\|\s*(No|否|任意)")
+            self.assertIn("FreeType", text)
+            self.assertIn("hint", text.lower())
+            self.assertIn("false", text)
+
     def test_contribution_guide_documents_the_complete_one_family_flow(self):
         text = CONTRIBUTING.read_text(encoding="utf-8")
         for expected in (
@@ -118,6 +133,10 @@ class ContributionDocsTest(unittest.TestCase):
             self.assertIn(expected, text)
         for removed in ("License", "LICENSES.md", "## Validation", "python scripts/"):
             self.assertNotIn(removed, text)
+
+        self.assertIn("English display name", text)
+        self.assertIn("Optional localized names or description", text)
+        self.assertIn("FreeType auto-hinting", text)
 
         self.assertIn("name: Font submission", FONT_CHOOSER_TEMPLATE.read_text(encoding="utf-8"))
         self.assertTrue(GENERAL_TEMPLATE.is_file())

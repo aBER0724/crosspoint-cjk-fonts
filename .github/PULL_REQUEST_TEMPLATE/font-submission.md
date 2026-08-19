@@ -9,7 +9,8 @@ assignees: []
 ## Summary
 
 - Stable family ID: `FamilyId`
-- Display name:
+- English display name:
+- Optional localized names or description:
 - Change type: <!-- Add / Update / Remove -->
 - Languages: <!-- zh-Hans / zh-Hant / ja -->
 - Category: <!-- sans-serif / serif / rounded-sans / handwriting / fangsong / display -->
@@ -25,7 +26,7 @@ assignees: []
 
 - [ ] The file covers every language listed in `languages`.
 - [ ] The submitted face is Regular/400, or the static axes are listed above.
-- [ ] `force_autohint` is omitted, or its need is explained below.
+- [ ] `force_autohint` is omitted/`false`, or the need for FreeType auto-hinting is explained below.
 
 Rendering notes:
 

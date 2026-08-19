@@ -36,8 +36,8 @@ community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 
 ```yaml
   - name: ExampleSansJP
-    display_names: {en: "Example Sans", zh: "Example Sans", ja: "Example Sans"}
-    description: "Japanese sans-serif with kana and kanji"
+    display_names: {en: "Example Sans"}
+    # 可选：有合适名称或说明时再填写 zh、ja 和 description。
     category: sans-serif
     languages: [ja]
     source_url: "https://example.com/example-sans" # 可选
@@ -52,14 +52,14 @@ community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 | --- | --- | --- |
 | `name` | 是 | 稳定的 ASCII 家族 ID。必须与 `community-fonts/<FamilyId>/` 一致，也会用于 `.cpfont` 文件名。 |
 | `display_names.en` | 是 | 英文显示名。没有单独英文名时，重复字体原名即可。 |
-| `display_names.zh` | 是 | 中文显示名。没有通用中文名时，重复字体原名即可。 |
-| `display_names.ja` | 是 | 日文显示名。没有通用日文名时，重复字体原名即可。 |
-| `description` | 是 | 简短的英文说明，写清字体风格和大致覆盖范围即可。 |
+| `display_names.zh` | 否 | 中文显示名。不填时，网页使用 `display_names.en`。 |
+| `display_names.ja` | 否 | 日文显示名。不填时，网页使用 `display_names.en`。 |
+| `description` | 否 | 简短的英文说明，可写字体风格或覆盖范围；不需要时可以省略。 |
 | `category` | 是 | 可选值：`sans-serif`、`serif`、`rounded-sans`、`handwriting`、`fangsong`、`display`。 |
 | `languages` | 是 | 字体实际覆盖的语言，可选 `zh-Hans`、`zh-Hant`、`ja`。可以填写多个。 |
 | `source_url` | 否 | 字体来源官网、项目页或源仓库地址。没有可靠地址时直接省略。 |
 | `intervals` | 是 | 通常填写 `latin-ext,cjk`。 |
-| `force_autohint` | 否 | 只有正常渲染明显不佳时才设为 `true`，并在 PR 中说明原因。 |
+| `force_autohint` | 否 | 控制生成点阵时使用的 FreeType hint（像素对齐）方式。不填或设为 `false` 时保留字体原有 hint；小字号笔画明显不齐或粗细不均时，可设为 `true`，让 FreeType 自动生成 hint。 |
 | `source.path` | 上传文件时必填 | TTF、OTF 或 ZIP 在仓库中的路径，必须位于 `community-fonts/<FamilyId>/`。 |
 | `source.archive_member` | ZIP 必填 | ZIP 内实际使用的 `.ttf` 或 `.otf` 路径。 |
 | `source.variable` | 可变字体必填 | 构建静态字重所用的轴值，例如 `variable: {wght: 400}`。 |
