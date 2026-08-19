@@ -157,6 +157,7 @@ def render_text(
     canvas_width: int = 880,
     padding: int = 24,
     apply_ligatures: bool = True,
+    transparent_background: bool = False,
 ) -> RenderResult:
     style = font.regular
     layout = layout_text(
@@ -178,6 +179,11 @@ def render_text(
                 destination_x = positioned.x + x
                 if 0 <= destination_x < layout.width:
                     pixels[destination_x, destination_y] = GRAYSCALE_TONES[raw]
+    if transparent_background:
+        alpha = Image.eval(image, lambda value: 255 - value)
+        transparent_image = Image.new("RGBA", image.size, color=(255, 255, 255, 0))
+        transparent_image.putalpha(alpha)
+        image = transparent_image
     return RenderResult(image=image, missing_codepoints=layout.missing_codepoints)
 
 

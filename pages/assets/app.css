@@ -357,6 +357,8 @@ main {
 .preview.preview--dark {
   border-color: #404040;
   background: var(--preview-dark-paper);
+  filter: none;
+  mix-blend-mode: normal;
 }
 
 .preview.is-broken {

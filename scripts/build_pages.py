@@ -207,7 +207,13 @@ def build_site(
                     raise CatalogBuildError(f"{family_name}: preview file disagrees with manifest metadata")
                 try:
                     font = CpfontFile.from_path(font_path)
-                    result = render_text(font, preview_text, canvas_width=880, padding=24)
+                    result = render_text(
+                        font,
+                        preview_text,
+                        canvas_width=880,
+                        padding=24,
+                        transparent_background=True,
+                    )
                 except (CpfontError, ValueError) as error:
                     raise CatalogBuildError(f"{family_name}: cannot render {entry['name']}: {error}") from error
                 preview_name = f"{family_name}_{size}.png"

@@ -163,8 +163,9 @@ class PagesCatalogTest(unittest.TestCase):
         written = json.loads((self.output_dir / "catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(written, catalog)
         preview = Image.open(self.output_dir / "previews" / "ExampleCJK_14.png")
-        self.assertEqual(preview.mode, "L")
-        self.assertEqual(preview.getextrema()[0], 0)
+        self.assertEqual(preview.mode, "RGBA")
+        self.assertEqual(preview.getextrema()[3], (0, 255))
+        self.assertEqual(preview.getpixel((0, 0)), (255, 255, 255, 0))
 
     def test_preview_sample_follows_declared_languages_and_adds_symbols(self):
         samples = {

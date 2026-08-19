@@ -54,7 +54,6 @@ function resolvedTheme() {
 
 function updatePreviewAppearance(preview, dark) {
   preview.classList.toggle("preview--dark", dark);
-  preview.style.filter = dark ? "invert(93.3%)" : "";
 }
 
 function applyTheme() {

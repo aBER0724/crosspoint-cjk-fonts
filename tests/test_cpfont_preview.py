@@ -88,6 +88,23 @@ class CpfontPreviewTest(unittest.TestCase):
         self.assertEqual(tuple(result.image.getpixel((x, 5)) for x in range(2, 6)), GRAYSCALE_TONES)
         self.assertEqual(result.image.getpixel((0, 0)), 255)
 
+    def test_transparent_preview_keeps_glyph_coverage_without_white_canvas(self):
+        result = render_text(
+            self.font,
+            "A",
+            canvas_width=12,
+            padding=2,
+            apply_ligatures=False,
+            transparent_background=True,
+        )
+
+        self.assertEqual(result.image.mode, "RGBA")
+        self.assertEqual(result.image.getpixel((0, 0)), (255, 255, 255, 0))
+        self.assertEqual(
+            tuple(result.image.getpixel((x, 5))[3] for x in range(2, 6)),
+            tuple(255 - tone for tone in GRAYSCALE_TONES),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

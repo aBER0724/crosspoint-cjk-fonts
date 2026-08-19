@@ -55,7 +55,7 @@ The ASCII `name` continues to define filenames such as `WenKaiCJK_14.cpfont`; Pa
 - Browser-language default with a `localStorage` override.
 - Seven direct Release `.cpfont` downloads per family; no family ZIP and no binary copy on Pages.
 - Pages provides localized `Light / Dark / System` theme controls and persists the selected mode in local storage.
-- Dark mode uses the same neutral Maker palette, and font previews switch to an e-paper-like black background with light glyphs instead of leaving the PNGs white.
+- Dark mode uses the same neutral Maker palette, and transparent font preview PNGs inherit an e-paper-like black background with light glyphs without exposing their original white canvas.
 - Secondary custom-font CTA target: `https://crosspoint-cjk-font-maker.onrender.com/`.
 - Font Maker's approved current-format workflow is specified separately; its existing `legacy-bin` and experimental `xbf2` outputs remain legacy tools until that implementation is deployed.
 - Pages is not a device-compatible binary mirror. The firmware manifest endpoint remains the versioned GitHub Release.
