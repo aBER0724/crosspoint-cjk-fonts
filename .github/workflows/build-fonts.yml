@@ -9,14 +9,17 @@ on:
       - pages/**
       - requirements.txt
       - .github/workflows/build-fonts.yml
+      - .github/workflows/release-fonts.yml
       - .github/workflows/deploy-pages.yml
   push:
     branches: [main]
     paths:
       - config/**
       - scripts/**
+      - tests/**
       - requirements.txt
       - .github/workflows/build-fonts.yml
+      - .github/workflows/release-fonts.yml
   workflow_dispatch:
     inputs:
       smoke_family:
@@ -29,6 +32,16 @@ on:
         type: string
         required: false
         default: ""
+      families_json:
+        description: "Optional JSON list selected by the incremental release planner"
+        type: string
+        required: false
+        default: ""
+      publish_catalog:
+        description: "Upload the merged per-family manifest artifact"
+        type: boolean
+        required: false
+        default: true
 
 permissions:
   contents: read
@@ -61,6 +74,7 @@ jobs:
         name: Select build matrix
         env:
           SMOKE_FAMILY: ${{ inputs.smoke_family }}
+          FAMILIES_JSON: ${{ inputs.families_json }}
         shell: bash
         run: |
           python - <<'PY' >> "$GITHUB_OUTPUT"
@@ -69,17 +83,29 @@ jobs:
           import yaml
 
           with open("config/fonts.yaml", encoding="utf-8") as source:
-              names = [family["name"] for family in yaml.safe_load(source)["families"]]
+              known = [family["name"] for family in yaml.safe_load(source)["families"]]
+          selected_json = os.environ.get("FAMILIES_JSON", "").strip()
           smoke = os.environ.get("SMOKE_FAMILY", "").strip()
-          if smoke:
-              if smoke not in names:
-                  raise SystemExit(f"Unknown smoke family: {smoke}")
+          if selected_json:
+              names = json.loads(selected_json)
+              if not isinstance(names, list) or not all(isinstance(name, str) for name in names):
+                  raise SystemExit("families_json must be a JSON string list")
+          elif smoke:
               names = [smoke]
+          else:
+              names = known
+          unknown = sorted(set(names) - set(known))
+          if unknown:
+              raise SystemExit("Unknown families: " + ", ".join(unknown))
+          if len(names) != len(set(names)):
+              raise SystemExit("families_json contains duplicates")
           print("families=" + json.dumps(names, separators=(",", ":")))
           PY
 
   build:
-    if: github.event_name != 'pull_request' && github.event_name != 'push'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_call' && inputs.families_json != '[]')
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 180
@@ -96,23 +122,30 @@ jobs:
           cache: pip
       - run: python -m pip install -r requirements.txt
       - run: python scripts/fetch_fallback.py
+      - id: source
+        name: Read locked family source digest
+        shell: bash
+        run: echo "sha256=$(python scripts/incremental_release.py source-sha '${{ matrix.family }}')" >> "$GITHUB_OUTPUT"
       - name: Restore locked source and variable-instance cache
         uses: actions/cache@v4
         with:
           path: .cache
-          key: font-source-${{ runner.os }}-${{ matrix.family }}-${{ hashFiles('config/fonts.yaml', 'scripts/fetch_fallback.py') }}
+          key: source-${{ matrix.family }}-${{ steps.source.outputs.sha256 }}
       - run: python scripts/build_fonts.py --clean --only "${{ matrix.family }}" --base-url "$FONT_BASE_URL"
       - run: python scripts/verify_release.py dist
       - uses: actions/upload-artifact@v4
         with:
           name: font-${{ matrix.family }}
-          path: dist/*.cpfont
+          path: dist/
           if-no-files-found: error
           compression-level: 0
           retention-days: 7
 
   catalog:
-    if: github.event_name != 'pull_request' && github.event_name != 'push'
+    if: >-
+      (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call') &&
+      inputs.publish_catalog != false &&
+      needs.validate.outputs.families != '[]'
     needs: [validate, build]
     runs-on: ubuntu-24.04
     timeout-minutes: 15

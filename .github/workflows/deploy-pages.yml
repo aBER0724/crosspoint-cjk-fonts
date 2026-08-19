@@ -5,6 +5,8 @@ on:
   workflow_run:
     workflows: ["Publish font release"]
     types: [completed]
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -21,7 +23,10 @@ env:
 
 jobs:
   build:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'release' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
