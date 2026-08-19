@@ -47,9 +47,12 @@ def main() -> int:
         if name in names:
             errors.append(f"duplicate family: {name}")
         names.add(name)
-        for key in ("description", "license", "license_url", "source_url", "intervals"):
+        for key in ("description", "category", "license", "license_url", "source_url", "intervals"):
             if not family.get(key):
                 errors.append(f"{name}: missing {key}")
+        languages = family.get("languages")
+        if not isinstance(languages, list) or not languages or not all(isinstance(value, str) and value for value in languages):
+            errors.append(f"{name}: languages must be a non-empty string list")
         if family.get("license") != "OFL-1.1":
             errors.append(f"{name}: only the reviewed OFL-1.1 catalog is accepted")
         if "sizes" in family:

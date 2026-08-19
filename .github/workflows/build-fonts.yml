@@ -5,8 +5,11 @@ on:
     paths:
       - config/**
       - scripts/**
+      - tests/**
+      - pages/**
       - requirements.txt
       - .github/workflows/build-fonts.yml
+      - .github/workflows/deploy-pages.yml
   push:
     branches: [main]
     paths:
@@ -53,6 +56,7 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python scripts/validate_config.py
       - run: python -m py_compile scripts/*.py
+      - run: python -m unittest discover -s tests -v
       - id: catalog
         name: Select build matrix
         env:
