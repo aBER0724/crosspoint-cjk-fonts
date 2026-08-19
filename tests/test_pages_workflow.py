@@ -74,6 +74,14 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn('<div id="preview-size" class="preview-size-switch" role="group"', html)
         self.assertNotIn('<select id="preview-size"', html)
 
+    def test_preview_size_defaults_to_18_pt(self):
+        script = PAGE_JS.read_text(encoding="utf-8")
+
+        self.assertIn('const DEFAULT_PREVIEW_SIZE = "18";', script)
+        self.assertIn('previewSize: DEFAULT_PREVIEW_SIZE', script)
+        self.assertIn('state.catalog.previewSizes.map(String).includes(DEFAULT_PREVIEW_SIZE)', script)
+        self.assertNotIn('previewSize: "14"', script)
+
     def test_font_cards_localize_display_names_and_keep_stable_ids_searchable(self):
         script = PAGE_JS.read_text(encoding="utf-8")
 
