@@ -58,7 +58,7 @@ Add one item to `config/fonts.yaml`. Do not change the shared size lists.
 | `category` | Yes | One of `sans-serif`, `serif`, `rounded-sans`, `handwriting`, `fangsong`, or `display`. |
 | `languages` | Yes | Any supported languages the file actually covers: `zh-Hans`, `zh-Hant`, `ja`. |
 | `source_url` | No | Font homepage, project page, or source repository. Omit it if you do not have a link. |
-| `intervals` | Yes | Usually `latin-ext,cjk`. |
+| `intervals` | Yes | Selects the Unicode ranges rasterized into every `.cpfont`; it does not describe the font's language or style. For CJK submissions, use `latin-ext,cjk`: `latin-ext` adds Latin letters, numbers, and common punctuation, while `cjk` adds CJK punctuation, hiragana, katakana, common Han ideographs, compatibility ideographs, and full-width forms. The converter keeps only glyphs present in the submitted font or fallback and always adds U+FFFD. Presets may be comma-separated; advanced entries may add a range such as `(0x2100-0x214F)`. Adding ranges increases build time and file size. |
 | `force_autohint` | No | Controls FreeType hinting during bitmap generation. Omit it or use `false` to keep the font's normal hinting; use `true` to make FreeType generate its own hints when small text has visibly uneven strokes or poor alignment. |
 | `source.path` | Yes for uploads | Path to the uploaded TTF, OTF, or ZIP under `community-fonts/<FamilyId>/`. |
 | `source.archive_member` | ZIP only | Exact `.ttf` or `.otf` path inside the ZIP. |
