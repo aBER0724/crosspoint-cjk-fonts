@@ -304,7 +304,7 @@ jobs:
 
   publish-metadata:
     needs: [plan, assemble, verify-fonts]
-    if: needs.plan.outputs.needs_release_update == 'true'
+    if: always() && needs.plan.outputs.needs_release_update == 'true' && needs.assemble.result == 'success' && (needs.verify-fonts.result == 'success' || needs.verify-fonts.result == 'skipped')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
