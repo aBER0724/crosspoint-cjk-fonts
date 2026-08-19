@@ -358,6 +358,10 @@ main {
   object-fit: contain;
 }
 
+.preview:not(.preview--dark) {
+  filter: invert(1);
+}
+
 .preview.preview--dark {
   border-color: #404040;
   background: var(--preview-dark-paper);

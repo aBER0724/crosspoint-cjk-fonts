@@ -151,6 +151,8 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertNotIn('preview.style.filter = dark ? "invert(93.3%)" : "";', script)
         self.assertIn(':root[data-theme="dark"]', css)
         self.assertIn('--preview-dark-paper: #111111;', css)
+        self.assertIn('.preview:not(.preview--dark)', css)
+        self.assertIn('filter: invert(1);', css)
         self.assertIn('.preview.preview--dark', css)
         self.assertIn('background: var(--preview-dark-paper);', css)
         self.assertIn('filter: none;', css)
