@@ -33,6 +33,8 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn("scripts/fetch_release_previews.py", text)
         self.assertIn("--sizes 14,18,22", text)
         self.assertIn("scripts/build_pages.py", text)
+        self.assertIn('len(document["families"]) * len(document["preview_sizes"])', text)
+        self.assertNotIn('name \'*.png\' | wc -l)" -eq 45', text)
         self.assertNotIn("pull_request_target", text)
         self.assertNotIn("dist/*.cpfont", text)
 

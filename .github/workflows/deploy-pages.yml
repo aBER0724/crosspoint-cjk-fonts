@@ -54,7 +54,15 @@ jobs:
       - run: |
           test -f site-dist/index.html
           test -f site-dist/catalog.json
-          test "$(find site-dist/previews -type f -name '*.png' | wc -l)" -eq 45
+          expected_previews="$(python - <<'PY'
+          import yaml
+
+          with open("config/fonts.yaml", encoding="utf-8") as source:
+              document = yaml.safe_load(source)
+          print(len(document["families"]) * len(document["preview_sizes"]))
+          PY
+          )"
+          test "$(find site-dist/previews -type f -name '*.png' | wc -l)" -eq "$expected_previews"
           if find site-dist -type f \( -name '*.cpfont' -o -name '*.ttf' -o -name '*.otf' -o -name '*.zip' \) | grep -q .; then
             echo "Forbidden font payload found in Pages artifact" >&2
             exit 1

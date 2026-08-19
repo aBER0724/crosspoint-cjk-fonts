@@ -14,7 +14,7 @@ Pages contains only HTML, JSON metadata, and compact PNG previews decoded from t
 
 ## Catalog
 
-The current catalog contains 15 OFL-1.1 families for Simplified Chinese,
+The current catalog contains 16 OFL-1.1 families for Simplified Chinese,
 Traditional Chinese, and Japanese. Pages shows each family's original/localized
 name for the selected UI language and keeps the stable ASCII build ID below it;
 search accepts either form. Each family is pre-rendered at the seven

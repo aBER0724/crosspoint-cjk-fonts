@@ -229,3 +229,17 @@ families:
       url: "https://raw.githubusercontent.com/ButTaiwan/genyog-font/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91/otf/TC/GenYoGothic2TC-R.otf"
       filename: "GenYoGothic2TC-R.otf"
       sha256: 8f49bf82d2f47148eb54696c5c91dbe9d98d7f97f25e5a591dafab5ef8243f80
+
+  - name: ZenMaruGothicJP
+    display_names: {en: "Zen Maru Gothic", zh: "Zen Maru Gothic", ja: "Zen 丸ゴシック"}
+    description: "Soft Japanese rounded sans-serif with kanji and kana"
+    category: rounded-sans
+    languages: [ja]
+    license: OFL-1.1
+    license_url: "https://github.com/google/fonts/blob/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic/OFL.txt"
+    source_url: "https://github.com/google/fonts/tree/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic"
+    intervals: latin-ext,cjk
+    source:
+      url: "https://raw.githubusercontent.com/google/fonts/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic/ZenMaruGothic-Regular.ttf"
+      filename: "ZenMaruGothic-Regular.ttf"
+      sha256: a0c0b53543e0993ae2225e629c833f3d51495ad31720694ff112ce4ce11111ef
