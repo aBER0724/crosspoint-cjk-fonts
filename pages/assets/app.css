@@ -311,24 +311,23 @@ main {
 .downloads {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-  margin-top: 16px;
+  gap: 4px;
+  margin-top: 12px;
 }
 
 .downloads a {
   display: inline-flex;
   min-width: 0;
-  min-height: 36px;
+  min-height: 30px;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) - 6px);
-  padding: 7px 4px;
+  border-radius: calc(var(--radius) - 8px);
+  padding: 4px 2px;
   text-align: center;
   text-decoration: none;
-  white-space: pre-line;
   font-size: 0.75rem;
-  line-height: 1.3;
+  line-height: 1.2;
   transition: border-color 150ms ease, background-color 150ms ease;
 }
 
@@ -446,9 +445,5 @@ main {
 
   .license-status {
     justify-self: start;
-  }
-
-  .downloads {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
