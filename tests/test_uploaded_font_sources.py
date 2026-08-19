@@ -32,7 +32,7 @@ class UploadedFontSourceTest(unittest.TestCase):
             "description": "Uploaded CJK test font",
             "category": "sans-serif",
             "languages": ["zh-Hans"],
-            "license_type": "personal-use",
+            "source_url": "https://example.com/uploaded-cjk",
             "intervals": "latin-ext,cjk",
             "source": {"path": "community-fonts/UploadedCJK/UploadedCJK-Regular.ttf"},
         }
@@ -45,20 +45,32 @@ class UploadedFontSourceTest(unittest.TestCase):
             "families": [family],
         }
 
-    def test_uploaded_source_accepts_optional_license_types(self):
+    def test_uploaded_source_accepts_optional_source_url(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             font_path = root / "community-fonts" / "UploadedCJK" / "UploadedCJK-Regular.ttf"
             font_path.parent.mkdir(parents=True)
             font_path.write_bytes(b"font")
 
-            for license_type in ("commercial-use", "personal-use", None):
+            for source_url in ("https://example.com/uploaded-cjk", None):
                 family = dict(self.base_family)
-                if license_type is None:
-                    family.pop("license_type", None)
+                if source_url is None:
+                    family.pop("source_url", None)
                 else:
-                    family["license_type"] = license_type
+                    family["source_url"] = source_url
                 self.assertEqual(self.validate.validate_document(self.document(family), root=root), [])
+
+    def test_rejects_removed_license_metadata(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            font_path = root / "community-fonts" / "UploadedCJK" / "UploadedCJK-Regular.ttf"
+            font_path.parent.mkdir(parents=True)
+            font_path.write_bytes(b"font")
+            for key in ("license_type", "license_url"):
+                family = dict(self.base_family)
+                family[key] = "legacy"
+                errors = self.validate.validate_document(self.document(family), root=root)
+                self.assertTrue(any(key in error and "no longer used" in error for error in errors), errors)
 
     def test_uploaded_source_rejects_paths_outside_community_fonts(self):
         family = dict(self.base_family)

@@ -335,17 +335,6 @@ main {
   line-height: 1.45;
 }
 
-.license-status {
-  align-self: flex-start;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 4px 8px;
-  color: var(--muted-foreground);
-  font-size: 0.625rem;
-  line-height: 1.2;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
 
 .preview-frame {
   display: flex;
@@ -531,8 +520,3 @@ main {
   .description {
     overflow-wrap: anywhere;
   }
-
-  .license-status {
-    justify-self: start;
-  }
-}

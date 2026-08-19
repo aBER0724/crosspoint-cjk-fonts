@@ -100,14 +100,10 @@ Each family contains:
 - `name`
 - `description`
 - `styles`
-- `license`
-- `licenseStatus`
-- `licenseUrl`
 - `sourceUrl`
 - `files[]` with `name`, `physicalSize`, `byteSize`, `sha256`, and `downloadUrl`
 - `previews` keyed by physical size
 
-The current locked core families use `licenseStatus: "verified"` because the repository records and publishes their traceable OFL-1.1 sources. Future community records must preserve their actual review status instead of inheriting this value.
 
 ## `.cpfont v4` parser
 
@@ -150,11 +146,10 @@ The first page is an editorial card grid rather than a large application shell.
 Each card shows:
 
 - family name and description;
-- license and verification status;
 - the selected real bitmap preview;
 - a `14 / 18 / 22 pt` preview selector;
 - seven direct Release download links with human-readable sizes;
-- source and license links when present;
+- source links when present;
 - an “Open Font Maker” secondary action.
 
 Global controls provide:

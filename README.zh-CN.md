@@ -10,16 +10,12 @@
 
 简要流程：
 
-1. Fork 本仓库，并为一个字体家族创建一个独立分支。
-2. 将一个 TTF、OTF 或 ZIP 源文件上传到 `community-fonts/<FamilyId>/`。
-3. 在 [`config/fonts.yaml`](config/fonts.yaml) 中增加一个条目，填写稳定 ASCII 家族 ID、本地化名称、语言覆盖、分类、上传文件路径，以及可选的许可类型。
-4. 在 [`LICENSES.md`](LICENSES.md) 中增加一行简要记录。许可类型可以填写**免费商用**、**仅限个人使用**，也可以在未知或未提供时留空。
-5. 运行配置测试；本地具备 FreeType 时，再执行单家族构建。
-6. 创建 Pull Request。GitHub 会自动填入根检查表；在 `compare` → `New pull request` → `Get started` 中也可以选择专用的 **Font submission** 模板。
+1. Fork 本仓库，一个 PR 只处理一个字体家族。
+2. 将一个 TTF、OTF 或 ZIP 文件放入 `community-fonts/<FamilyId>/`。
+3. 在 [`config/fonts.yaml`](config/fonts.yaml) 中添加字体名称、覆盖语言、分类和文件路径。来源官网或源仓库地址可以选填。
+4. 创建 Pull Request。GitHub 会自动填入检查表；也可以选择 **Font submission** 模板。
 
-上传社区字体不要求原始上游仓库、OFL 许可、不可变下载 URL 或源文件 SHA-256。允许使用第三方下载来源。投稿者需要对许可声明的准确性负责，并确认自己有权上传和重新分发该文件。
-
-不要提交生成的 `.cpfont`、`dist/`、缓存、可执行文件或 Git LFS 对象。一个 PR 只能新增、更新或删除一个字体家族。
+字段说明和完整示例见[字体投稿指南](CONTRIBUTING.zh-CN.md)。不要提交生成的 `.cpfont`、`dist/`、缓存、可执行文件或 Git LFS 对象。
 
 ## 字体目录
 
@@ -29,7 +25,7 @@
 - 14/16/18/22 pt 映射到阅读器的四个持久化字号档位；默认竖屏边距下，每行约可显示 16/14/12/10 个全角 CJK 字符。
 - 固件只选择已安装的物理字体文件，不会在设备端缩放 CJK 字体。
 
-每个字体家族已填写的许可类型、来源和归属信息见 [`LICENSES.md`](LICENSES.md)。
+每个字体家族已填写的来源地址见 [`SOURCES.md`](SOURCES.md)。
 
 ## 本地构建
 

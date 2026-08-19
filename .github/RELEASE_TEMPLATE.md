@@ -22,9 +22,9 @@ Remove any empty change section before publishing. The automated Release workflo
 
 Browse previews and download individual physical sizes from the [CrossPoint CJK font catalog](https://aber0724.github.io/crosspoint-cjk-fonts/). Device downloads continue to use this GitHub Release directly.
 
-### Verification and licensing
+### Verification
 
 - `fonts.json` is the complete firmware manifest (schema 2).
 - `build-index.json` records the reproducible per-family build fingerprints and file hashes.
 - Every published `.cpfont` uses binary format 4 and is checked for size, SHA-256, and structure before metadata is updated.
-- See `FONT-LICENSES.md` and `OFL-1.1.txt` in the Release assets for attribution and redistribution terms.
+- Source links recorded for each family are available in `FONT-SOURCES.md`.

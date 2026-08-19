@@ -33,6 +33,12 @@ class CatalogSizeContractTest(unittest.TestCase):
         for family in self.document["families"]:
             self.assertNotIn("sizes", family)
 
+    def test_catalog_records_only_optional_source_metadata(self):
+        for family in self.document["families"]:
+            self.assertTrue({"license_type", "license_url"}.isdisjoint(family), family["name"])
+            if "source_url" in family:
+                self.assertTrue(family["source_url"].startswith("https://"), family["name"])
+
     def test_build_uses_ordered_union_of_ui_and_reader_sizes(self):
         module = load_build_module()
         sizes = module.catalog_sizes(self.document)

@@ -28,7 +28,7 @@ class ContributionDocsTest(unittest.TestCase):
         self.assertLess(submission_position, text.index("## Catalog"))
         self.assertIn("[read the font contribution guide](CONTRIBUTING.md)", text)
         self.assertIn("Font submission", text)
-        self.assertIn("Upload one TTF, OTF, or ZIP source file", text)
+        self.assertIn("Put one TTF, OTF, or ZIP file", text)
         for localized, catalog_heading in readmes:
             self.assertNotIn("## Reproducibility", localized)
             self.assertNotIn("## 可复现性", localized)
@@ -61,57 +61,63 @@ class ContributionDocsTest(unittest.TestCase):
             "zh": CONTRIBUTING_ZH.read_text(encoding="utf-8"),
             "ja": CONTRIBUTING_JA.read_text(encoding="utf-8"),
         }
-        for text in guides.values():
+        expected_tables = {
+            "en": "| Field | Required | Description |",
+            "zh": "| 字段 | 是否必填 | 简要说明 |",
+            "ja": "| Field | Required | Description |",
+        }
+        for locale, text in guides.items():
+            self.assertIn(expected_tables[locale], text)
             for expected in (
-                "license_type",
+                "source_url",
                 "config/fonts.yaml",
-                "LICENSES.md",
                 "archive_member",
                 "variable: {wght: 400}",
                 "path: community-fonts/ExampleSansJP/ExampleSans-Regular.ttf",
+            ):
+                self.assertIn(expected, text)
+            for removed in (
+                "license_type",
+                "license_url",
+                "LICENSES.md",
                 "python scripts/validate_config.py",
                 "python scripts/build_fonts.py --clean --only <FamilyId>",
             ):
-                self.assertIn(expected, text)
+                self.assertNotIn(removed, text)
 
-        self.assertIn("一个字体家族", guides["zh"])
-        self.assertIn("1つのフォントファミリー", guides["ja"])
-        self.assertIn("免费商用", guides["zh"])
-        self.assertIn("个人使用", guides["zh"])
+        self.assertIn("一个 CJK 字体家族", guides["zh"])
+        self.assertIn("1つの CJK フォントファミリー", guides["ja"])
+        self.assertIn("来源官网或源仓库", guides["zh"])
+        self.assertIn("配布元サイトまたはソースリポジトリ", guides["ja"])
 
     def test_contribution_guide_documents_the_complete_one_family_flow(self):
         text = CONTRIBUTING.read_text(encoding="utf-8")
         for expected in (
-            "one font family",
-            "Commercial use allowed",
-            "Personal use only",
-            "license_type",
+            "one CJK font family",
+            "| Field | Required | Description |",
+            "source_url",
             "config/fonts.yaml",
-            "LICENSES.md",
             "archive_member",
             "variable: {wght: 400}",
             "path: community-fonts/ExampleSansJP/ExampleSans-Regular.ttf",
-            "python scripts/validate_config.py",
-            "python scripts/build_fonts.py --clean --only <FamilyId>",
-            "Pull requests from forks run read-only validation",
+            "Pull requests from forks run read-only checks",
         ):
             self.assertIn(expected, text)
+        for removed in ("license_type", "license_url", "LICENSES.md", "## 5. Local validation"):
+            self.assertNotIn(removed, text)
 
-    def test_font_pr_template_collects_source_license_and_validation_evidence(self):
+    def test_font_pr_template_collects_source_and_catalog_metadata(self):
         text = FONT_TEMPLATE.read_text(encoding="utf-8")
         for expected in (
             "Stable family ID",
             "Font file path",
-            "License type",
-            "Commercial use allowed",
-            "Personal use only",
-            "Unknown / not provided",
+            "Source homepage or repository URL",
             "config/fonts.yaml",
-            "LICENSES.md",
-            "python scripts/build_fonts.py --clean --only <FamilyId>",
             "one font family",
         ):
             self.assertIn(expected, text)
+        for removed in ("License", "LICENSES.md", "## Validation", "python scripts/"):
+            self.assertNotIn(removed, text)
 
         self.assertIn("name: Font submission", FONT_CHOOSER_TEMPLATE.read_text(encoding="utf-8"))
         self.assertTrue(GENERAL_TEMPLATE.is_file())

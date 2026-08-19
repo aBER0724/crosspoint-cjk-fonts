@@ -2,42 +2,19 @@
 
 [English](CONTRIBUTING.md) | [简体中文](CONTRIBUTING.zh-CN.md) | [日本語](CONTRIBUTING.ja.md)
 
-CrossPoint Reader CJK フォントカタログへのご協力ありがとうございます。フォント投稿には、アップロードした TTF、OTF、ZIP ソースファイルを1つ含めることができます。マージ後、リポジトリが7つの物理サイズの `.cpfont v4` に変換します。
+1つのフォント PR では、1つの CJK フォントファミリーだけを追加・更新・削除します。TTF、OTF、ZIP のいずれかを1つアップロードしてください。マージ後、GitHub Actions が7サイズの `.cpfont v4` を生成します。
 
-## 投稿前の確認
+## 投稿条件
 
-投稿は次の技術要件を満たす必要があります：
+- `zh-Hans`、`zh-Hant`、`ja` のいずれかを収録していること。
+- 通常の Regular/400 を使用すること。Variable Font では、Regular を作るための軸値を指定してください。
+- 1つの PR は1ファミリーに限定してください。
+- ファイルは `community-fonts/<FamilyId>/` に置きます。Git LFS は使わないでください。
+- 配布元サイトまたはソースリポジトリの URL は任意です。分からない場合は省略できます。
 
-- 簡体字中国語、繁体字中国語、または日本語をカバーしていること。
-- 通常の Regular/400 ウェイトをアップロードすること。Variable Font はビルドに使う静的 axes を宣言してください。
-- 1つの Pull Request で追加・更新・削除するのは1つのフォントファミリーだけであること。
-- 投稿者がファイルをアップロード・再配布する権限を持つこと。
+## 1. フォントファイルを追加する
 
-プロプライエタリフォント、個人利用限定フォント、非商用フォント、ライセンスが不明確なフォント、第三者ダウンロード一覧から取得したファイルも受け付けます。元の上流リポジトリや OFL ライセンスは必須ではありません。
-
-任意の `license_type` フィールドは次を使用できます：
-
-- `commercial-use` — **商用利用可**。
-- `personal-use` — **個人利用のみ**。
-- 省略 — **不明 / 未提供**。
-
-このフィールドは投稿者による申告であり、リポジトリによるライセンス確認や法的審査ではありません。`license_url`、作者情報、ダウンロードページが分かる場合は記入できますが、省略しても構いません。
-
-## 1. Fork とブランチ作成
-
-GitHub でこのリポジトリを Fork し、Fork を clone して、1つのフォントファミリー専用ブランチを作成します：
-
-```bash
-git clone https://github.com/<your-name>/crosspoint-cjk-fonts.git
-cd crosspoint-cjk-fonts
-git switch -c font/<FamilyId>
-```
-
-`FamilyId` は安定したビルド ID とファイル名プレフィックスです。ASCII の英字、数字、`_`、`-` のみを使用し、31文字以内にしてください。`ZenMaruGothicJP` のような読みやすい ID を使い、空白やローカライズ文字は使用しないでください。
-
-## 2. フォントファイルをアップロードする
-
-ファミリー用ディレクトリを作成し、TTF、OTF、ZIP ソースを1つ配置します：
+ファミリー ID と同じ名前のディレクトリを作ります：
 
 ```text
 community-fonts/<FamilyId>/
@@ -49,27 +26,43 @@ community-fonts/<FamilyId>/
 community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 ```
 
-直接フォントファイルには分かりやすい名前を付けてください。ZIP の場合は必要なパッケージだけをアップロードし、`archive_member` に ZIP 内の正確な `.ttf` または `.otf` パスを指定します。アップロードする各ファイルは GitHub リポジトリの 100 MiB 上限未満にしてください。Git LFS は使用しないでください。
+ファイル形式は TTF、OTF、ZIP に対応しています。サイズは 100 MiB 未満にしてください。ZIP を使う場合は、`archive_member` に実際に使う `.ttf` または `.otf` のパスを指定します。
 
-## 3. カタログエントリを追加する
+`FamilyId` はビルド ID とファイル名の接頭辞になります。使用できる文字は ASCII 英数字、`_`、`-` で、最大31文字です。例：`ZenMaruGothicJP`。
 
-`config/fonts.yaml` に1つのファミリーを追加します。カタログ全体のサイズ一覧は変更しないでください。
+## 2. カタログ設定を追加する
 
-アップロードした TTF/OTF の例：
+`config/fonts.yaml` に1件追加します。ファイル先頭の共通サイズ設定は変更しないでください。
 
 ```yaml
   - name: ExampleSansJP
     display_names: {en: "Example Sans", zh: "Example Sans", ja: "Example Sans"}
-    description: "Short English description of coverage and style"
+    description: "Japanese sans-serif with kana and kanji"
     category: sans-serif
     languages: [ja]
-    license_type: commercial-use
-    license_url: "https://example.com/license" # 任意
-    source_url: "https://example.com/download-page" # 任意
+    source_url: "https://example.com/example-sans" # 任意
     intervals: latin-ext,cjk
     source:
       path: community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 ```
+
+### 記入する項目
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `name` | 必須 | 安定した ASCII ファミリー ID。`community-fonts/<FamilyId>/` と一致させ、`.cpfont` のファイル名にも使います。 |
+| `display_names.en` | 必須 | 英語表示名。別の英語名がなければ既知のフォント名をそのまま使えます。 |
+| `display_names.zh` | 必須 | 中国語表示名。定着した名称がなければフォント名をそのまま使えます。 |
+| `display_names.ja` | 必須 | 日本語表示名。定着した名称がなければフォント名をそのまま使えます。 |
+| `description` | 必須 | スタイルと収録範囲を説明する短い英語文。 |
+| `category` | 必須 | `sans-serif`、`serif`、`rounded-sans`、`handwriting`、`fangsong`、`display` のいずれか。 |
+| `languages` | 必須 | 実際に収録する言語。`zh-Hans`、`zh-Hant`、`ja` から選びます。複数指定できます。 |
+| `source_url` | 任意 | フォント公式サイト、プロジェクトページ、またはソースリポジトリ。URL がなければ省略します。 |
+| `intervals` | 必須 | 通常は `latin-ext,cjk`。 |
+| `force_autohint` | 任意 | 通常の描画が明らかに悪い場合だけ `true` にし、PR に理由を書いてください。 |
+| `source.path` | アップロード時は必須 | `community-fonts/<FamilyId>/` 以下に置いた TTF、OTF、ZIP のパス。 |
+| `source.archive_member` | ZIP の場合は必須 | ZIP 内で使用する `.ttf` または `.otf` の正確なパス。 |
+| `source.variable` | Variable Font の場合は必須 | 静的インスタンスを作る軸値。例：`variable: {wght: 400}`。 |
 
 Variable Font の例：
 
@@ -87,65 +80,22 @@ ZIP の例：
       archive_member: "fonts/ExampleSans-Regular.ttf"
 ```
 
-現在使用できるカタログ値：
+既存エントリでは `source.url`、`source.filename`、`source.sha256` を使っている場合があります。新規投稿では `source.path` を使ってください。
 
-- `languages`：`zh-Hans`、`zh-Hant`、`ja`。ファイルが実際にカバーする言語だけを指定します。
-- `category`：`sans-serif`、`serif`、`rounded-sans`、`handwriting`、`fangsong`、`display`。
-- `license_type`：任意の `commercial-use` または `personal-use`。
-- `intervals`：通常は `latin-ext,cjk`。
-- `force_autohint: true`：任意。通常のラスタライズが明らかに悪い場合だけ使用し、PR で視覚的な理由を説明してください。
+## 3. Pull Request を作成する
 
-`display_names` には空でない `en`、`zh`、`ja` が必要です。定着したローカライズ名がない場合は、既知のフォント名を繰り返して構いません。これは利用者向け表示名であり、`name` は常に安定した ASCII ID です。
-
-既存の URL ベースのカタログエントリは、引き続き `url`、`filename`、`sha256` を使用できます。新しいコミュニティ投稿では通常 `source.path` を使用し、ビルド対象の正確なフォントファイルを PR に含めてください。
-
-## 4. ライセンス申告を記録する
-
-`LICENSES.md` に1行を追加し、次を記録します：
-
-- 安定したファミリー ID。
-- 申告するライセンスタイプ：商用利用可、個人利用のみ、または未提供。
-- 分かる場合はダウンロードページ、ライセンス URL、作者、著作権者、その他の帰属情報。
-
-ライセンスが不明な場合は「確認済み」と書かないでください。カタログは投稿内容をそのまま表示します。
-
-## 5. ローカルで検証する
-
-設定だけの検証は短時間で完了します：
+フォントファイルと設定をコミットします：
 
 ```bash
-python -m pip install -r requirements.txt
-python scripts/validate_config.py
-python -m py_compile scripts/*.py
-python -m unittest discover -s tests -v
-```
-
-単一ファミリーの完全ビルドには、FreeType の開発ライブラリとランタイムも必要です：
-
-```bash
-python scripts/fetch_fallback.py
-python scripts/build_fonts.py --clean --only <FamilyId>
-python scripts/verify_release.py dist
-```
-
-8、10、12、14、16、18、22 pt の7つの `.cpfont v4` が生成されることを確認します。`dist/` や生成済み `.cpfont` を Git に追加しないでください。
-
-FreeType をローカルで実行できない場合は、設定テストが通った後に Draft PR を作成し、チェックリストに理由を書いてください。メンテナーが単一ファミリービルドを起動できます。
-
-## 6. Pull Request を作成する
-
-ブランチを push し、`main` 向けの PR を作成します：
-
-```bash
-git add community-fonts/<FamilyId> config/fonts.yaml LICENSES.md
+git add community-fonts/<FamilyId> config/fonts.yaml
 git commit -m "feat: add <font display name>"
 git push -u origin font/<FamilyId>
 ```
 
-PR テンプレートには、アップロードしたファイルのパス、言語カバレッジ、任意のライセンス申告、検証結果を記入します。該当する項目をすべて埋め、PR を1つのフォントファミリーだけに限定してください。
+PR には、ファミリー ID、アップロードしたファイルのパス、収録言語、分類、任意の配布元 URL を記入してください。Variable Font や ZIP の場合は、軸値または `archive_member` も記入します。
 
-Fork からの PR は Release 認証情報なしで読み取り専用検証を実行します。`main` へのマージ後、増分 Release ワークフローが起動し、変更のないファミリーを再利用して、投稿ファミリーだけをビルド・アップロードします。
+Fork からの PR では、Release 権限を使わない読み取り専用チェックが走ります。マージ後は変更されたファミリーだけをビルドし、変更のないファイルは再利用します。
 
-## ファミリーの更新または削除
+## 更新と削除
 
-1つの PR で1つのファミリーという規則は同じです。更新ではアップロードしたソースファイルを置き換え、変更内容を説明してください。削除では `community-fonts/<FamilyId>/` ディレクトリ、`config/fonts.yaml` エントリ、`LICENSES.md` の行を削除してください。Release ワークフローは新しい完全 manifest を先に公開してから、古いアセットを削除します。
+更新も1つの PR で1ファミリーだけを扱います。ファイルと `config/fonts.yaml` を更新し、変更点を書いてください。削除時は `community-fonts/<FamilyId>/` と対応する設定を削除します。

@@ -63,8 +63,7 @@ The ASCII `name` continues to define filenames such as `WenKaiCJK_14.cpfont`; Pa
 ## Future community submissions
 
 - One source record under `community-fonts/<name>.yml`.
-- First version remains OFL-1.1-only.
-- Require pinned TTF/OTF source, SHA-256, license, and source metadata.
+- Record the uploaded font path and an optional source homepage or repository URL.
 - PR CI is read-only, uses no Secrets, and does not use `pull_request_target`.
 - PRs produce temporary build and preview artifacts only.
 - Production publication stays maintainer-reviewed and manually confirmed.

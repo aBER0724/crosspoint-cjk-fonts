@@ -73,20 +73,11 @@ def load_metadata_from_yaml(yaml_path: Path) -> dict[str, dict[str, str]]:
         public = {}
         for yaml_key, manifest_key in (
             ("description", "description"),
-            ("license_type", "licenseType"),
-            ("license_url", "licenseUrl"),
             ("source_url", "sourceUrl"),
         ):
             value = family.get(yaml_key)
             if value:
                 public[manifest_key] = value
-        license_type = family.get("license_type")
-        if license_type:
-            public["license"] = license_type
-            public["licenseStatus"] = "declared"
-        else:
-            public["license"] = "not-provided"
-            public["licenseStatus"] = "not-provided"
         metadata[family["name"]] = public
     return metadata
 
@@ -215,7 +206,7 @@ def build_manifest(
             "styles": styles,
             "files": file_entries,
         }
-        for key in ("license", "licenseType", "licenseStatus", "licenseUrl", "sourceUrl"):
+        for key in ("sourceUrl",):
             if key in metadata:
                 family_entry[key] = metadata[key]
         manifest_families.append(family_entry)
@@ -249,7 +240,7 @@ def main():
     parser.add_argument(
         "--descriptions-from",
         default=None,
-        help="Path to the font catalog YAML used for descriptions and license metadata",
+        help="Path to the font catalog YAML used for descriptions and source metadata",
     )
     args = parser.parse_args()
 

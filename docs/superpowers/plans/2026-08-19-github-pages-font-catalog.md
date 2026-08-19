@@ -42,7 +42,7 @@
 - Update `.gitignore`
 
 **Steps**
-1. Add failing tests for web schema version 1, cpfont version 4, manifest version 2, exactly seven ordered downloads, verified core license status, preview completeness, URL safety, hash/size verification, and an artifact free of fonts/archives/external scripts.
+1. Add failing tests for web schema version 1, cpfont version 4, manifest version 2, exactly seven ordered downloads, preview completeness, URL safety, hash/size verification, and an artifact free of fonts/archives/external scripts.
 2. Implement manifest/config joins and strict mismatch failures.
 3. Implement verified download of only `14/18/22` files with resumable local cache behavior.
 4. Implement the static editorial catalog with local assets, search, dynamically available filters, locale selection, real preview-size switching, direct Release downloads, and graceful image failures.

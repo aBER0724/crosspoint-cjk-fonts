@@ -35,8 +35,6 @@ class IncrementalReleaseTest(unittest.TestCase):
         changed["display_names"] = {"en": "Changed", "zh": "Changed", "ja": "Changed"}
         changed["languages"] = ["ja"]
         changed["category"] = "display"
-        changed["license_type"] = "personal-use"
-        changed.pop("license_url", None)
         changed.pop("source_url", None)
         self.assertEqual(first, self.module.family_fingerprint(self.document, changed))
 
@@ -101,6 +99,37 @@ class IncrementalReleaseTest(unittest.TestCase):
         self.assertIn(self.family["name"], plan["reuse"])
         self.assertEqual(plan["remove"], [])
 
+    def test_plan_publishes_metadata_changes_without_rebuilding_fonts(self):
+        previous_manifest = {
+            "version": 2,
+            "baseUrl": "https://example.invalid/fonts/",
+            "families": [],
+        }
+        for family in self.document["families"]:
+            previous_manifest["families"].append(
+                {
+                    "name": family["name"],
+                    "description": family["description"],
+                    "sourceUrl": family.get("source_url"),
+                    "license": "commercial-use",
+                    "licenseType": "commercial-use",
+                    "licenseStatus": "declared",
+                    "licenseUrl": "https://example.invalid/terms",
+                    "files": [
+                        {"name": filename, "size": 1, "sha256": "a" * 64}
+                        for filename in self.module.expected_family_filenames(self.document, family["name"])
+                    ],
+                }
+            )
+        previous = self.module.build_index_document(self.document, previous_manifest)
+
+        plan = self.module.plan_release(self.document, previous, previous_manifest)
+
+        self.assertEqual(plan["build"], [])
+        self.assertEqual(plan["reuse"], [family["name"] for family in self.document["families"]])
+        self.assertEqual(plan["metadataChanged"], plan["reuse"])
+        self.assertTrue(plan["needsReleaseUpdate"])
+
     def test_write_manifest_combines_reused_and_built_families(self):
         previous_manifest = {
             "version": 2,
@@ -116,10 +145,6 @@ class IncrementalReleaseTest(unittest.TestCase):
                             self.document, self.family["name"]
                         )
                     ],
-                    "license": "commercial-use",
-                    "licenseType": "commercial-use",
-                    "licenseStatus": "declared",
-                    "licenseUrl": "https://example.invalid/license",
                     "sourceUrl": "https://example.invalid/source",
                 }
             ],
@@ -141,10 +166,6 @@ class IncrementalReleaseTest(unittest.TestCase):
                         {"name": filename, "size": 4, "sha256": "b" * 64}
                         for filename in self.module.expected_family_filenames(current, "NewFamily")
                     ],
-                    "license": "commercial-use",
-                    "licenseType": "commercial-use",
-                    "licenseStatus": "declared",
-                    "licenseUrl": "https://example.invalid/license",
                     "sourceUrl": "https://example.invalid/source",
                 }
             ],
@@ -153,7 +174,10 @@ class IncrementalReleaseTest(unittest.TestCase):
         manifest = self.module.merge_manifest(current, previous_manifest, built_manifest)
         self.assertEqual([entry["name"] for entry in manifest["families"]], [self.family["name"], "NewFamily"])
         self.assertEqual(manifest["families"][0]["description"], self.family["description"])
+        self.assertEqual(manifest["families"][0]["sourceUrl"], self.family["source_url"])
         self.assertEqual(manifest["families"][1]["files"], built_manifest["families"][0]["files"])
+        for entry in manifest["families"]:
+            self.assertTrue({"license", "licenseType", "licenseStatus", "licenseUrl"}.isdisjoint(entry))
 
     def test_verify_remote_metadata_checks_every_manifest_file_without_downloading(self):
         manifest = {

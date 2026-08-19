@@ -10,16 +10,12 @@ Optional CJK `.cpfont` files for CrossPoint Reader.
 
 The short version:
 
-1. Fork the repository and create one branch for one font family.
-2. Upload one TTF, OTF, or ZIP source file under `community-fonts/<FamilyId>/`.
-3. Add one entry to [`config/fonts.yaml`](config/fonts.yaml) with the stable ASCII family ID, localized names, language coverage, category, uploaded file path, and optional license type.
-4. Add a short row to [`LICENSES.md`](LICENSES.md). Choose **Commercial use allowed**, **Personal use only**, or leave the license type blank when it is unknown or not provided.
-5. Run the configuration tests and, when FreeType is available, a single-family build.
-6. Open a pull request. GitHub pre-fills the root checklist; a dedicated **Font submission** choice is also available under `compare` → `New pull request` → `Get started`.
+1. Fork the repository. Keep each font PR to one family.
+2. Put one TTF, OTF, or ZIP file under `community-fonts/<FamilyId>/`.
+3. Add its names, languages, category, and file path to [`config/fonts.yaml`](config/fonts.yaml). A font homepage or source repository URL is optional.
+4. Open a pull request. GitHub pre-fills the checklist, or you can choose the **Font submission** template.
 
-Original upstream repositories, OFL licensing, immutable download URLs, and SHA-256 source locks are not required for uploaded community fonts. Third-party download sources are allowed. The submitter is responsible for the accuracy of the license declaration and for having permission to upload and redistribute the file.
-
-Do not commit generated `.cpfont` files, `dist/`, caches, executables, or Git LFS objects. One pull request must add, update, or remove only one family.
+The [contribution guide](CONTRIBUTING.md) has the field table and full examples. Do not commit generated `.cpfont` files, `dist/`, caches, executables, or Git LFS objects.
 
 ## Catalog
 
@@ -29,7 +25,7 @@ The current catalog contains 16 families for Simplified Chinese, Traditional Chi
 - 14/16/18/22 pt map to the reader's four persisted size slots and show roughly 16/14/12/10 full-width CJK characters per line at the default portrait margin.
 - The firmware selects an installed physical file; it never scales a CJK font on the device.
 
-See [`LICENSES.md`](LICENSES.md) for the license type and any source or attribution information provided for each family.
+See [`SOURCES.md`](SOURCES.md) for the source links recorded for each family.
 
 ## Local build
 

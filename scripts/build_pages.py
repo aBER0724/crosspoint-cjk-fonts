@@ -182,18 +182,10 @@ def build_site(
                     raise CatalogBuildError(
                         f"{family_name}: config and manifest metadata disagree for {config_key}"
                     )
-            expected_license_type = editorial.get("license_type")
-            expected_license = expected_license_type or "not-provided"
-            expected_license_status = "declared" if expected_license_type else "not-provided"
-            if published.get("license") != expected_license:
-                raise CatalogBuildError(f"{family_name}: config and manifest metadata disagree for license_type")
-            if published.get("licenseStatus", expected_license_status) != expected_license_status:
-                raise CatalogBuildError(f"{family_name}: config and manifest metadata disagree for license_status")
-            for config_key, manifest_key in (("license_url", "licenseUrl"), ("source_url", "sourceUrl")):
-                if editorial.get(config_key) != published.get(manifest_key):
-                    raise CatalogBuildError(
-                        f"{family_name}: config and manifest metadata disagree for {config_key}"
-                    )
+            if editorial.get("source_url") != published.get("sourceUrl"):
+                raise CatalogBuildError(
+                    f"{family_name}: config and manifest metadata disagree for source_url"
+                )
 
             files = [_file_entry(entry, family_name, base_url) for entry in published.get("files", [])]
             files.sort(key=lambda entry: entry["physicalSize"])
@@ -234,17 +226,9 @@ def build_site(
                 "category": editorial.get("category", "other"),
                 "languages": languages,
                 "styles": published.get("styles", []),
-                "license": expected_license,
-                "licenseStatus": expected_license_status,
                 "files": files,
                 "previews": previews,
             }
-            if expected_license_type:
-                family_entry["licenseType"] = expected_license_type
-            if editorial.get("license_url"):
-                family_entry["licenseUrl"] = _https_url(
-                    editorial["license_url"], f"{family_name} license URL"
-                )
             if editorial.get("source_url"):
                 family_entry["sourceUrl"] = _https_url(
                     editorial["source_url"], f"{family_name} source URL"
