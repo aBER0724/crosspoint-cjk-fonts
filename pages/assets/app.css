@@ -145,7 +145,8 @@ main {
   box-shadow: var(--shadow-sm);
 }
 
-.toolbar label {
+.toolbar label,
+.preview-size-field {
   display: grid;
   gap: 8px;
   color: var(--foreground);
@@ -175,6 +176,46 @@ main {
 .toolbar select:focus {
   border-color: var(--ring);
   box-shadow: 0 0 0 2px rgb(161 161 161 / 0.2);
+}
+
+.preview-size-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  height: 40px;
+  gap: 2px;
+  border-radius: calc(var(--radius) - 2px);
+  padding: 3px;
+  background: var(--muted);
+}
+
+.preview-size-switch button {
+  min-width: 0;
+  border: 0;
+  border-radius: calc(var(--radius) - 5px);
+  padding: 0 8px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.preview-size-switch button:hover {
+  color: var(--foreground);
+}
+
+.preview-size-switch button[aria-pressed="true"] {
+  background: var(--background);
+  color: var(--foreground);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+
+.preview-size-switch button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
 }
 
 .status {

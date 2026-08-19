@@ -68,9 +68,22 @@ function populateFilters() {
     node.value = values.includes(selected) ? selected : "";
   }
   const selectedSize = state.previewSize;
-  nodes.previewSize.replaceChildren(...state.catalog.previewSizes.map(size => new Option(`${size} pt`, String(size))));
-  nodes.previewSize.value = state.catalog.previewSizes.map(String).includes(selectedSize) ? selectedSize : String(state.catalog.previewSizes[0]);
-  state.previewSize = nodes.previewSize.value;
+  nodes.previewSize.replaceChildren(...state.catalog.previewSizes.map(size => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.previewSize = String(size);
+    button.textContent = `${size} pt`;
+    button.setAttribute("aria-pressed", String(String(size) === selectedSize));
+    button.addEventListener("click", () => {
+      state.previewSize = String(size);
+      render();
+    });
+    return button;
+  }));
+  if (!state.catalog.previewSizes.map(String).includes(selectedSize)) state.previewSize = String(state.catalog.previewSizes[0]);
+  nodes.previewSize.querySelectorAll("button").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.previewSize === state.previewSize));
+  });
 }
 
 function humanBytes(value) {
@@ -142,7 +155,6 @@ document.querySelectorAll("[data-locale]").forEach(button => button.addEventList
 nodes.search.addEventListener("input", event => { state.query = event.target.value; render(); });
 nodes.language.addEventListener("change", event => { state.language = event.target.value; render(); });
 nodes.category.addEventListener("change", event => { state.category = event.target.value; render(); });
-nodes.previewSize.addEventListener("change", event => { state.previewSize = event.target.value; render(); });
 
 state.locale = preferredLocale();
 applyCopy();
