@@ -8,7 +8,7 @@ families:
     description: "Simplified Chinese sans-serif with Japanese kana"
     category: sans-serif
     languages: [zh-Hans, ja]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/google/fonts/blob/main/ofl/notosanssc/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notosanssc"
     intervals: latin-ext,cjk
@@ -23,7 +23,7 @@ families:
     description: "Traditional Chinese sans-serif with Japanese kana"
     category: sans-serif
     languages: [zh-Hant, ja]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/google/fonts/blob/main/ofl/notosanstc/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notosanstc"
     intervals: latin-ext,cjk
@@ -38,7 +38,7 @@ families:
     description: "Japanese sans-serif with kanji and kana"
     category: sans-serif
     languages: [ja]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/google/fonts/blob/main/ofl/notosansjp/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notosansjp"
     intervals: latin-ext,cjk
@@ -53,7 +53,7 @@ families:
     description: "Simplified Chinese Song-style serif with Japanese kana"
     category: serif
     languages: [zh-Hans, ja]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/google/fonts/blob/main/ofl/notoserifsc/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notoserifsc"
     intervals: latin-ext,cjk
@@ -68,7 +68,7 @@ families:
     description: "Traditional Chinese Ming-style serif with Japanese kana"
     category: serif
     languages: [zh-Hant, ja]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/google/fonts/blob/main/ofl/notoseriftc/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notoseriftc"
     intervals: latin-ext,cjk
@@ -83,7 +83,7 @@ families:
     description: "Japanese Mincho-style serif with kanji and kana"
     category: serif
     languages: [ja]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/google/fonts/blob/main/ofl/notoserifjp/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/main/ofl/notoserifjp"
     intervals: latin-ext,cjk
@@ -98,7 +98,7 @@ families:
     description: "Readable CJK handwriting-style typeface derived from LXGW WenKai"
     category: handwriting
     languages: [zh-Hans, zh-Hant, ja]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/lxgw/LxgwWenKai/blob/main/OFL.txt"
     source_url: "https://github.com/lxgw/LxgwWenKai/tree/main"
     intervals: latin-ext,cjk
@@ -113,7 +113,7 @@ families:
     description: "Traditional Chinese rounded sans-serif with Japanese kana"
     category: rounded-sans
     languages: [zh-Hant, ja]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/chiron-fonts/chiron-go-round-tc/blob/release/LICENSE.md"
     source_url: "https://github.com/chiron-fonts/chiron-go-round-tc/tree/release"
     intervals: latin-ext,cjk
@@ -127,7 +127,7 @@ families:
     description: "Narrow oblique Simplified Chinese display face derived from Smiley Sans"
     category: display
     languages: [zh-Hans]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/atelier-anchor/smiley-sans/blob/v2.0.1/LICENSE"
     source_url: "https://github.com/atelier-anchor/smiley-sans/tree/v2.0.1"
     intervals: latin-ext,cjk
@@ -143,7 +143,7 @@ families:
     description: "Bookish Simplified Chinese Fangsong face derived from Zhuque Fangsong"
     category: fangsong
     languages: [zh-Hans]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/TrionesType/zhuque/blob/v0.212/LICENSE.txt"
     source_url: "https://github.com/TrionesType/zhuque/tree/v0.212"
     intervals: latin-ext,cjk
@@ -159,7 +159,7 @@ families:
     description: "Print-inspired Simplified Chinese reading face derived from LXGW Bright GB"
     category: serif
     languages: [zh-Hans]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/lxgw/LxgwBright/blob/f9e978f4944cb36b081941a001e92a02e7dcc3d3/OFL.txt"
     source_url: "https://github.com/lxgw/LxgwBright/tree/f9e978f4944cb36b081941a001e92a02e7dcc3d3"
     intervals: latin-ext,cjk
@@ -174,7 +174,7 @@ families:
     description: "Print-inspired Traditional Chinese reading face derived from LXGW Bright TC"
     category: serif
     languages: [zh-Hant]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/lxgw/LxgwBright/blob/f9e978f4944cb36b081941a001e92a02e7dcc3d3/OFL.txt"
     source_url: "https://github.com/lxgw/LxgwBright/tree/f9e978f4944cb36b081941a001e92a02e7dcc3d3"
     intervals: latin-ext,cjk
@@ -189,7 +189,7 @@ families:
     description: "Traditional Chinese handwriting-style face derived from Klee One"
     category: handwriting
     languages: [zh-Hant]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/ButTaiwan/iansui/blob/v1.020/OFL.txt"
     source_url: "https://github.com/ButTaiwan/iansui/tree/v1.020"
     intervals: latin-ext,cjk
@@ -205,7 +205,7 @@ families:
     description: "Warm Traditional Chinese Ming-style face with an ink-bleed print texture"
     category: serif
     languages: [zh-Hant]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/ButTaiwan/genwan-font/blob/25e718615173a3b51099ecc9a6bf4fa558c03fbc/SIL_Open_Font_License_1.1.txt"
     source_url: "https://github.com/ButTaiwan/genwan-font/tree/25e718615173a3b51099ecc9a6bf4fa558c03fbc"
     intervals: latin-ext,cjk
@@ -220,7 +220,7 @@ families:
     description: "Traditional Chinese sans-serif with classic print-oriented glyph forms"
     category: sans-serif
     languages: [zh-Hant]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/ButTaiwan/genyog-font/blob/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91/SIL_Open_Font_License_1.1.txt"
     source_url: "https://github.com/ButTaiwan/genyog-font/tree/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91"
     intervals: latin-ext,cjk
@@ -235,7 +235,7 @@ families:
     description: "Soft Japanese rounded sans-serif with kanji and kana"
     category: rounded-sans
     languages: [ja]
-    license: OFL-1.1
+    license_type: commercial-use
     license_url: "https://github.com/google/fonts/blob/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic/OFL.txt"
     source_url: "https://github.com/google/fonts/tree/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic"
     intervals: latin-ext,cjk

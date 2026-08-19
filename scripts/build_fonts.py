@@ -112,14 +112,27 @@ def extract_static_instance(source: Path, axes: dict[str, float], family: str) -
     return destination
 
 
+def resolve_source_path(source: dict, family: str) -> Path:
+    uploaded_path = source.get("path")
+    if uploaded_path:
+        path = Path(uploaded_path)
+        if not path.is_absolute():
+            path = ROOT / path
+        if not path.is_file():
+            raise RuntimeError(f"{family}: uploaded source is missing: {uploaded_path}")
+        return path
+
+    return download(
+        source["url"],
+        DOWNLOAD_DIR / family / source["filename"],
+        source["sha256"],
+        family,
+    )
+
+
 def resolve_source(family: dict) -> Path:
     source = family["source"]
-    archive = download(
-        source["url"],
-        DOWNLOAD_DIR / family["name"] / source["filename"],
-        source["sha256"],
-        family["name"],
-    )
+    archive = resolve_source_path(source, family["name"])
     resolved = extract_archive_member(archive, source["archive_member"], family["name"]) if source.get(
         "archive_member"
     ) else archive

@@ -4,7 +4,7 @@ This repository primarily accepts one-family font catalog submissions. For a doc
 
 ## Summary
 
-<!-- One font pull request must add, update, or remove exactly one family. Briefly explain why this change is useful for CrossPoint Reader. -->
+<!-- One font pull request must add, update, or remove exactly one family. -->
 
 - Stable family ID: `FamilyId`
 - Display name:
@@ -12,45 +12,40 @@ This repository primarily accepts one-family font catalog submissions. For a doc
 - Languages: <!-- zh-Hans / zh-Hant / ja -->
 - Category: <!-- sans-serif / serif / rounded-sans / handwriting / fangsong / display -->
 
-## Authoritative source
+## Uploaded font
 
-- Upstream project:
-- Pinned release or full commit SHA:
-- Exact source font or ZIP URL:
-- Source SHA-256:
+- Font file path: `community-fonts/<FamilyId>/<file.ttf|file.otf|file.zip>`
 - Regular/static instance: <!-- e.g. Regular 400, or wght=400 -->
 - ZIP archive member, if applicable:
+- Download page or source URL, if available:
 
-## License review
+## License declaration
 
-- License: `OFL-1.1`
-- Pinned license URL:
-- Copyright holder(s):
-- Reserved Font Name declared? <!-- No / Yes: list it -->
-- Additional permission or naming consideration:
+- License type: <!-- Commercial use allowed / Personal use only / Unknown / not provided -->
+- License or terms URL, if available:
+- Author or copyright holder, if known:
+- Additional notes:
 
-<!-- Do not rely only on a third-party font index. Link the original upstream license and explain any OFL naming condition. -->
+<!-- This is a submitter declaration. An original upstream repository and OFL license are not required. -->
 
 ## Coverage and rendering
 
-- [ ] The source actually covers every language declared in `languages`.
+- [ ] The file actually covers every language declared in `languages`.
 - [ ] The submitted face is the normal Regular/400 style.
 - [ ] `force_autohint` is omitted, or its visual need is explained below.
 - [ ] I checked representative CJK punctuation, Latin text, and numbers.
 
 Rendering notes:
 
-<!-- Mention unusual metrics, missing glyphs, autohint requirements, or other visible limitations. -->
-
 ## Repository changes
 
 - [ ] I read [CONTRIBUTING.md](https://github.com/aBER0724/crosspoint-cjk-fonts/blob/main/CONTRIBUTING.md).
 - [ ] This PR changes only one font family, or it is a focused non-font maintenance change.
+- [ ] I placed the source file under `community-fonts/<FamilyId>/` without Git LFS.
 - [ ] I added, updated, or removed the family in `config/fonts.yaml`.
-- [ ] I made the matching attribution change in `LICENSES.md`.
-- [ ] The source URL is pinned to a tag or full commit, not a moving branch or `latest` URL.
-- [ ] The SHA-256 is for the exact downloaded source URL.
-- [ ] I did not commit TTF/OTF/ZIP sources, generated `.cpfont` files, `dist/`, caches, executables, or Git LFS objects.
+- [ ] I made the matching license declaration or attribution change in `LICENSES.md`.
+- [ ] I have permission to upload and redistribute the submitted file.
+- [ ] I did not commit generated `.cpfont` files, `dist/`, caches, executables, or Git LFS objects.
 
 ## Validation
 
@@ -63,8 +58,6 @@ Rendering notes:
 
 If the full FreeType build was not run locally, explain why:
 
-<!-- Maintainers can trigger a trusted single-family build after source and license review. -->
-
 ## Screenshots or specimens
 
-<!-- Optional but useful. Attach an upstream specimen or local render that demonstrates the declared language coverage. Do not upload the source font itself. -->
+<!-- Optional. Attach a specimen or local render. -->

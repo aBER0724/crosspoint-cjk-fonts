@@ -17,14 +17,26 @@ GENERAL_TEMPLATE = ROOT / ".github" / "PULL_REQUEST_TEMPLATE" / "general-change.
 
 class ContributionDocsTest(unittest.TestCase):
     def test_readme_has_a_prominent_font_submission_entry_point(self):
-        text = README.read_text(encoding="utf-8")
-        catalog_position = text.index("## Catalog")
+        readmes = [
+            (README.read_text(encoding="utf-8"), "## Catalog"),
+            (README_ZH.read_text(encoding="utf-8"), "## 字体目录"),
+            (README_JA.read_text(encoding="utf-8"), "## カタログ"),
+        ]
+        text = readmes[0][0]
         submission_position = text.index("## Submit a font")
 
-        self.assertLess(submission_position, catalog_position)
+        self.assertLess(submission_position, text.index("## Catalog"))
         self.assertIn("[read the font contribution guide](CONTRIBUTING.md)", text)
         self.assertIn("Font submission", text)
-        self.assertIn("Do **not** commit TTF/OTF/ZIP sources", text)
+        self.assertIn("Upload one TTF, OTF, or ZIP source file", text)
+        for localized, catalog_heading in readmes:
+            self.assertNotIn("## Reproducibility", localized)
+            self.assertNotIn("## 可复现性", localized)
+            self.assertNotIn("## 再現性", localized)
+            self.assertNotIn("The generated binaries are deliberately excluded from Git history", localized)
+            self.assertNotIn("生成的二进制文件不会提交到 Git 历史", localized)
+            self.assertNotIn("生成済みバイナリは Git 履歴へコミットしません", localized)
+            self.assertIn(catalog_heading, localized)
 
     def test_readmes_link_the_three_language_versions(self):
         english = README.read_text(encoding="utf-8")
@@ -51,11 +63,12 @@ class ContributionDocsTest(unittest.TestCase):
         }
         for text in guides.values():
             for expected in (
-                "OFL-1.1",
+                "license_type",
                 "config/fonts.yaml",
                 "LICENSES.md",
                 "archive_member",
                 "variable: {wght: 400}",
+                "path: community-fonts/ExampleSansJP/ExampleSans-Regular.ttf",
                 "python scripts/validate_config.py",
                 "python scripts/build_fonts.py --clean --only <FamilyId>",
             ):
@@ -63,20 +76,23 @@ class ContributionDocsTest(unittest.TestCase):
 
         self.assertIn("一个字体家族", guides["zh"])
         self.assertIn("1つのフォントファミリー", guides["ja"])
+        self.assertIn("免费商用", guides["zh"])
+        self.assertIn("个人使用", guides["zh"])
 
     def test_contribution_guide_documents_the_complete_one_family_flow(self):
         text = CONTRIBUTING.read_text(encoding="utf-8")
         for expected in (
             "one font family",
-            "SIL Open Font License 1.1",
-            "full commit SHA",
+            "Commercial use allowed",
+            "Personal use only",
+            "license_type",
             "config/fonts.yaml",
             "LICENSES.md",
             "archive_member",
             "variable: {wght: 400}",
+            "path: community-fonts/ExampleSansJP/ExampleSans-Regular.ttf",
             "python scripts/validate_config.py",
             "python scripts/build_fonts.py --clean --only <FamilyId>",
-            "Do **not** add `dist/`",
             "Pull requests from forks run read-only validation",
         ):
             self.assertIn(expected, text)
@@ -85,10 +101,11 @@ class ContributionDocsTest(unittest.TestCase):
         text = FONT_TEMPLATE.read_text(encoding="utf-8")
         for expected in (
             "Stable family ID",
-            "Stable family ID",
-            "Pinned release or full commit SHA",
-            "Source SHA-256",
-            "Reserved Font Name declared?",
+            "Font file path",
+            "License type",
+            "Commercial use allowed",
+            "Personal use only",
+            "Unknown / not provided",
             "config/fonts.yaml",
             "LICENSES.md",
             "python scripts/build_fonts.py --clean --only <FamilyId>",

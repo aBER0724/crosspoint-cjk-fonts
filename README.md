@@ -2,54 +2,34 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
-Reproducible build and GitHub Release hosting for optional CrossPoint Reader CJK `.cpfont` files.
-
-The generated binaries are deliberately excluded from Git history. GitHub Actions downloads SHA-256-locked upstream font sources, converts them into device-native files, generates `fonts.json`, verifies every asset, and publishes the catalog as the `sd-fonts-m2-b4` Release.
-
-A lightweight browser catalog is generated for GitHub Pages at:
-
-```text
-https://aber0724.github.io/crosspoint-cjk-fonts/
-```
-
-Pages contains only HTML, JSON metadata, and compact PNG previews decoded from the real `.cpfont v4` 2-bit bitmaps. All font downloads continue to point directly at the versioned GitHub Release.
+Optional CJK `.cpfont` files for CrossPoint Reader.
 
 ## Submit a font
 
-**Start here: [read the font contribution guide](CONTRIBUTING.md).** It contains the accepted-license rules, a complete `config/fonts.yaml` example, source-pinning and SHA-256 instructions, local validation commands, and the maintainer review/release flow.
+**Start here: [read the font contribution guide](CONTRIBUTING.md).**
 
 The short version:
 
 1. Fork the repository and create one branch for one font family.
-2. Choose an authoritative upstream **OFL-1.1** Regular/400 source pinned to a release tag or full commit SHA.
-3. Add one entry to [`config/fonts.yaml`](config/fonts.yaml) with a stable ASCII family ID, localized names, actual language coverage, exact source URL, and SHA-256.
-4. Add the pinned upstream and license attribution to [`LICENSES.md`](LICENSES.md).
+2. Upload one TTF, OTF, or ZIP source file under `community-fonts/<FamilyId>/`.
+3. Add one entry to [`config/fonts.yaml`](config/fonts.yaml) with the stable ASCII family ID, localized names, language coverage, category, uploaded file path, and optional license type.
+4. Add a short row to [`LICENSES.md`](LICENSES.md). Choose **Commercial use allowed**, **Personal use only**, or leave the license type blank when it is unknown or not provided.
 5. Run the configuration tests and, when FreeType is available, a single-family build.
 6. Open a pull request. GitHub pre-fills the root checklist; a dedicated **Font submission** choice is also available under `compare` → `New pull request` → `Get started`.
 
-Do **not** commit TTF/OTF/ZIP sources or generated `.cpfont` files. Pull requests contain only the catalog and attribution changes; the trusted workflow downloads the locked source and builds the seven physical font files after review. One pull request must add, update, or remove only one family.
+Original upstream repositories, OFL licensing, immutable download URLs, and SHA-256 source locks are not required for uploaded community fonts. Third-party download sources are allowed. The submitter is responsible for the accuracy of the license declaration and for having permission to upload and redistribute the file.
+
+Do not commit generated `.cpfont` files, `dist/`, caches, executables, or Git LFS objects. One pull request must add, update, or remove only one family.
 
 ## Catalog
 
-The current catalog contains 16 OFL-1.1 families for Simplified Chinese,
-Traditional Chinese, and Japanese. Pages shows each family's original/localized
-name for the selected UI language and keeps the stable ASCII build ID below it;
-search accepts either form. Each family is pre-rendered at the seven
-catalog sizes defined once in [config/fonts.yaml](config/fonts.yaml): UI
-fallback at 8/10/12 pt and reader text at 14/16/18/22 pt.
+The current catalog contains 16 families for Simplified Chinese, Traditional Chinese, and Japanese. Pages shows each family's original/localized name for the selected UI language and keeps the stable ASCII build ID below it; search accepts either form. Each family is rendered at the seven catalog sizes defined once in [`config/fonts.yaml`](config/fonts.yaml): UI fallback at 8/10/12 pt and reader text at 14/16/18/22 pt.
 
 - 8/10/12 pt provide CJK UI fallback glyphs.
-- 14/16/18/22 pt map to the reader's four persisted size slots and show roughly
-  16/14/12/10 full-width CJK characters per line at the default portrait margin.
+- 14/16/18/22 pt map to the reader's four persisted size slots and show roughly 16/14/12/10 full-width CJK characters per line at the default portrait margin.
 - The firmware selects an installed physical file; it never scales a CJK font on the device.
 
-See [LICENSES.md](LICENSES.md) for exact upstream sources and attribution.
-
-## Reproducibility
-
-Source URLs and expected SHA-256 digests live in [config/fonts.yaml](config/fonts.yaml). A build stops before conversion if a downloaded source does not match its lock.
-
-The Latin fallback used to fill punctuation and basic Latin glyphs is also SHA-256 locked by [scripts/fetch_fallback.py](scripts/fetch_fallback.py).
+See [`LICENSES.md`](LICENSES.md) for the license type and any source or attribution information provided for each family.
 
 ## Local build
 
@@ -95,21 +75,17 @@ Open `site-dist/index.html` through a local static HTTP server. The generated `c
 
 ## GitHub Actions
 
-- **Build font catalog** validates configuration, Python code, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on every relevant pull request and `main` push. Manual smoke runs may select one family; the reusable workflow accepts the exact family list chosen by the Release planner.
-- **Publish font release** runs automatically after relevant changes reach `main`, and can also be dispatched manually by typing `sd-fonts-m2-b4`. It fingerprints each family's byte-producing inputs, reuses unchanged assets already present in the fixed Release, builds only new or changed families, verifies the complete asset inventory, and publishes `fonts.json` only after the changed binaries pass remote hash checks. A manual `force_all` option remains available for deliberate full rebuilds. Release notes are rendered from the previous/current manifests and build plan with [`.github/RELEASE_TEMPLATE.md`](.github/RELEASE_TEMPLATE.md) as the maintained human-readable template.
-- **Deploy font catalog** runs manually, after a successful font release workflow, or when the fixed Release is first published. It downloads and verifies only the 14/18/22 pt files, generates three PNG previews per published family, and deploys a font-free Pages artifact.
+- **Build font catalog** validates configuration, Python code, uploaded font paths, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on relevant pull requests and `main` pushes. Manual smoke runs may select one family.
+- **Publish font release** runs after relevant changes reach `main`, builds new or changed families, reuses unchanged published files, verifies the complete asset inventory, and updates the fixed `sd-fonts-m2-b4` Release.
+- **Deploy font catalog** generates the 14/18/22 pt PNG previews and deploys the Pages catalog after a successful font release.
 
-The Release includes `build-index.json`, which records the reproducible build fingerprint and expected files for every family. The first incremental run bootstraps the existing 15-family Release from its immutable `sd-fonts-m2-b4` tag; subsequent runs compare directly with the published index. Catalog-only metadata such as localized names does not rebuild font binaries, while source hashes, conversion inputs, physical sizes, the fallback digest, converter code, or pinned rasterization dependencies invalidate the affected output.
-
-The stable device endpoints are:
+Stable device endpoints:
 
 ```text
 https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/fonts.json
 https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/<Family>_<size>.cpfont
 ```
 
-The public repository and Release are the production distribution channel. For local development, the firmware's test override can instead point to a LAN HTTP server serving an already verified `release-assets/` directory.
-
 ## Generated asset policy
 
-Do not commit `.cpfont`, downloaded source fonts, caches, `fonts.json`, or `site-dist/`. Release assets are the binary distribution channel. Pages is a human-readable catalog and real-bitmap preview layer, not a device font mirror or alternate font CDN.
+Uploaded TTF, OTF, and ZIP source files belong under `community-fonts/<FamilyId>/`. Do not commit generated `.cpfont` files, `dist/`, caches, `fonts.json`, or `site-dist/`.

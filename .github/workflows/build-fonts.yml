@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - config/**
+      - community-fonts/**
       - scripts/**
       - tests/**
       - pages/**
@@ -15,6 +16,7 @@ on:
     branches: [main]
     paths:
       - config/**
+      - community-fonts/**
       - scripts/**
       - tests/**
       - requirements.txt
@@ -123,10 +125,10 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python scripts/fetch_fallback.py
       - id: source
-        name: Read locked family source digest
+        name: Read family source digest
         shell: bash
         run: echo "sha256=$(python scripts/incremental_release.py source-sha '${{ matrix.family }}')" >> "$GITHUB_OUTPUT"
-      - name: Restore locked source and variable-instance cache
+      - name: Restore source and variable-instance cache
         uses: actions/cache@v4
         with:
           path: .cache
