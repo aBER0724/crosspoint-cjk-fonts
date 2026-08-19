@@ -106,6 +106,16 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertEqual(html.count('id="maker-link"'), 1)
         self.assertNotIn("nodes.maker.href = state.catalog.fontMakerUrl;", script)
 
+    def test_mobile_locale_and_theme_controls_share_one_row(self):
+        css = PAGE_CSS.read_text(encoding="utf-8")
+        mobile_css = css[css.index("@media (max-width: 640px)") :]
+
+        self.assertIn("grid-template-columns: minmax(0, auto) minmax(0, auto);", mobile_css)
+        self.assertIn("justify-content: end;", mobile_css)
+        self.assertIn("align-items: center;", mobile_css)
+        self.assertIn(".locale-switcher,\n  .theme-switcher", mobile_css)
+        self.assertNotIn("justify-self: end;", mobile_css)
+
     def test_theme_switcher_matches_maker_dark_mode_and_uses_transparent_device_previews(self):
         html = PAGE_HTML.read_text(encoding="utf-8")
         css = PAGE_CSS.read_text(encoding="utf-8")
