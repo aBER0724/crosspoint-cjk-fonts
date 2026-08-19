@@ -78,9 +78,11 @@ Open `site-dist/index.html` through a local static HTTP server. The generated `c
 
 ## GitHub Actions
 
-- **Build font catalog** validates configuration, Python code, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on every relevant pull request and `main` push. Font binaries are built only by manual dispatch or reusable workflow calls, so a normal `main` validation does not duplicate the Release build.
-- **Publish font release** is manual and requires typing `sd-fonts-m2-b4`. It performs a clean full build, verification, and replacement of the versioned Release assets.
-- **Deploy font catalog** runs manually or after a successful font release. It downloads and verifies only the 14/18/22 pt files, generates 45 PNG previews, and deploys a font-free Pages artifact.
+- **Build font catalog** validates configuration, Python code, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on every relevant pull request and `main` push. Manual smoke runs may select one family; the reusable workflow accepts the exact family list chosen by the Release planner.
+- **Publish font release** runs automatically after relevant changes reach `main`, and can also be dispatched manually by typing `sd-fonts-m2-b4`. It fingerprints each family's byte-producing inputs, reuses unchanged assets already present in the fixed Release, builds only new or changed families, verifies the complete asset inventory, and publishes `fonts.json` only after the changed binaries pass remote hash checks. A manual `force_all` option remains available for deliberate full rebuilds.
+- **Deploy font catalog** runs manually, after a successful font release workflow, or when the fixed Release is first published. It downloads and verifies only the 14/18/22 pt files, generates three PNG previews per published family, and deploys a font-free Pages artifact.
+
+The Release includes `build-index.json`, which records the reproducible build fingerprint and expected files for every family. The first incremental run bootstraps the existing 15-family Release from its immutable `sd-fonts-m2-b4` tag; subsequent runs compare directly with the published index. Catalog-only metadata such as localized names does not rebuild font binaries, while source hashes, conversion inputs, physical sizes, the fallback digest, converter code, or pinned rasterization dependencies invalidate the affected output.
 
 The stable device endpoints are:
 

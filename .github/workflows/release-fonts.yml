@@ -1,51 +1,352 @@
 name: Publish font release
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - config/fonts.yaml
+      - scripts/build_fonts.py
+      - scripts/fontconvert_sdcard.py
+      - scripts/cpfont_version.py
+      - scripts/fetch_fallback.py
+      - scripts/incremental_release.py
+      - requirements.txt
+      - LICENSES.md
+      - OFL-1.1.txt
+      - RELEASE_NOTES.md
+      - .github/workflows/build-fonts.yml
+      - .github/workflows/release-fonts.yml
   workflow_dispatch:
     inputs:
       confirm_tag:
-        description: "Type sd-fonts-m2-b4 to publish or replace the release assets"
+        description: "Type sd-fonts-m2-b4 to publish; unchanged families are reused"
         required: true
+      force_all:
+        description: "Rebuild every family instead of using build fingerprints"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: publish-sd-fonts-m2-b4
   cancel-in-progress: false
 
 env:
+  PYTHONUTF8: "1"
   RELEASE_TAG: sd-fonts-m2-b4
+  FONT_BASE_URL: https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/
+  BOOTSTRAP_REF: sd-fonts-m2-b4
 
 jobs:
-  build:
-    if: inputs.confirm_tag == 'sd-fonts-m2-b4'
-    uses: ./.github/workflows/build-fonts.yml
-    with:
-      smoke_family: ""
-
-  publish:
-    needs: build
+  plan:
+    if: github.event_name == 'push' || inputs.confirm_tag == 'sd-fonts-m2-b4'
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 15
+    outputs:
+      families_json: ${{ steps.plan.outputs.families_json }}
+      changed_existing_json: ${{ steps.plan.outputs.changed_existing_json }}
+      new_json: ${{ steps.plan.outputs.new_json }}
+      has_builds: ${{ steps.plan.outputs.has_builds }}
+      has_previous_release: ${{ steps.plan.outputs.has_previous_release }}
+      needs_font_publish: ${{ steps.plan.outputs.needs_font_publish }}
+      release_exists: ${{ steps.release.outputs.exists }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
         with:
-          name: crosspoint-cjk-fonts
-          path: dist
-      - name: Prepare notices
-        run: |
-          cp LICENSES.md dist/FONT-LICENSES.md
-          cp OFL-1.1.txt dist/OFL-1.1.txt
-      - name: Replace versioned release assets
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - id: release
+        name: Download current Release metadata when available
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
+          mkdir -p previous
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release delete "$RELEASE_TAG" --cleanup-tag --yes
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            gh release download "$RELEASE_TAG" --pattern fonts.json --dir previous
+            gh release download "$RELEASE_TAG" --pattern build-index.json --dir previous || true
+            gh release view "$RELEASE_TAG" --json assets > previous/assets.json
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
-          gh release create "$RELEASE_TAG" dist/* \
+      - id: plan
+        name: Plan incremental build
+        shell: bash
+        env:
+          FORCE_ALL: ${{ inputs.force_all }}
+        run: |
+          args=(
+            plan
+            --previous-manifest previous/fonts.json
+            --previous-index previous/build-index.json
+            --bootstrap-ref "$BOOTSTRAP_REF"
+            --output plan.json
+            --github-output "$GITHUB_OUTPUT"
+          )
+          if [[ "$FORCE_ALL" == "true" ]]; then
+            args+=(--force-all)
+          fi
+          python scripts/incremental_release.py "${args[@]}"
+      - name: Verify reusable Release asset metadata
+        if: steps.plan.outputs.has_previous_release == 'true'
+        run: >-
+          python scripts/incremental_release.py verify-assets
+          --manifest previous/fonts.json
+          --assets previous/assets.json
+          --require fonts.json
+      - name: Reject an existing Release that has no usable manifest
+        if: steps.release.outputs.exists == 'true' && steps.plan.outputs.has_previous_release != 'true'
+        run: |
+          echo "Existing Release has no usable fonts.json; refusing a non-atomic bootstrap" >&2
+          exit 1
+      - name: Verify no-op run already has a published build index
+        if: steps.plan.outputs.has_builds != 'true' && steps.plan.outputs.needs_font_publish != 'true'
+        run: test -f previous/build-index.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: incremental-release-plan
+          path: |
+            plan.json
+            previous/fonts.json
+            previous/build-index.json
+            previous/assets.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.has_builds == 'true'
+    uses: ./.github/workflows/build-fonts.yml
+    with:
+      families_json: ${{ needs.plan.outputs.families_json }}
+      publish_catalog: true
+
+  assemble:
+    needs: [plan, build]
+    if: always() && needs.plan.result == 'success' && (needs.build.result == 'success' || needs.build.result == 'skipped')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      changed_existing_json: ${{ needs.plan.outputs.changed_existing_json }}
+      new_json: ${{ needs.plan.outputs.new_json }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: incremental-release-plan
+          path: state
+      - uses: actions/download-artifact@v4
+        if: needs.plan.outputs.has_builds == 'true'
+        with:
+          name: crosspoint-cjk-fonts
+          path: built
+      - name: Assemble complete manifest and build index
+        env:
+          HAS_PREVIOUS_RELEASE: ${{ needs.plan.outputs.has_previous_release }}
+          HAS_BUILDS: ${{ needs.plan.outputs.has_builds }}
+        shell: bash
+        run: |
+          args=(
+            merge
+            --base-url "$FONT_BASE_URL"
+            --manifest-output dist/fonts.json
+            --index-output dist/build-index.json
+            --commit "$GITHUB_SHA"
+          )
+          if [[ "$HAS_PREVIOUS_RELEASE" == "true" ]]; then
+            args+=(--previous-manifest state/previous/fonts.json)
+          fi
+          if [[ "$HAS_BUILDS" == "true" ]]; then
+            args+=(--built-manifest built/fonts.json)
+          fi
+          python scripts/incremental_release.py "${args[@]}"
+      - name: Copy changed font files and notices
+        env:
+          FAMILIES_JSON: ${{ needs.plan.outputs.families_json }}
+        shell: bash
+        run: |
+          if [[ "$FAMILIES_JSON" != "[]" ]]; then
+            while IFS= read -r filename; do
+              cp "built/$filename" "dist/$filename"
+            done < <(
+              python scripts/incremental_release.py list-files \
+                --manifest dist/fonts.json \
+                --families-json "$FAMILIES_JSON"
+            )
+            python scripts/incremental_release.py verify-files \
+              --manifest dist/fonts.json \
+              --directory dist \
+              --families-json "$FAMILIES_JSON"
+          fi
+          cp LICENSES.md dist/FONT-LICENSES.md
+          cp OFL-1.1.txt dist/OFL-1.1.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: incremental-release-candidate
+          path: dist/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+
+  publish-fonts:
+    needs: [plan, assemble]
+    if: needs.plan.outputs.has_builds == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: incremental-release-candidate
+          path: dist
+      - name: Create the first Release or upload changed font assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HAS_PREVIOUS_RELEASE: ${{ needs.plan.outputs.has_previous_release }}
+          CHANGED_EXISTING_JSON: ${{ needs.plan.outputs.changed_existing_json }}
+          NEW_JSON: ${{ needs.plan.outputs.new_json }}
+        shell: bash
+        run: |
+          if [[ "$HAS_PREVIOUS_RELEASE" != "true" ]]; then
+            gh release create "$RELEASE_TAG" dist/*.cpfont \
+              --target "$GITHUB_SHA" \
+              --title "CrossPoint CJK fonts (manifest 2 / cpfont 4)" \
+              --notes-file RELEASE_NOTES.md
+            exit 0
+          fi
+
+          if [[ "$CHANGED_EXISTING_JSON" != "[]" ]]; then
+            while IFS= read -r filename; do
+              gh release upload "$RELEASE_TAG" "dist/$filename" --clobber
+            done < <(
+              python scripts/incremental_release.py list-files \
+                --manifest dist/fonts.json \
+                --families-json "$CHANGED_EXISTING_JSON"
+            )
+          fi
+          if [[ "$NEW_JSON" != "[]" ]]; then
+            while IFS= read -r filename; do
+              gh release upload "$RELEASE_TAG" "dist/$filename"
+            done < <(
+              python scripts/incremental_release.py list-files \
+                --manifest dist/fonts.json \
+                --families-json "$NEW_JSON"
+            )
+          fi
+
+  verify-fonts:
+    needs: [plan, assemble, publish-fonts]
+    if: always() && needs.assemble.result == 'success' && (needs.publish-fonts.result == 'success' || needs.publish-fonts.result == 'skipped')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: incremental-release-candidate
+          path: dist
+      - name: Verify every Release asset and changed font hash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FAMILIES_JSON: ${{ needs.plan.outputs.families_json }}
+        shell: bash
+        run: |
+          gh release view "$RELEASE_TAG" --json assets > assets.json
+          python scripts/incremental_release.py verify-assets \
+            --manifest dist/fonts.json \
+            --assets assets.json
+          mkdir -p remote-fonts
+          if [[ "$FAMILIES_JSON" != "[]" ]]; then
+            while IFS= read -r filename; do
+              gh release download "$RELEASE_TAG" --pattern "$filename" --dir remote-fonts
+            done < <(
+              python scripts/incremental_release.py list-files \
+                --manifest dist/fonts.json \
+                --families-json "$FAMILIES_JSON"
+            )
+            python scripts/incremental_release.py verify-files \
+              --manifest dist/fonts.json \
+              --directory remote-fonts \
+              --families-json "$FAMILIES_JSON"
+          fi
+
+  publish-metadata:
+    needs: [plan, assemble, verify-fonts]
+    if: needs.plan.outputs.needs_font_publish == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: incremental-release-plan
+          path: state
+      - uses: actions/download-artifact@v4
+        with:
+          name: incremental-release-candidate
+          path: dist
+      - name: Publish manifest only after all font assets verify
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release upload "$RELEASE_TAG" \
+            dist/fonts.json \
+            dist/build-index.json \
+            dist/FONT-LICENSES.md \
+            dist/OFL-1.1.txt \
+            --clobber
+          gh release edit "$RELEASE_TAG" \
             --title "CrossPoint CJK fonts (manifest 2 / cpfont 4)" \
             --notes-file RELEASE_NOTES.md
+      - name: Remove assets no longer listed by the complete manifest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if [[ -f state/previous/fonts.json ]]; then
+            while IFS= read -r filename; do
+              gh release delete-asset "$RELEASE_TAG" "$filename" --yes
+            done < <(
+              python scripts/incremental_release.py obsolete-files \
+                --previous-manifest state/previous/fonts.json \
+                --current-manifest dist/fonts.json
+            )
+          fi
+      - name: Verify published metadata and full asset inventory
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          mkdir -p published
+          gh release download "$RELEASE_TAG" --pattern fonts.json --dir published
+          gh release download "$RELEASE_TAG" --pattern build-index.json --dir published
+          cmp dist/fonts.json published/fonts.json
+          cmp dist/build-index.json published/build-index.json
+          gh release view "$RELEASE_TAG" --json assets > published/assets.json
+          python scripts/incremental_release.py verify-assets \
+            --manifest published/fonts.json \
+            --assets published/assets.json \
+            --require fonts.json \
+            --require build-index.json \
+            --require FONT-LICENSES.md \
+            --require OFL-1.1.txt
