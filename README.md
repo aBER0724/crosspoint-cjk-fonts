@@ -12,6 +12,21 @@ https://aber0724.github.io/crosspoint-cjk-fonts/
 
 Pages contains only HTML, JSON metadata, and compact PNG previews decoded from the real `.cpfont v4` 2-bit bitmaps. All font downloads continue to point directly at the versioned GitHub Release.
 
+## Submit a font
+
+**Start here: [read the font contribution guide](CONTRIBUTING.md).** It contains the accepted-license rules, a complete `config/fonts.yaml` example, source-pinning and SHA-256 instructions, local validation commands, and the maintainer review/release flow.
+
+The short version:
+
+1. Fork the repository and create one branch for one font family.
+2. Choose an authoritative upstream **OFL-1.1** Regular/400 source pinned to a release tag or full commit SHA.
+3. Add one entry to [`config/fonts.yaml`](config/fonts.yaml) with a stable ASCII family ID, localized names, actual language coverage, exact source URL, and SHA-256.
+4. Add the pinned upstream and license attribution to [`LICENSES.md`](LICENSES.md).
+5. Run the configuration tests and, when FreeType is available, a single-family build.
+6. Open a pull request. GitHub pre-fills the root checklist; a dedicated **Font submission** choice is also available under `compare` → `New pull request` → `Get started`.
+
+Do **not** commit TTF/OTF/ZIP sources or generated `.cpfont` files. Pull requests contain only the catalog and attribution changes; the trusted workflow downloads the locked source and builds the seven physical font files after review. One pull request must add, update, or remove only one family.
+
 ## Catalog
 
 The current catalog contains 16 OFL-1.1 families for Simplified Chinese,
