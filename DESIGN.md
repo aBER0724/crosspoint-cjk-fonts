@@ -34,17 +34,18 @@ preview_sizes: [14, 18, 22]
 
 Every family builds the ordered union `8/10/12/14/16/18/22`.
 
-## Future GitHub Pages catalog
+## GitHub Pages catalog
 
-- Editorial card layout.
-- Samples rendered from actual built `.cpfont` data in 1-bit monochrome.
-- Simplified Chinese, Traditional Chinese, Japanese, and English UI.
+- Public URL: `https://aber0724.github.io/crosspoint-cjk-fonts/`
+- Web catalog endpoint: `https://aber0724.github.io/crosspoint-cjk-fonts/catalog.json`
+- Editorial card layout with Simplified Chinese, Traditional Chinese, Japanese, and English UI.
+- Preview PNGs are rendered from actual built `.cpfont v4` 2-bit bitmap data at 14/18/22 pt.
+- The preview renderer uses stored intervals, glyph metrics, fp4 advances, kerning, ligatures, baseline, and fallback behavior. It does not render the source TTF/OTF.
 - Browser-language default with a `localStorage` override.
-- Seven direct `.cpfont` downloads per family; no family ZIP.
-- Secondary custom-font CTA configured by `FONT_MAKER_URL`.
-- Default CTA target until a public app exists:
-  `https://github.com/aBER0724/xteink-cjk-font-maker`
-- Do not claim Font Maker exports `.cpfont` v4; its current outputs are `legacy-bin` and experimental `xbf2`.
+- Seven direct Release `.cpfont` downloads per family; no family ZIP and no binary copy on Pages.
+- Secondary custom-font CTA target: `https://github.com/aBER0724/crosspoint-cjk-font-maker`.
+- Font Maker's approved current-format workflow is specified separately; its existing `legacy-bin` and experimental `xbf2` outputs remain legacy tools until that implementation is deployed.
+- Pages is not a device-compatible binary mirror. The firmware manifest endpoint remains the versioned GitHub Release.
 
 ## Future community submissions
 
