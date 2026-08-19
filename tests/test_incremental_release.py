@@ -35,6 +35,9 @@ class IncrementalReleaseTest(unittest.TestCase):
         changed["display_names"] = {"en": "Changed", "zh": "Changed", "ja": "Changed"}
         changed["languages"] = ["ja"]
         changed["category"] = "display"
+        changed["license_type"] = "personal-use"
+        changed.pop("license_url", None)
+        changed.pop("source_url", None)
         self.assertEqual(first, self.module.family_fingerprint(self.document, changed))
 
     def test_fingerprint_tracks_inputs_that_change_cpfont_bytes(self):
@@ -51,6 +54,24 @@ class IncrementalReleaseTest(unittest.TestCase):
         sizes_changed = json.loads(json.dumps(self.document))
         sizes_changed["reader_sizes"] = [14, 16, 18, 20, 22]
         self.assertNotEqual(first, self.module.family_fingerprint(sizes_changed, self.family))
+
+    def test_uploaded_source_cache_key_tracks_content_and_build_options(self):
+        with tempfile.TemporaryDirectory(dir=ROOT) as directory:
+            path = Path(directory) / "font.zip"
+            path.write_bytes(b"font archive")
+            relative = path.relative_to(ROOT).as_posix()
+            family = {"source": {"path": relative, "archive_member": "a.ttf"}}
+            first = self.module.source_cache_key(family)
+
+            changed_member = {"source": {"path": relative, "archive_member": "b.ttf"}}
+            changed_axis = {
+                "source": {"path": relative, "archive_member": "a.ttf", "variable": {"wght": 400}}
+            }
+            self.assertNotEqual(first, self.module.source_cache_key(changed_member))
+            self.assertNotEqual(first, self.module.source_cache_key(changed_axis))
+
+            path.write_bytes(b"changed archive")
+            self.assertNotEqual(first, self.module.source_cache_key(family))
 
     def test_plan_reuses_matching_family_and_builds_new_family(self):
         previous_manifest = {
@@ -95,7 +116,9 @@ class IncrementalReleaseTest(unittest.TestCase):
                             self.document, self.family["name"]
                         )
                     ],
-                    "license": "OFL-1.1",
+                    "license": "commercial-use",
+                    "licenseType": "commercial-use",
+                    "licenseStatus": "declared",
                     "licenseUrl": "https://example.invalid/license",
                     "sourceUrl": "https://example.invalid/source",
                 }
@@ -118,7 +141,9 @@ class IncrementalReleaseTest(unittest.TestCase):
                         {"name": filename, "size": 4, "sha256": "b" * 64}
                         for filename in self.module.expected_family_filenames(current, "NewFamily")
                     ],
-                    "license": "OFL-1.1",
+                    "license": "commercial-use",
+                    "licenseType": "commercial-use",
+                    "licenseStatus": "declared",
                     "licenseUrl": "https://example.invalid/license",
                     "sourceUrl": "https://example.invalid/source",
                 }

@@ -188,6 +188,23 @@ class PagesWorkflowTest(unittest.TestCase):
         mobile_css = css[css.index("@media (max-width: 640px)") :]
         self.assertNotIn(".downloads {", mobile_css)
 
+    def test_license_type_labels_are_localized_and_optional_links_are_safe(self):
+        script = PAGE_JS.read_text(encoding="utf-8")
+
+        self.assertIn('"commercial-use": "Commercial use allowed"', script)
+        self.assertIn('"personal-use": "Personal use only"', script)
+        self.assertIn('"not-provided": "License not provided"', script)
+        self.assertIn('"commercial-use": "免费商用"', script)
+        self.assertIn('"personal-use": "仅限个人使用"', script)
+        self.assertIn('"not-provided": "未填写许可"', script)
+        self.assertIn('"commercial-use": "商用利用可"', script)
+        self.assertIn('"personal-use": "個人利用のみ"', script)
+        self.assertIn("if (family.sourceUrl)", script)
+        self.assertIn("else source.remove();", script)
+        self.assertIn("if (family.licenseUrl)", script)
+        self.assertIn("else license.remove();", script)
+        self.assertNotIn('verified: "Verified"', script)
+
     def test_every_family_declares_filter_metadata(self):
         document = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
 

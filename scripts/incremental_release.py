@@ -163,6 +163,20 @@ def validate_manifest_family(document: dict, family: dict) -> None:
             raise RuntimeError(f"{entry.get('name', name)}: invalid SHA-256")
 
 
+def source_cache_key(family: dict, *, ref: str | None = None) -> str:
+    source = family["source"]
+    if source.get("sha256"):
+        return source["sha256"]
+    path = source["path"]
+    data = repository_bytes(path, ref) if ref else (ROOT / path).read_bytes()
+    payload = {
+        "fileSha256": sha256_bytes(data),
+        "archiveMember": source.get("archive_member"),
+        "variable": source.get("variable"),
+    }
+    return canonical_hash(payload)
+
+
 def build_index_document(
     document: dict,
     manifest: dict | None = None,
@@ -176,7 +190,7 @@ def build_index_document(
         name = family["name"]
         entry: dict[str, Any] = {
             "fingerprint": family_fingerprint(document, family, ref),
-            "sourceSha256": family["source"]["sha256"],
+            "sourceSha256": source_cache_key(family, ref=ref),
         }
         if name in manifest_by_name:
             validate_manifest_family(document, manifest_by_name[name])
@@ -261,12 +275,19 @@ def plan_release(
 
 
 def public_family_metadata(config_family: dict) -> dict:
-    return {
+    license_type = config_family.get("license_type")
+    result = {
         "description": config_family["description"],
-        "license": config_family["license"],
-        "licenseUrl": config_family["license_url"],
-        "sourceUrl": config_family["source_url"],
+        "license": license_type or "not-provided",
+        "licenseStatus": "declared" if license_type else "not-provided",
     }
+    if license_type:
+        result["licenseType"] = license_type
+    if config_family.get("license_url"):
+        result["licenseUrl"] = config_family["license_url"]
+    if config_family.get("source_url"):
+        result["sourceUrl"] = config_family["source_url"]
+    return result
 
 
 def merge_manifest(
@@ -510,7 +531,7 @@ def command_source_sha(args: argparse.Namespace) -> int:
     family = next((item for item in document.get("families", []) if item["name"] == args.family), None)
     if family is None:
         raise RuntimeError(f"Unknown family: {args.family}")
-    print(family["source"]["sha256"])
+    print(source_cache_key(family))
     return 0
 
 

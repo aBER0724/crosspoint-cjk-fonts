@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - config/fonts.yaml
+      - community-fonts/**
       - scripts/build_fonts.py
       - scripts/fontconvert_sdcard.py
       - scripts/cpfont_version.py

@@ -28,7 +28,7 @@ class ZenMaruSubmissionTest(unittest.TestCase):
                 "description": "Soft Japanese rounded sans-serif with kanji and kana",
                 "category": "rounded-sans",
                 "languages": ["ja"],
-                "license": "OFL-1.1",
+                "license_type": "commercial-use",
                 "license_url": "https://github.com/google/fonts/blob/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic/OFL.txt",
                 "source_url": "https://github.com/google/fonts/tree/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic",
                 "intervals": "latin-ext,cjk",

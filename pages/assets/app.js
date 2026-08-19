@@ -7,7 +7,9 @@ const COPY = {
     categories: { "sans-serif": "Sans serif", serif: "Serif", handwriting: "Handwriting", "rounded-sans": "Rounded sans", display: "Display", fangsong: "Fangsong" },
     downloads: "Download physical sizes", source: "Source", license: "License", manifest: "Release manifest", maker: "Make a custom font", theme: "Theme", themeLight: "Light", themeDark: "Dark", themeSystem: "System",
     footer: "Pages hosts only this catalog and compact PNG previews. Font binaries remain on GitHub Release.",
-    verified: "Verified", loading: "Loading catalog…", empty: "No matching fonts.", error: "Catalog unavailable. Try again later.", families: count => `${count} font ${count === 1 ? "family" : "families"}`,
+    licenseTypes: { "commercial-use": "Commercial use allowed", "personal-use": "Personal use only", "not-provided": "License not provided" },
+    licenseStatuses: { declared: "Self-declared", "not-provided": "Not provided" },
+    loading: "Loading catalog…", empty: "No matching fonts.", error: "Catalog unavailable. Try again later.", families: count => `${count} font ${count === 1 ? "family" : "families"}`,
   },
   zh: {
     title: "CJK 字体目录",
@@ -17,7 +19,9 @@ const COPY = {
     categories: { "sans-serif": "无衬线体", serif: "衬线体", handwriting: "手写体", "rounded-sans": "圆体", display: "展示体", fangsong: "仿宋体" },
     downloads: "下载物理字号", source: "字体来源", license: "授权", manifest: "Release 清单", maker: "制作自制字体", theme: "主题", themeLight: "浅色", themeDark: "深色", themeSystem: "跟随系统",
     footer: "Pages 只托管目录和轻量 PNG 预览；字体二进制仍由 GitHub Release 分发。",
-    verified: "已核验", loading: "正在加载字体目录…", empty: "没有匹配的字体。", error: "字体目录暂时不可用，请稍后重试。", families: count => `${count} 个字体家族`,
+    licenseTypes: { "commercial-use": "免费商用", "personal-use": "仅限个人使用", "not-provided": "未填写许可" },
+    licenseStatuses: { declared: "投稿者声明", "not-provided": "未填写" },
+    loading: "正在加载字体目录…", empty: "没有匹配的字体。", error: "字体目录暂时不可用，请稍后重试。", families: count => `${count} 个字体家族`,
   },
   ja: {
     title: "CJK フォントカタログ",
@@ -25,9 +29,11 @@ const COPY = {
     searchLabel: "フォント検索", searchPlaceholder: "名前または説明", languageLabel: "言語", categoryLabel: "分類", previewLabel: "プレビューサイズ", all: "すべて",
     languages: { "zh-Hans": "簡体字中国語", "zh-Hant": "繁体字中国語", ja: "日本語" },
     categories: { "sans-serif": "ゴシック体", serif: "明朝体", handwriting: "手書き体", "rounded-sans": "丸ゴシック体", display: "ディスプレイ体", fangsong: "仿宋体" },
-    downloads: "物理サイズをダウンロード", source: "出典", license: "ライセンス", manifest: "Release マニフェスト", maker: "個人用フォントを作成", theme: "テーマ", themeLight: "ライト", themeDark: "ダーク", themeSystem: "システム",
+    downloads: "物理サイズをダウンロード", source: "入手元", license: "ライセンス", manifest: "Release マニフェスト", maker: "個人用フォントを作成", theme: "テーマ", themeLight: "ライト", themeDark: "ダーク", themeSystem: "システム",
     footer: "Pages はカタログと軽量 PNG のみを配信し、フォント本体は GitHub Release に置かれます。",
-    verified: "確認済み", loading: "カタログを読み込み中…", empty: "該当するフォントはありません。", error: "カタログを読み込めませんでした。", families: count => `${count} ファミリー`,
+    licenseTypes: { "commercial-use": "商用利用可", "personal-use": "個人利用のみ", "not-provided": "ライセンス未記入" },
+    licenseStatuses: { declared: "投稿者申告", "not-provided": "未記入" },
+    loading: "カタログを読み込み中…", empty: "該当するフォントはありません。", error: "カタログを読み込めませんでした。", families: count => `${count} ファミリー`,
   },
 };
 
@@ -163,6 +169,14 @@ function familyDisplayName(family) {
   return family.displayNames[state.locale] || family.displayNames.en || family.name;
 }
 
+function licenseTypeLabel(family) {
+  return COPY[state.locale].licenseTypes[family.licenseType || "not-provided"] || family.licenseType || COPY[state.locale].licenseTypes["not-provided"];
+}
+
+function licenseStatusLabel(family) {
+  return COPY[state.locale].licenseStatuses[family.licenseStatus] || family.licenseStatus;
+}
+
 function render() {
   if (!state.catalog) return;
   const copy = COPY[state.locale];
@@ -182,14 +196,14 @@ function render() {
     fragment.querySelector("h2").textContent = displayName;
     fragment.querySelector(".family-id").textContent = family.name;
     fragment.querySelector(".description").textContent = family.description;
-    fragment.querySelector(".license-status").textContent = family.licenseStatus === "verified" ? copy.verified : family.licenseStatus;
+    fragment.querySelector(".license-status").textContent = licenseStatusLabel(family);
     const preview = fragment.querySelector(".preview");
     preview.src = family.previews[state.previewSize];
     preview.alt = `${displayName}, ${state.previewSize} pt`;
     updatePreviewAppearance(preview, resolvedTheme() === "dark");
     preview.addEventListener("error", () => preview.classList.add("is-broken"), { once: true });
     fragment.querySelector(".tags").textContent = [...family.languages, family.category].filter(Boolean).join(" · ");
-    fragment.querySelector(".license").textContent = family.license;
+    fragment.querySelector(".license").textContent = licenseTypeLabel(family);
     const downloads = fragment.querySelector(".downloads");
     downloads.setAttribute("aria-label", `${family.name}: ${copy.downloads}`);
     family.files.forEach(file => {
@@ -201,8 +215,12 @@ function render() {
       link.rel = "noopener noreferrer";
       downloads.append(link);
     });
-    const source = fragment.querySelector(".source-link"); source.href = family.sourceUrl; source.textContent = copy.source;
-    const license = fragment.querySelector(".license-link"); license.href = family.licenseUrl; license.textContent = copy.license;
+    const source = fragment.querySelector(".source-link");
+    if (family.sourceUrl) { source.href = family.sourceUrl; source.textContent = copy.source; }
+    else source.remove();
+    const license = fragment.querySelector(".license-link");
+    if (family.licenseUrl) { license.href = family.licenseUrl; license.textContent = copy.license; }
+    else license.remove();
     nodes.catalog.append(fragment);
   });
   nodes.status.textContent = families.length ? copy.families(families.length) : copy.empty;

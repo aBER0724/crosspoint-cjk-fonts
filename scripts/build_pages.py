@@ -177,12 +177,19 @@ def build_site(
         for family_name in sorted(config_families):
             editorial = config_families[family_name]
             published = manifest_families[family_name]
-            for config_key, manifest_key in (
-                ("description", "description"),
-                ("license", "license"),
-                ("license_url", "licenseUrl"),
-                ("source_url", "sourceUrl"),
-            ):
+            for config_key, manifest_key in (("description", "description"),):
+                if editorial.get(config_key) != published.get(manifest_key):
+                    raise CatalogBuildError(
+                        f"{family_name}: config and manifest metadata disagree for {config_key}"
+                    )
+            expected_license_type = editorial.get("license_type")
+            expected_license = expected_license_type or "not-provided"
+            expected_license_status = "declared" if expected_license_type else "not-provided"
+            if published.get("license") != expected_license:
+                raise CatalogBuildError(f"{family_name}: config and manifest metadata disagree for license_type")
+            if published.get("licenseStatus", expected_license_status) != expected_license_status:
+                raise CatalogBuildError(f"{family_name}: config and manifest metadata disagree for license_status")
+            for config_key, manifest_key in (("license_url", "licenseUrl"), ("source_url", "sourceUrl")):
                 if editorial.get(config_key) != published.get(manifest_key):
                     raise CatalogBuildError(
                         f"{family_name}: config and manifest metadata disagree for {config_key}"
@@ -220,22 +227,29 @@ def build_site(
                 result.image.save(previews_dir / preview_name, format="PNG", optimize=True)
                 previews[str(size)] = urljoin(site_url, f"previews/{preview_name}")
 
-            catalog_families.append(
-                {
-                    "name": family_name,
-                    "displayNames": display_names,
-                    "description": editorial["description"],
-                    "category": editorial.get("category", "other"),
-                    "languages": languages,
-                    "styles": published.get("styles", []),
-                    "license": editorial["license"],
-                    "licenseStatus": editorial.get("license_status", "verified"),
-                    "licenseUrl": _https_url(editorial["license_url"], f"{family_name} license URL"),
-                    "sourceUrl": _https_url(editorial["source_url"], f"{family_name} source URL"),
-                    "files": files,
-                    "previews": previews,
-                }
-            )
+            family_entry = {
+                "name": family_name,
+                "displayNames": display_names,
+                "description": editorial["description"],
+                "category": editorial.get("category", "other"),
+                "languages": languages,
+                "styles": published.get("styles", []),
+                "license": expected_license,
+                "licenseStatus": expected_license_status,
+                "files": files,
+                "previews": previews,
+            }
+            if expected_license_type:
+                family_entry["licenseType"] = expected_license_type
+            if editorial.get("license_url"):
+                family_entry["licenseUrl"] = _https_url(
+                    editorial["license_url"], f"{family_name} license URL"
+                )
+            if editorial.get("source_url"):
+                family_entry["sourceUrl"] = _https_url(
+                    editorial["source_url"], f"{family_name} source URL"
+                )
+            catalog_families.append(family_entry)
 
         catalog = {
             "schemaVersion": WEB_CATALOG_VERSION,
