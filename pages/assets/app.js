@@ -117,6 +117,7 @@ function render() {
     fragment.querySelector(".tags").textContent = [...family.languages, family.category].filter(Boolean).join(" · ");
     fragment.querySelector(".license").textContent = family.license;
     const downloads = fragment.querySelector(".downloads");
+    downloads.setAttribute("aria-label", `${family.name}: ${copy.downloads}`);
     family.files.forEach(file => {
       const link = document.createElement("a");
       link.href = file.downloadUrl; link.textContent = `${file.physicalSize} pt\n${humanBytes(file.byteSize)}`; link.rel = "noopener noreferrer";
@@ -124,7 +125,6 @@ function render() {
     });
     const source = fragment.querySelector(".source-link"); source.href = family.sourceUrl; source.textContent = copy.source;
     const license = fragment.querySelector(".license-link"); license.href = family.licenseUrl; license.textContent = copy.license;
-    fragment.querySelector("summary").textContent = copy.downloads;
     nodes.catalog.append(fragment);
   });
   nodes.status.textContent = families.length ? copy.families(families.length) : copy.empty;

@@ -12,6 +12,7 @@ PAGES_WORKFLOW = ROOT / ".github" / "workflows" / "deploy-pages.yml"
 CONFIG = ROOT / "config" / "fonts.yaml"
 PAGE_HTML = ROOT / "pages" / "index.html"
 PAGE_CSS = ROOT / "pages" / "assets" / "app.css"
+PAGE_JS = ROOT / "pages" / "assets" / "app.js"
 
 
 class PagesWorkflowTest(unittest.TestCase):
@@ -72,6 +73,19 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertNotIn("#f4f1e8", css)
         self.assertIn('<div id="preview-size" class="preview-size-switch" role="group"', html)
         self.assertNotIn('<select id="preview-size"', html)
+
+    def test_font_cards_show_direct_download_buttons_without_an_expander(self):
+        html = PAGE_HTML.read_text(encoding="utf-8")
+        css = PAGE_CSS.read_text(encoding="utf-8")
+        script = PAGE_JS.read_text(encoding="utf-8")
+
+        self.assertIn('<div class="downloads" role="group" aria-label="Download physical sizes"></div>', html)
+        self.assertNotIn("<details>", html)
+        self.assertNotIn("<summary", html)
+        self.assertNotIn('fragment.querySelector("summary")', script)
+        self.assertIn('downloads.setAttribute("aria-label", `${family.name}: ${copy.downloads}`);', script)
+        self.assertIn("grid-template-columns: repeat(4, minmax(0, 1fr));", css)
+        self.assertIn("min-height: 36px;", css)
 
     def test_every_family_declares_filter_metadata(self):
         document = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
