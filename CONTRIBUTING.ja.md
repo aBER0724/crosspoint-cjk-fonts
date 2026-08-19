@@ -36,8 +36,8 @@ community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 
 ```yaml
   - name: ExampleSansJP
-    display_names: {en: "Example Sans", zh: "Example Sans", ja: "Example Sans"}
-    description: "Japanese sans-serif with kana and kanji"
+    display_names: {en: "Example Sans"}
+    # 任意：適切な名前や説明がある場合だけ zh、ja、description を追加します。
     category: sans-serif
     languages: [ja]
     source_url: "https://example.com/example-sans" # 任意
@@ -52,14 +52,14 @@ community-fonts/ExampleSansJP/ExampleSans-Regular.ttf
 | --- | --- | --- |
 | `name` | 必須 | 安定した ASCII ファミリー ID。`community-fonts/<FamilyId>/` と一致させ、`.cpfont` のファイル名にも使います。 |
 | `display_names.en` | 必須 | 英語表示名。別の英語名がなければ既知のフォント名をそのまま使えます。 |
-| `display_names.zh` | 必須 | 中国語表示名。定着した名称がなければフォント名をそのまま使えます。 |
-| `display_names.ja` | 必須 | 日本語表示名。定着した名称がなければフォント名をそのまま使えます。 |
-| `description` | 必須 | スタイルと収録範囲を説明する短い英語文。 |
+| `display_names.zh` | 任意 | 中国語表示名。省略した場合、サイトは `display_names.en` を使います。 |
+| `display_names.ja` | 任意 | 日本語表示名。省略した場合、サイトは `display_names.en` を使います。 |
+| `description` | 任意 | スタイルや収録範囲を説明する短い英語文。不要なら省略できます。 |
 | `category` | 必須 | `sans-serif`、`serif`、`rounded-sans`、`handwriting`、`fangsong`、`display` のいずれか。 |
 | `languages` | 必須 | 実際に収録する言語。`zh-Hans`、`zh-Hant`、`ja` から選びます。複数指定できます。 |
 | `source_url` | 任意 | フォント公式サイト、プロジェクトページ、またはソースリポジトリ。URL がなければ省略します。 |
 | `intervals` | 必須 | 通常は `latin-ext,cjk`。 |
-| `force_autohint` | 任意 | 通常の描画が明らかに悪い場合だけ `true` にし、PR に理由を書いてください。 |
+| `force_autohint` | 任意 | ビットマップ生成時の FreeType hint（ピクセル位置の調整）を制御します。省略または `false` ではフォント本来の hint を使います。小サイズで線の位置や太さが明らかに不揃いな場合は `true` にして、FreeType に hint を自動生成させます。 |
 | `source.path` | アップロード時は必須 | `community-fonts/<FamilyId>/` 以下に置いた TTF、OTF、ZIP のパス。 |
 | `source.archive_member` | ZIP の場合は必須 | ZIP 内で使用する `.ttf` または `.otf` の正確なパス。 |
 | `source.variable` | Variable Font の場合は必須 | 静的インスタンスを作る軸値。例：`variable: {wght: 400}`。 |

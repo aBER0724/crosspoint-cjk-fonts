@@ -23,7 +23,6 @@ except ImportError:
 WEB_CATALOG_VERSION = 1
 MANIFEST_VERSION = 2
 EXPECTED_ALL_SIZES = [8, 10, 12, 14, 16, 18, 22]
-EXPECTED_DISPLAY_NAME_LOCALES = {"en", "zh", "ja"}
 DISALLOWED_SUFFIXES = {".cpfont", ".ttf", ".otf", ".zip", ".rar", ".7z"}
 
 
@@ -118,11 +117,20 @@ def _file_entry(entry: dict, family_name: str, base_url: str) -> dict:
 
 
 def _localized_display_names(value: object, family_name: str) -> dict[str, str]:
-    if not isinstance(value, dict) or set(value) != EXPECTED_DISPLAY_NAME_LOCALES:
-        raise CatalogBuildError(f"{family_name}: localized display names must define en, zh, and ja")
-    if not all(isinstance(name, str) and name.strip() for name in value.values()):
-        raise CatalogBuildError(f"{family_name}: localized display names must be non-empty strings")
-    return {locale: value[locale].strip() for locale in ("en", "zh", "ja")}
+    if not isinstance(value, dict):
+        raise CatalogBuildError(f"{family_name}: display_names.en must be a non-empty string")
+    english = value.get("en")
+    if not isinstance(english, str) or not english.strip():
+        raise CatalogBuildError(f"{family_name}: display_names.en must be a non-empty string")
+    result = {"en": english.strip()}
+    for locale in ("zh", "ja"):
+        localized = value.get(locale, english)
+        if not isinstance(localized, str) or not localized.strip():
+            raise CatalogBuildError(
+                f"{family_name}: display_names.{locale} must be a non-empty string when provided"
+            )
+        result[locale] = localized.strip()
+    return result
 
 
 def _copy_static_source(source_dir: Path, output_dir: Path) -> None:
@@ -177,11 +185,10 @@ def build_site(
         for family_name in sorted(config_families):
             editorial = config_families[family_name]
             published = manifest_families[family_name]
-            for config_key, manifest_key in (("description", "description"),):
-                if editorial.get(config_key) != published.get(manifest_key):
-                    raise CatalogBuildError(
-                        f"{family_name}: config and manifest metadata disagree for {config_key}"
-                    )
+            if editorial.get("description") != published.get("description"):
+                raise CatalogBuildError(
+                    f"{family_name}: config and manifest metadata disagree for description"
+                )
             if editorial.get("source_url") != published.get("sourceUrl"):
                 raise CatalogBuildError(
                     f"{family_name}: config and manifest metadata disagree for source_url"
@@ -222,13 +229,14 @@ def build_site(
             family_entry = {
                 "name": family_name,
                 "displayNames": display_names,
-                "description": editorial["description"],
                 "category": editorial.get("category", "other"),
                 "languages": languages,
                 "styles": published.get("styles", []),
                 "files": files,
                 "previews": previews,
             }
+            if editorial.get("description"):
+                family_entry["description"] = editorial["description"]
             if editorial.get("source_url"):
                 family_entry["sourceUrl"] = _https_url(
                     editorial["source_url"], f"{family_name} source URL"

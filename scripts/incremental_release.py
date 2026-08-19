@@ -285,14 +285,18 @@ def plan_release(
 
 
 def public_family_metadata(config_family: dict) -> dict:
-    result = {"description": config_family["description"]}
+    result = {}
+    if config_family.get("description"):
+        result["description"] = config_family["description"]
     if config_family.get("source_url"):
         result["sourceUrl"] = config_family["source_url"]
     return result
 
 
 def normalized_public_family(family: dict) -> dict:
-    result = {"description": family.get("description")}
+    result = {}
+    if family.get("description"):
+        result["description"] = family["description"]
     if family.get("sourceUrl"):
         result["sourceUrl"] = family["sourceUrl"]
     if any(key in family for key in ("license", "licenseType", "licenseStatus", "licenseUrl")):

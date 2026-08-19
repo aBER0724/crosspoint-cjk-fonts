@@ -60,6 +60,30 @@ class UploadedFontSourceTest(unittest.TestCase):
                     family["source_url"] = source_url
                 self.assertEqual(self.validate.validate_document(self.document(family), root=root), [])
 
+    def test_only_english_display_name_is_required_and_description_is_optional(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            font_path = root / "community-fonts" / "UploadedCJK" / "UploadedCJK-Regular.ttf"
+            font_path.parent.mkdir(parents=True)
+            font_path.write_bytes(b"font")
+            family = dict(self.base_family)
+            family["display_names"] = {"en": "Uploaded CJK"}
+            family.pop("description")
+
+            self.assertEqual(self.validate.validate_document(self.document(family), root=root), [])
+
+    def test_rejects_missing_or_blank_english_display_name(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            font_path = root / "community-fonts" / "UploadedCJK" / "UploadedCJK-Regular.ttf"
+            font_path.parent.mkdir(parents=True)
+            font_path.write_bytes(b"font")
+            for display_names in ({}, {"en": ""}, {"zh": "上传字体"}):
+                family = dict(self.base_family)
+                family["display_names"] = display_names
+                errors = self.validate.validate_document(self.document(family), root=root)
+                self.assertTrue(any("display_names.en" in error for error in errors), errors)
+
     def test_rejects_removed_license_metadata(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

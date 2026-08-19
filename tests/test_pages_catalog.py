@@ -211,17 +211,24 @@ class PagesCatalogTest(unittest.TestCase):
         with self.assertRaisesRegex(CatalogBuildError, "preview file"):
             self.build()
 
-    def test_rejects_missing_or_invalid_localized_display_names(self):
-        missing = yaml.safe_load(self.config_path.read_text(encoding="utf-8"))
-        del missing["families"][0]["display_names"]["zh"]
-        self.config_path.write_text(yaml.safe_dump(missing, sort_keys=False, allow_unicode=True), encoding="utf-8")
-        with self.assertRaisesRegex(CatalogBuildError, "localized display names"):
-            self.build()
+    def test_optional_localized_names_fall_back_to_english_and_description_may_be_omitted(self):
+        minimal = yaml.safe_load(self.config_path.read_text(encoding="utf-8"))
+        minimal["families"][0]["display_names"] = {"en": "Example CJK"}
+        minimal["families"][0].pop("description")
+        self.config_path.write_text(yaml.safe_dump(minimal, sort_keys=False, allow_unicode=True), encoding="utf-8")
+        self.manifest["families"][0].pop("description")
+        self.manifest_path.write_text(json.dumps(self.manifest), encoding="utf-8")
 
+        family = self.build()["families"][0]
+
+        self.assertEqual(family["displayNames"], {"en": "Example CJK", "zh": "Example CJK", "ja": "Example CJK"})
+        self.assertNotIn("description", family)
+
+    def test_rejects_missing_or_blank_english_display_name(self):
         invalid = yaml.safe_load(yaml.safe_dump(self.config, sort_keys=False, allow_unicode=True))
-        invalid["families"][0]["display_names"]["ja"] = ""
+        invalid["families"][0]["display_names"] = {"zh": "示例字体"}
         self.config_path.write_text(yaml.safe_dump(invalid, sort_keys=False, allow_unicode=True), encoding="utf-8")
-        with self.assertRaisesRegex(CatalogBuildError, "localized display names"):
+        with self.assertRaisesRegex(CatalogBuildError, "display_names.en"):
             self.build()
 
     def test_rejects_unsafe_urls_and_unexpected_size_set(self):

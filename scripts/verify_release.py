@@ -43,9 +43,8 @@ def main() -> int:
     families = manifest.get("families", [])
     for family in families:
         name = family.get("name", "<unnamed>")
-        for key in ("description",):
-            if not family.get(key):
-                errors.append(f"{name}: missing {key}")
+        if "description" in family and not family.get("description"):
+            errors.append(f"{name}: invalid description")
         if "sourceUrl" in family and not family.get("sourceUrl"):
             errors.append(f"{name}: invalid sourceUrl")
         for entry in family.get("files", []):
