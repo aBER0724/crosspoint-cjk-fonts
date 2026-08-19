@@ -27,7 +27,8 @@ const COPY = {
 
 const THEME_STORAGE_KEY = "crosspoint-font-catalog-theme";
 const THEME_MODES = ["light", "dark", "system"];
-const state = { catalog: null, locale: "en", themeMode: "system", prefersDark: false, query: "", language: "", category: "", previewSize: "14" };
+const DEFAULT_PREVIEW_SIZE = "18";
+const state = { catalog: null, locale: "en", themeMode: "system", prefersDark: false, query: "", language: "", category: "", previewSize: DEFAULT_PREVIEW_SIZE };
 const nodes = {
   catalog: document.querySelector("#catalog"), status: document.querySelector("#status"), search: document.querySelector("#search"),
   language: document.querySelector("#language-filter"), category: document.querySelector("#category-filter"), previewSize: document.querySelector("#preview-size"), theme: document.querySelector("#theme-switcher"),
@@ -204,7 +205,9 @@ async function loadCatalog() {
     const response = await fetch("catalog.json", { cache: "no-cache" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     state.catalog = validateCatalog(await response.json());
-    state.previewSize = String(state.catalog.previewSizes[0]);
+    state.previewSize = state.catalog.previewSizes.map(String).includes(DEFAULT_PREVIEW_SIZE)
+      ? DEFAULT_PREVIEW_SIZE
+      : String(state.catalog.previewSizes[0]);
     nodes.manifest.href = state.catalog.manifestUrl;
     render();
   } catch (error) {
