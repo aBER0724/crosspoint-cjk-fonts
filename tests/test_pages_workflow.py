@@ -106,15 +106,19 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertEqual(html.count('id="maker-link"'), 1)
         self.assertNotIn("nodes.maker.href = state.catalog.fontMakerUrl;", script)
 
-    def test_mobile_locale_and_theme_controls_share_one_row(self):
+    def test_locale_and_theme_controls_share_one_row_at_every_width(self):
         css = PAGE_CSS.read_text(encoding="utf-8")
+        base_controls = css[css.index(".masthead__controls {") : css.index(".locale-switcher,", css.index(".masthead__controls {"))]
         mobile_css = css[css.index("@media (max-width: 640px)") :]
 
-        self.assertIn("grid-template-columns: minmax(0, auto) minmax(0, auto);", mobile_css)
-        self.assertIn("justify-content: end;", mobile_css)
-        self.assertIn("align-items: center;", mobile_css)
-        self.assertIn(".locale-switcher,\n  .theme-switcher", mobile_css)
-        self.assertNotIn("justify-self: end;", mobile_css)
+        self.assertIn("display: flex;", base_controls)
+        self.assertIn("align-items: center;", base_controls)
+        self.assertIn("justify-content: flex-end;", base_controls)
+        self.assertIn("overflow-x: auto;", base_controls)
+        self.assertNotIn("display: grid;", base_controls)
+        mobile_controls = mobile_css[mobile_css.index(".masthead__controls {") : mobile_css.index(".locale-switcher,")]
+        self.assertNotIn("grid-template-columns:", mobile_controls)
+        self.assertNotIn("justify-self: end;", mobile_controls)
 
     def test_theme_switcher_matches_maker_dark_mode_and_uses_transparent_device_previews(self):
         html = PAGE_HTML.read_text(encoding="utf-8")

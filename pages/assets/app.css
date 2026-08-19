@@ -139,10 +139,14 @@ h1 {
 }
 
 .masthead__controls {
-  display: grid;
+  display: flex;
+  min-width: 0;
   flex: none;
-  justify-items: end;
+  align-items: center;
+  justify-content: flex-end;
   gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .locale-switcher,
@@ -481,10 +485,7 @@ main {
   }
 
   .masthead__controls {
-    grid-template-columns: minmax(0, auto) minmax(0, auto);
     width: 100%;
-    align-items: center;
-    justify-content: end;
   }
 
   .locale-switcher,
