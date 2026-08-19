@@ -10,6 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD_WORKFLOW = ROOT / ".github" / "workflows" / "build-fonts.yml"
 PAGES_WORKFLOW = ROOT / ".github" / "workflows" / "deploy-pages.yml"
 CONFIG = ROOT / "config" / "fonts.yaml"
+PAGE_HTML = ROOT / "pages" / "index.html"
+PAGE_CSS = ROOT / "pages" / "assets" / "app.css"
 
 
 class PagesWorkflowTest(unittest.TestCase):
@@ -40,6 +42,34 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertNotIn("pages/**", push_block.split("  workflow_dispatch:", 1)[0])
         self.assertIn("github.event_name != 'push'", text)
         self.assertIn("python -m unittest discover -s tests -v", text)
+
+    def test_pages_source_keeps_runtime_hooks_and_font_maker_visual_tokens(self):
+        html = PAGE_HTML.read_text(encoding="utf-8")
+        css = PAGE_CSS.read_text(encoding="utf-8")
+
+        for hook in (
+            'id="catalog"',
+            'id="status"',
+            'id="search"',
+            'id="language-filter"',
+            'id="category-filter"',
+            'id="preview-size"',
+            'id="font-card-template"',
+            'id="manifest-link"',
+            'id="maker-link"',
+        ):
+            self.assertIn(hook, html)
+        for selector in ('class="description"', 'class="license-status"', 'class="preview"', 'class="tags"', 'class="license"', 'class="downloads"', 'class="source-link"', 'class="license-link"'):
+            self.assertIn(selector, html)
+
+        self.assertIn('--font-sans: "DM Sans", ui-sans-serif, sans-serif, system-ui;', css)
+        self.assertIn("--radius: 1rem;", css)
+        self.assertIn("--background: #ffffff;", css)
+        self.assertIn("--primary: #171717;", css)
+        self.assertIn("grid-template-columns: repeat(3, minmax(0, 1fr));", css)
+        self.assertIn('.locale-switcher button[aria-pressed="true"]', css)
+        self.assertNotIn("font-family: Georgia", css)
+        self.assertNotIn("#f4f1e8", css)
 
     def test_every_family_declares_filter_metadata(self):
         document = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
