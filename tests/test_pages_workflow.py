@@ -84,8 +84,13 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertNotIn("<summary", html)
         self.assertNotIn('fragment.querySelector("summary")', script)
         self.assertIn('downloads.setAttribute("aria-label", `${family.name}: ${copy.downloads}`);', script)
+        self.assertIn('link.textContent = `${file.physicalSize} pt`;', script)
+        self.assertIn('link.setAttribute("aria-label", `${file.physicalSize} pt, ${humanBytes(file.byteSize)}`);', script)
+        self.assertNotIn("white-space: pre-line;", css)
         self.assertIn("grid-template-columns: repeat(4, minmax(0, 1fr));", css)
-        self.assertIn("min-height: 36px;", css)
+        self.assertIn("min-height: 30px;", css)
+        mobile_css = css[css.index("@media (max-width: 640px)") :]
+        self.assertNotIn(".downloads {", mobile_css)
 
     def test_every_family_declares_filter_metadata(self):
         document = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))

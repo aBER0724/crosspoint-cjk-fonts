@@ -120,7 +120,11 @@ function render() {
     downloads.setAttribute("aria-label", `${family.name}: ${copy.downloads}`);
     family.files.forEach(file => {
       const link = document.createElement("a");
-      link.href = file.downloadUrl; link.textContent = `${file.physicalSize} pt\n${humanBytes(file.byteSize)}`; link.rel = "noopener noreferrer";
+      link.href = file.downloadUrl;
+      link.textContent = `${file.physicalSize} pt`;
+      link.setAttribute("aria-label", `${file.physicalSize} pt, ${humanBytes(file.byteSize)}`);
+      link.title = `${file.physicalSize} pt · ${humanBytes(file.byteSize)}`;
+      link.rel = "noopener noreferrer";
       downloads.append(link);
     });
     const source = fragment.querySelector(".source-link"); source.href = family.sourceUrl; source.textContent = copy.source;
