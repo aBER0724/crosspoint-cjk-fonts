@@ -3,7 +3,7 @@ const COPY = {
     title: "CJK font catalog",
     intro: "Preview the actual 2-bit device bitmaps, then download verified physical font files from GitHub Release.",
     searchLabel: "Search fonts", searchPlaceholder: "Name or description", languageLabel: "Language", categoryLabel: "Category", previewLabel: "Preview size", all: "All",
-    downloads: "Download physical sizes", source: "Source", license: "License", manifest: "Release manifest", maker: "Make a private font",
+    downloads: "Download physical sizes", source: "Source", license: "License", manifest: "Release manifest", maker: "Make a custom font",
     footer: "Pages hosts only this catalog and compact PNG previews. Font binaries remain on GitHub Release.",
     verified: "Verified", loading: "Loading catalog…", empty: "No matching fonts.", error: "Catalog unavailable. Try again later.", families: count => `${count} font ${count === 1 ? "family" : "families"}`,
   },
@@ -29,7 +29,7 @@ const state = { catalog: null, locale: "en", query: "", language: "", category: 
 const nodes = {
   catalog: document.querySelector("#catalog"), status: document.querySelector("#status"), search: document.querySelector("#search"),
   language: document.querySelector("#language-filter"), category: document.querySelector("#category-filter"), previewSize: document.querySelector("#preview-size"),
-  template: document.querySelector("#font-card-template"), manifest: document.querySelector("#manifest-link"), maker: document.querySelector("#maker-link"),
+  template: document.querySelector("#font-card-template"), manifest: document.querySelector("#manifest-link"),
 };
 
 function preferredLocale() {
@@ -154,7 +154,6 @@ async function loadCatalog() {
     state.catalog = validateCatalog(await response.json());
     state.previewSize = String(state.catalog.previewSizes[0]);
     nodes.manifest.href = state.catalog.manifestUrl;
-    nodes.maker.href = state.catalog.fontMakerUrl;
     render();
   } catch (error) {
     console.error(error);

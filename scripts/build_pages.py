@@ -262,7 +262,7 @@ def main() -> int:
         "--manifest-url",
         default="https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/fonts.json",
     )
-    parser.add_argument("--font-maker-url", default="https://github.com/aBER0724/crosspoint-cjk-font-maker")
+    parser.add_argument("--font-maker-url", default="https://crosspoint-cjk-font-maker.onrender.com/")
     args = parser.parse_args()
 
     catalog = build_site(
