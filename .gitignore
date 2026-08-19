@@ -1,6 +1,7 @@
 release-assets/*
 !release-assets/.gitkeep
 dist/
+site-dist/
 smoke-dist/
 .cache/
 vendor/
