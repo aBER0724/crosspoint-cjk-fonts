@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Real CrossPoint .cpfont v4 bitmap previews and verified Release downloads." />
+    <title>CrossPoint CJK Fonts</title>
+    <link rel="stylesheet" href="assets/app.css" />
+    <script type="module" src="assets/app.js"></script>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="masthead__copy">
+        <p class="eyebrow">CrossPoint Reader</p>
+        <h1 data-copy="title">CJK font catalog</h1>
+        <p class="intro" data-copy="intro">Preview the actual 2-bit device bitmaps, then download verified physical font files from GitHub Release.</p>
+      </div>
+      <nav class="locale-switcher" aria-label="Language">
+        <button type="button" data-locale="en">EN</button>
+        <button type="button" data-locale="zh">中文</button>
+        <button type="button" data-locale="ja">日本語</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="toolbar" aria-label="Catalog controls">
+        <label class="search-field">
+          <span data-copy="searchLabel">Search fonts</span>
+          <input id="search" type="search" autocomplete="off" data-copy-placeholder="searchPlaceholder" placeholder="Name or description" />
+        </label>
+        <label>
+          <span data-copy="languageLabel">Language</span>
+          <select id="language-filter"><option value="" data-copy="all">All</option></select>
+        </label>
+        <label>
+          <span data-copy="categoryLabel">Category</span>
+          <select id="category-filter"><option value="" data-copy="all">All</option></select>
+        </label>
+        <label>
+          <span data-copy="previewLabel">Preview size</span>
+          <select id="preview-size"></select>
+        </label>
+      </section>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <section id="catalog" class="catalog" aria-label="Font families"></section>
+    </main>
+
+    <template id="font-card-template">
+      <article class="font-card">
+        <header class="font-card__header">
+          <div>
+            <h2></h2>
+            <p class="description"></p>
+          </div>
+          <span class="license-status"></span>
+        </header>
+        <img class="preview" alt="" loading="lazy" decoding="async" />
+        <div class="font-meta">
+          <p class="tags"></p>
+          <p class="license"></p>
+        </div>
+        <details>
+          <summary data-copy="downloads">Download physical sizes</summary>
+          <div class="downloads"></div>
+        </details>
+        <footer>
+          <a class="source-link" target="_blank" rel="noopener noreferrer" data-copy="source">Source</a>
+          <a class="license-link" target="_blank" rel="noopener noreferrer" data-copy="license">License</a>
+        </footer>
+      </article>
+    </template>
+
+    <footer class="site-footer">
+      <p data-copy="footer">Pages hosts only this catalog and compact PNG previews. Font binaries remain on GitHub Release.</p>
+      <a id="manifest-link" target="_blank" rel="noopener noreferrer" data-copy="manifest">Release manifest</a>
+      <a id="maker-link" target="_blank" rel="noopener noreferrer" data-copy="maker">Make a private font</a>
+    </footer>
+  </body>
+</html>

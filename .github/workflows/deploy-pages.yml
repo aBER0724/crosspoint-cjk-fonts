@@ -1,0 +1,71 @@
+name: Deploy font catalog
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Publish font release"]
+    types: [completed]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+env:
+  RELEASE_TAG: sd-fonts-m2-b4
+  MANIFEST_URL: https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/fonts.json
+
+jobs:
+  build:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - name: Download published manifest
+        run: curl --fail --location --retry 3 --output release-assets/fonts.json "$MANIFEST_URL"
+      - name: Download verified preview font files
+        run: >-
+          python scripts/fetch_release_previews.py
+          --manifest release-assets/fonts.json
+          --output .cache/pages-fonts
+          --sizes 14,18,22
+      - name: Build static catalog
+        run: >-
+          python scripts/build_pages.py
+          --manifest release-assets/fonts.json
+          --fonts .cache/pages-fonts
+          --output site-dist
+      - run: python -m unittest discover -s tests -v
+      - run: |
+          test -f site-dist/index.html
+          test -f site-dist/catalog.json
+          test "$(find site-dist/previews -type f -name '*.png' | wc -l)" -eq 45
+          if find site-dist -type f \( -name '*.cpfont' -o -name '*.ttf' -o -name '*.otf' -o -name '*.zip' \) | grep -q .; then
+            echo "Forbidden font payload found in Pages artifact" >&2
+            exit 1
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site-dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

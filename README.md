@@ -4,6 +4,14 @@ Reproducible build and GitHub Release hosting for optional CrossPoint Reader CJK
 
 The generated binaries are deliberately excluded from Git history. GitHub Actions downloads SHA-256-locked upstream font sources, converts them into device-native files, generates `fonts.json`, verifies every asset, and publishes the catalog as the `sd-fonts-m2-b4` Release.
 
+A lightweight browser catalog is generated for GitHub Pages at:
+
+```text
+https://aber0724.github.io/crosspoint-cjk-fonts/
+```
+
+Pages contains only HTML, JSON metadata, and compact PNG previews decoded from the real `.cpfont v4` 2-bit bitmaps. All font downloads continue to point directly at the versioned GitHub Release.
+
 ## Catalog
 
 The current catalog contains 15 OFL-1.1 families for Simplified Chinese,
@@ -47,10 +55,30 @@ python scripts/build_fonts.py --clean --only NotoSansSC
 
 Generated files are written under `dist/` and are ignored by Git.
 
+## Local Pages build
+
+The Pages generator needs the published manifest and only the three preview sizes for each family:
+
+```bash
+mkdir -p release-assets .cache/pages-fonts
+python -c "import urllib.request; urllib.request.urlretrieve('https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/fonts.json', 'release-assets/fonts.json')"
+python scripts/fetch_release_previews.py \
+  --manifest release-assets/fonts.json \
+  --output .cache/pages-fonts \
+  --sizes 14,18,22
+python scripts/build_pages.py \
+  --manifest release-assets/fonts.json \
+  --fonts .cache/pages-fonts \
+  --output site-dist
+```
+
+Open `site-dist/index.html` through a local static HTTP server. The generated `catalog.json` is web schema 1 and records `.cpfont` version 4 plus Release manifest version 2.
+
 ## GitHub Actions
 
-- **Build font catalog** validates every pull request. A manually dispatched run can build either the full catalog or one smoke-test family and stores the result as a short-lived Actions artifact.
+- **Build font catalog** validates configuration, Python code, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on every relevant pull request and `main` push. Font binaries are built only by manual dispatch or reusable workflow calls, so a normal `main` validation does not duplicate the Release build.
 - **Publish font release** is manual and requires typing `sd-fonts-m2-b4`. It performs a clean full build, verification, and replacement of the versioned Release assets.
+- **Deploy font catalog** runs manually or after a successful font release. It downloads and verifies only the 14/18/22 pt files, generates 45 PNG previews, and deploys a font-free Pages artifact.
 
 The stable device endpoints are:
 
@@ -63,4 +91,4 @@ The public repository and Release are the production distribution channel. For l
 
 ## Generated asset policy
 
-Do not commit `.cpfont`, downloaded source fonts, caches, or `fonts.json`. Release assets and temporary Actions artifacts are the binary distribution channel.
+Do not commit `.cpfont`, downloaded source fonts, caches, `fonts.json`, or `site-dist/`. Release assets are the binary distribution channel. Pages is a human-readable catalog and real-bitmap preview layer, not a device font mirror or alternate font CDN.

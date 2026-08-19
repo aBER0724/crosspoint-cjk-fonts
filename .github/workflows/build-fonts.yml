@@ -5,8 +5,11 @@ on:
     paths:
       - config/**
       - scripts/**
+      - tests/**
+      - pages/**
       - requirements.txt
       - .github/workflows/build-fonts.yml
+      - .github/workflows/deploy-pages.yml
   push:
     branches: [main]
     paths:
@@ -53,6 +56,7 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python scripts/validate_config.py
       - run: python -m py_compile scripts/*.py
+      - run: python -m unittest discover -s tests -v
       - id: catalog
         name: Select build matrix
         env:
@@ -75,7 +79,7 @@ jobs:
           PY
 
   build:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.event_name != 'push'
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 180
@@ -108,7 +112,7 @@ jobs:
           retention-days: 7
 
   catalog:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.event_name != 'push'
     needs: [validate, build]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
