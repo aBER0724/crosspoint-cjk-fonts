@@ -118,6 +118,15 @@ class IncrementalReleaseWorkflowTest(unittest.TestCase):
         self.assertIn("name: crosspoint-cjk-fonts", block)
         self.assertIn("path: dist", block)
 
+    def test_catalog_job_is_not_gated_on_a_call_only_input(self):
+        # publish_catalog only exists as a workflow_call input. Under
+        # workflow_dispatch its empty value must not disable the catalog job,
+        # otherwise publish-self (which needs: catalog) is skipped too.
+        text = BUILD_WORKFLOW.read_text(encoding="utf-8")
+        catalog_block = text.split("\n  catalog:\n", 1)[1].split("\n    needs:", 1)[0]
+        self.assertNotIn("inputs.publish_catalog != false", catalog_block)
+        self.assertIn("inputs.publish_catalog == true", catalog_block)
+
     def test_contribute_mode_pushes_a_submit_branch(self):
         text = BUILD_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("push-submit:", text)
