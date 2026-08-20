@@ -146,6 +146,29 @@ def catalog_sizes(document: dict) -> list[int]:
     return list(dict.fromkeys([*document["ui_sizes"], *document["reader_sizes"]]))
 
 
+def parse_sizes(value: str) -> list[int]:
+    """Parse and validate a comma-separated physical size override.
+
+    Returns a de-duplicated list that preserves the declared order. Every entry
+    must be a positive integer. Self-builders may use this to emit only the
+    sizes their device needs instead of the full catalog contract.
+    """
+    parts = [part.strip() for part in value.split(",")]
+    if not parts or any(not part for part in parts):
+        raise RuntimeError("--sizes must be a non-empty comma-separated list of positive integers")
+    sizes: list[int] = []
+    for part in parts:
+        try:
+            size = int(part, 10)
+        except ValueError as error:
+            raise RuntimeError(f"--sizes contains a non-integer value: {part!r}") from error
+        if size <= 0:
+            raise RuntimeError("--sizes values must be positive integers")
+        if size not in sizes:
+            sizes.append(size)
+    return sizes
+
+
 def build_family(family: dict, output: Path, sizes: list[int]) -> None:
     source = resolve_source(family)
     output.mkdir(parents=True, exist_ok=True)
@@ -195,12 +218,17 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
     parser.add_argument("--only", help="Comma-separated family names")
+    parser.add_argument(
+        "--sizes",
+        help="Comma-separated physical sizes overriding config/fonts.yaml "
+        "(e.g. '12,14,18' for a self-built catalog)",
+    )
     parser.add_argument("--clean", action="store_true")
     args = parser.parse_args()
 
     config = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
     families = config.get("families", [])
-    sizes = catalog_sizes(config)
+    sizes = parse_sizes(args.sizes) if args.sizes else catalog_sizes(config)
     if args.only:
         selected = {name.strip() for name in args.only.split(",") if name.strip()}
         families = [family for family in families if family["name"] in selected]

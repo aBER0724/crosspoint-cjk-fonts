@@ -48,6 +48,12 @@ python scripts/verify_release.py dist
 python scripts/build_fonts.py --clean --only NotoSansSC
 ```
 
+自前でビルドする方は、カタログ全体の契約ではなく、自分の端末に必要なサイズだけを生成できます：
+
+```bash
+python scripts/build_fonts.py --clean --only NotoSansSC --sizes 12,14,18,22
+```
+
 生成物は `dist/` に出力され、Git から除外されます。
 
 ## Pages のローカルビルド
@@ -71,9 +77,24 @@ python scripts/build_pages.py \
 
 ## GitHub Actions
 
-- **Build font catalog**：関連する Pull Request と `main` push ごとに、設定、Python コード、アップロードされたフォントパス、`.cpfont v4` パーサー、プレビューレンダラー、Pages 投影、ワークフローを検証します。手動 smoke run では1ファミリーを選択できます。
+- **Build font catalog**：関連する Pull Request と `main` push ごとに、設定、Python コード、アップロードされたフォントパス、`.cpfont v4` パーサー、プレビューレンダラー、Pages 投影、ワークフローを検証します。手動実行では1ファミリーを選択でき（`smoke_family`）、必要に応じて物理サイズを上書きできます（`sizes`、カンマ区切り）ので、自前カタログをビルドできます。
 - **Publish font release**：関連変更が `main` に入ると実行され、新規または変更されたファミリーだけをビルドし、未変更の公開済みファイルを再利用します。完全なアセット一覧を検証し、固定の `sd-fonts-m2-b4` Release を更新します。
 - **Deploy font catalog**：フォント Release の成功後に 14/18/22 pt の PNG プレビューを生成し、Pages カタログをデプロイします。
+
+### 手動フォントビルド
+
+Actions の UI からカスタムサイズのカタログをビルドする手順：
+
+1. **Actions** タブを開き、**Build font catalog** ワークフローを選択します。
+2. **Run workflow** をクリックします。
+3. 下記の入力を設定し、再度 **Run workflow** をクリックします。
+
+| 入力 | デフォルト | 効果 |
+| --- | --- | --- |
+| `smoke_family` | 空 | この1ファミリーだけを高速ビルドします。空なら全ファミリーをビルドします。 |
+| `sizes` | 空 | 出力する物理サイズのカンマ区切りリスト（例: `12,14,18`）。空なら `config/fonts.yaml` の7サイズを使用します。 |
+
+不正な `sizes`（空リスト、整数でない値、0 または負数）は、フォントをビルドする前に即座に失敗します。
 
 端末向けの安定 URL：
 

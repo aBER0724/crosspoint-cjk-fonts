@@ -48,6 +48,12 @@ python scripts/verify_release.py dist
 python scripts/build_fonts.py --clean --only NotoSansSC
 ```
 
+自行构建者可以只生成设备需要的字号，而不是完整目录契约：
+
+```bash
+python scripts/build_fonts.py --clean --only NotoSansSC --sizes 12,14,18,22
+```
+
 生成文件写入 `dist/`，并由 Git 忽略。
 
 ## 本地构建 Pages
@@ -71,9 +77,24 @@ python scripts/build_pages.py \
 
 ## GitHub Actions
 
-- **Build font catalog**：在相关 Pull Request 和 `main` push 上验证配置、Python 代码、上传字体路径、`.cpfont v4` 解析器、预览渲染器、Pages 投影和工作流。手动 smoke run 可以选择一个家族。
+- **Build font catalog**：在相关 Pull Request 和 `main` push 上验证配置、Python 代码、上传字体路径、`.cpfont v4` 解析器、预览渲染器、Pages 投影和工作流。手动运行可以选择一个家族（`smoke_family`），并可选地覆盖物理字号（`sizes`，逗号分隔）以构建自用目录。
 - **Publish font release**：相关修改进入 `main` 后运行，只构建新增或变化的家族，复用未变化的已发布文件，验证完整资源清单，并更新固定的 `sd-fonts-m2-b4` Release。
 - **Deploy font catalog**：字体 Release 成功后生成 14/18/22 pt PNG 预览，并部署 Pages 字体目录。
+
+### 手动构建字体
+
+通过 Actions 界面构建自定义字号目录：
+
+1. 打开 **Actions** 标签页，选择 **Build font catalog** 工作流。
+2. 点击 **Run workflow**。
+3. 填写下表输入，再次点击 **Run workflow**。
+
+| 输入 | 默认值 | 作用 |
+| --- | --- | --- |
+| `smoke_family` | 空 | 只构建这一个家族用于快速 smoke run；留空则构建全部家族。 |
+| `sizes` | 空 | 要输出的物理字号，逗号分隔，如 `12,14,18`；留空使用 `config/fonts.yaml` 的七个目录字号。 |
+
+格式错误的 `sizes`（空列表、非整数、0 或负数）会在构建任何字体前直接让运行失败。
 
 稳定设备端点：
 
