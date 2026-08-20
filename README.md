@@ -81,6 +81,21 @@ Open `site-dist/index.html` through a local static HTTP server. The generated `c
 - **Publish font release** runs after relevant changes reach `main`, builds new or changed families, reuses unchanged published files, verifies the complete asset inventory, and updates the fixed `sd-fonts-m2-b4` Release.
 - **Deploy font catalog** generates the 14/18/22 pt PNG previews and deploys the Pages catalog after a successful font release.
 
+### Manual font build
+
+To build a custom-size catalog from the Actions UI:
+
+1. Open the **Actions** tab and select the **Build font catalog** workflow.
+2. Click **Run workflow**.
+3. Fill in the inputs below, then click **Run workflow** again.
+
+| Input | Default | Effect |
+| --- | --- | --- |
+| `smoke_family` | empty | Build only this one family for a fast smoke run; empty builds every family. |
+| `sizes` | empty | Comma-separated physical sizes to emit, e.g. `12,14,18`; empty uses the seven catalog sizes from `config/fonts.yaml`. |
+
+A malformed `sizes` value (empty list, non-integer, zero, or negative) fails the run before any font is built.
+
 Stable device endpoints:
 
 ```text
