@@ -77,7 +77,7 @@ python scripts/build_pages.py \
 
 ## GitHub Actions
 
-- **Build font catalog**：関連する Pull Request と `main` push ごとに、設定、Python コード、アップロードされたフォントパス、`.cpfont v4` パーサー、プレビューレンダラー、Pages 投影、ワークフローを検証します。手動実行では1ファミリーを選択でき（`smoke_family`）、必要に応じて物理サイズを上書きできます（`sizes`、カンマ区切り）ので、自前カタログをビルドできます。
+- **Build font catalog**：関連する Pull Request と `main` push ごとに、設定、Python コード、アップロードされたフォントパス、`.cpfont v4` パーサー、プレビューレンダラー、Pages 投影、ワークフローを検証します。手動実行では1ファミリーを選択でき（`smoke_family`）、物理サイズを上書きでき（`sizes`、カンマ区切り）、`mode`（`manual` / `self` / `contribute`）を選べます。自前カタログのビルド、個人 Release の公開、上流へのフォント提出が可能です。
 - **Publish font release**：関連変更が `main` に入ると実行され、新規または変更されたファミリーだけをビルドし、未変更の公開済みファイルを再利用します。完全なアセット一覧を検証し、固定の `sd-fonts-m2-b4` Release を更新します。
 - **Deploy font catalog**：フォント Release の成功後に 14/18/22 pt の PNG プレビューを生成し、Pages カタログをデプロイします。
 
@@ -93,8 +93,28 @@ Actions の UI からカスタムサイズのカタログをビルドする手�
 | --- | --- | --- |
 | `smoke_family` | 空 | この1ファミリーだけを高速ビルドします。空なら全ファミリーをビルドします。 |
 | `sizes` | 空 | 出力する物理サイズのカンマ区切りリスト（例: `12,14,18`）。空なら `config/fonts.yaml` の7サイズを使用します。 |
+| `mode` | `manual` | `manual` はビルドのみ（公開なし）。`self` はこのリポジトリの `sd-fonts-m2-b4` Release も公開。`contribute` は検証後に提出用ブランチを push し、上流への PR を案内します。 |
 
 不正な `sizes`（空リスト、整数でない値、0 または負数）は、フォントをビルドする前に即座に失敗します。
+
+#### シナリオ 1 — 自分の端末用にフォントをビルド（`mode: self`）
+
+自分の fork 上で実行すると、ビルド済みカタログは**あなた自身**の `sd-fonts-m2-b4` Release に公開され、manifest の `baseUrl` はあなたのリポジトリを指します：
+
+1. このリポジトリを fork し、フォントソースをデフォルトブランチの `community-fonts/<FamilyId>/` に push します。
+2. **Build font catalog** を `mode: self` で実行します（`smoke_family` と `sizes` も指定可能）。
+3. 完了後、`https://github.com/<あなたのowner>/<あなたのrepo>/releases/tag/sd-fonts-m2-b4` に `fonts.json` と全 `.cpfont` が入っています。
+4. 端末のフォントリポジトリ設定に `<あなたのowner>/<あなたのrepo>` を入力してフォントをダウンロードします（空のままなら上流デフォルトを使用）。
+
+再実行は同じ Release の資産を上書き更新するため（`--clobber`）、端末の URL は変わりません。
+
+#### シナリオ 2 — 上流へフォントを提出（`mode: contribute`）
+
+GitHub の `GITHUB_TOKEN` は fork からクロスリポジトリの PR を開けないため、このフローは半自動です：実行がフォントを検証・ビルドし、`submit/<FamilyId>` ブランチを fork に push して、リンクを表示します。それをクリックして PR Draft を開きます：
+
+1. このリポジトリを fork し、フォントソースをデフォルトブランチの `community-fonts/<FamilyId>/` に push します。
+2. **Build font catalog** を `mode: contribute` で実行します（`smoke_family: <FamilyId>` で自分のフォントだけ検証可能）。
+3. 完了後、**Summary** タブを開き、表示された compare リンクをクリックして上流への PR Draft を作成します。詳細は [`CONTRIBUTING.md`](CONTRIBUTING.md) を参照。
 
 端末向けの安定 URL：
 
