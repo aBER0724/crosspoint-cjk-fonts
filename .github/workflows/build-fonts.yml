@@ -202,10 +202,13 @@ jobs:
           retention-days: 7
 
   catalog:
+    # publish_catalog only exists as a workflow_call input; under
+    # workflow_dispatch an empty value would compare false and skip the
+    # catalog (and cascade into publish-self). Dispatch always publishes it.
     if: >-
       (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call') &&
-      inputs.publish_catalog != false &&
-      needs.validate.outputs.families != '[]'
+      needs.validate.outputs.families != '[]' &&
+      (github.event_name == 'workflow_dispatch' || inputs.publish_catalog == true)
     needs: [validate, build]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
