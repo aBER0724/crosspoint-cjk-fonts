@@ -32,6 +32,15 @@ on:
         description: "Comma-separated physical sizes to build (e.g. 12,14,18). Empty uses the catalog sizes from config/fonts.yaml."
         required: false
         default: ""
+      mode:
+        description: "manual (build only) | self (build + publish this repo's sd-fonts-m2-b4 Release) | contribute (build + push a submit branch for a PR to upstream)"
+        type: choice
+        required: false
+        default: manual
+        options:
+          - manual
+          - self
+          - contribute
   workflow_call:
     inputs:
       smoke_family:
@@ -43,6 +52,11 @@ on:
         type: string
         required: false
         default: ""
+      mode:
+        description: "manual (build only) | self (build + publish this repo's sd-fonts-m2-b4 Release) | contribute (build + push a submit branch for a PR to upstream)"
+        type: string
+        required: false
+        default: manual
       families_json:
         description: "Optional JSON list selected by the incremental release planner"
         type: string
@@ -55,7 +69,7 @@ on:
         default: true
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: fonts-build-${{ github.workflow }}-${{ github.ref }}
@@ -63,7 +77,10 @@ concurrency:
 
 env:
   PYTHONUTF8: "1"
-  FONT_BASE_URL: https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/
+  RELEASE_TAG: sd-fonts-m2-b4
+  # Resolve to the *current* repository so self-builders get a manifest whose
+  # baseUrl points at their own Release instead of upstream's fixed URL.
+  FONT_BASE_URL: https://github.com/${{ github.repository }}/releases/download/sd-fonts-m2-b4/
 
 jobs:
   validate:
@@ -218,3 +235,76 @@ jobs:
           if-no-files-found: error
           compression-level: 0
           retention-days: 14
+
+  # Scenario 1 (personal use): publish the manually built catalog to THIS
+  # repository's sd-fonts-m2-b4 Release so the device can point its font
+  # repository setting at owner/repo and download from a stable URL.
+  publish-self:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'self'
+    needs: catalog
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: crosspoint-cjk-fonts
+          path: dist
+      - name: Create or update the self-build Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: sd-fonts-m2-b4
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" \
+              --target "$GITHUB_SHA" \
+              --title "CrossPoint CJK fonts (self-build)" \
+              --notes "Self-built font catalog from a manual workflow run.
+          Point your device's font repository at ${{ github.repository }} and reuse tag $RELEASE_TAG."
+          fi
+          gh release upload "$RELEASE_TAG" dist/fonts.json --clobber
+          find dist -maxdepth 1 -name '*.cpfont' -print0 | while IFS= read -r -d '' file; do
+            gh release upload "$RELEASE_TAG" "$file" --clobber
+          done
+          echo "Self-build published: https://github.com/${{ github.repository }}/releases/tag/$RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"
+
+  # Scenario 2 (contribute): after a successful manual build, push the font
+  # submission to a submit/<family> branch of THIS (fork) repository and guide
+  # the user to open a PR draft to upstream. GitHub's GITHUB_TOKEN cannot open
+  # a cross-repo PR from a fork, so the flow is semi-automatic by design.
+  push-submit:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'contribute'
+    needs: [validate, build]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push font submission branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add upstream https://github.com/aBER0724/crosspoint-cjk-fonts.git
+          git fetch upstream main --quiet
+          changed="$(git diff --name-only "upstream/main...HEAD" -- community-fonts/ config/ || true)"
+          if [[ -z "$changed" ]]; then
+            echo "No changes under community-fonts/ or config/ relative to upstream main; nothing to submit." >&2
+            exit 1
+          fi
+          family="$(printf '%s\n' "$changed" | sed -nE 's#^community-fonts/([^/]+)/.*#\1#p' | sort -u | head -n1)"
+          branch="submit/${family:-font-submission}"
+          git checkout -b "$branch"
+          git add -- community-fonts/ config/
+          git commit -m "chore(fonts): submit ${family:-font} for upstream review"
+          # Force-update the long-lived submit/<family> branch so repeat runs
+          # refine the same PR draft instead of piling up branches.
+          git push -u origin "$branch" --force
+          pr_url="https://github.com/aBER0724/crosspoint-cjk-fonts/compare/${GITHUB_REPOSITORY_OWNER}:${branch}?expand=1"
+          echo "Pushed submission branch: $branch"
+          echo "Open this link to create a PR draft to upstream:" >> "$GITHUB_STEP_SUMMARY"
+          echo "$pr_url" >> "$GITHUB_STEP_SUMMARY"

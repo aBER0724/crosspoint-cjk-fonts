@@ -89,6 +89,58 @@ class IncrementalReleaseWorkflowTest(unittest.TestCase):
         self.assertIn("FONT-LICENSES.md OFL-1.1.txt", text)
         self.assertIn("verify-assets", text)
 
+    def test_build_workflow_declares_manual_mode_input(self):
+        import yaml
+
+        document = yaml.safe_load(BUILD_WORKFLOW.read_text(encoding="utf-8"))
+        triggers = document[True]
+        dispatch_mode = triggers["workflow_dispatch"]["inputs"]["mode"]
+        call_mode = triggers["workflow_call"]["inputs"]["mode"]
+        self.assertEqual(dispatch_mode["type"], "choice")
+        self.assertEqual(dispatch_mode["default"], "manual")
+        self.assertEqual(dispatch_mode["options"], ["manual", "self", "contribute"])
+        self.assertEqual(call_mode["default"], "manual")
+
+    def test_self_mode_publishes_to_current_repo_release(self):
+        text = BUILD_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("publish-self:", text)
+        self.assertIn("inputs.mode == 'self'", text)
+        self.assertIn("gh release create", text)
+        self.assertIn("gh release upload", text)
+        self.assertIn("--clobber", text)
+        self.assertIn("RELEASE_TAG: sd-fonts-m2-b4", text)
+        self.assertIn("github.repository", text)
+
+    def test_self_publish_job_requires_the_catalog_artifact(self):
+        text = BUILD_WORKFLOW.read_text(encoding="utf-8")
+        block = text.split("  publish-self:\n", 1)[1]
+        self.assertIn("needs: catalog", block)
+        self.assertIn("name: crosspoint-cjk-fonts", block)
+        self.assertIn("path: dist", block)
+
+    def test_contribute_mode_pushes_a_submit_branch(self):
+        text = BUILD_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("push-submit:", text)
+        self.assertIn("inputs.mode == 'contribute'", text)
+        self.assertIn("needs: [validate, build]", text)
+        self.assertIn("community-fonts/ config/", text)
+        self.assertIn("submit/${family:-font-submission}", text)
+        self.assertIn("git push -u origin \"$branch\" --force", text)
+        self.assertIn("compare", text)
+
+    def test_base_url_and_permissions_allow_self_managed_releases(self):
+        import yaml
+
+        document = yaml.safe_load(BUILD_WORKFLOW.read_text(encoding="utf-8"))
+        self.assertEqual(document["permissions"]["contents"], "write")
+        self.assertIn("${{ github.repository }}", document["env"]["FONT_BASE_URL"])
+
+    def test_manual_mode_keeps_the_default_build_only_behavior(self):
+        text = BUILD_WORKFLOW.read_text(encoding="utf-8")
+        # Default stays manual: no publish/PR jobs run unless mode is explicit.
+        self.assertIn("default: manual", text)
+        self.assertNotIn("publish-self", text.split("on:\n", 1)[0])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -77,13 +77,13 @@ Open `site-dist/index.html` through a local static HTTP server. The generated `c
 
 ## GitHub Actions
 
-- **Build font catalog** validates configuration, Python code, uploaded font paths, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on relevant pull requests and `main` pushes. Manual runs may select one family (`smoke_family`) and optionally override the physical sizes (`sizes`, comma-separated) for a self-built catalog.
+- **Build font catalog** validates configuration, Python code, uploaded font paths, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on relevant pull requests and `main` pushes. Manual runs may select one family (`smoke_family`), override the physical sizes (`sizes`, comma-separated), and choose a `mode` (`manual` / `self` / `contribute`) for a self-built catalog, a personal Release, or an upstream submission.
 - **Publish font release** runs after relevant changes reach `main`, builds new or changed families, reuses unchanged published files, verifies the complete asset inventory, and updates the fixed `sd-fonts-m2-b4` Release.
 - **Deploy font catalog** generates the 14/18/22 pt PNG previews and deploys the Pages catalog after a successful font release.
 
 ### Manual font build
 
-To build a custom-size catalog from the Actions UI:
+To build a catalog from the Actions UI:
 
 1. Open the **Actions** tab and select the **Build font catalog** workflow.
 2. Click **Run workflow**.
@@ -93,8 +93,28 @@ To build a custom-size catalog from the Actions UI:
 | --- | --- | --- |
 | `smoke_family` | empty | Build only this one family for a fast smoke run; empty builds every family. |
 | `sizes` | empty | Comma-separated physical sizes to emit, e.g. `12,14,18`; empty uses the seven catalog sizes from `config/fonts.yaml`. |
+| `mode` | `manual` | `manual` builds only (no publishing); `self` also publishes this repo's `sd-fonts-m2-b4` Release; `contribute` validates, then pushes a submit branch for a PR to upstream. |
 
 A malformed `sizes` value (empty list, non-integer, zero, or negative) fails the run before any font is built.
+
+#### Scenario 1 — build fonts for your own device (`mode: self`)
+
+Runs on your own fork, the built catalog is published to **your** `sd-fonts-m2-b4` Release and the manifest `baseUrl` points at your repository:
+
+1. Fork this repository and push your font sources under `community-fonts/<FamilyId>/` on the default branch.
+2. Run **Build font catalog** with `mode: self` (optionally `smoke_family` and `sizes`).
+3. When the run finishes, the Release at `https://github.com/<your-owner>/<your-repo>/releases/tag/sd-fonts-m2-b4` holds `fonts.json` plus every `.cpfont`.
+4. On the device, set the font repository to `<your-owner>/<your-repo>` (empty keeps the upstream default) and download fonts.
+
+Repeat runs update the same Release assets (`--clobber`), so your device URL never changes.
+
+#### Scenario 2 — submit a font to upstream (`mode: contribute`)
+
+GitHub's `GITHUB_TOKEN` cannot open a cross-repo PR from a fork, so the flow is semi-automatic: the run validates and builds your font, pushes a `submit/<FamilyId>` branch to your fork, then prints a link you click to open the PR draft:
+
+1. Fork this repository and push your font sources under `community-fonts/<FamilyId>/` on the default branch.
+2. Run **Build font catalog** with `mode: contribute` (use `smoke_family: <FamilyId>` to validate just your font).
+3. After the run, open the **Summary** tab and click the printed compare link to create a PR draft to upstream. Follow [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 Stable device endpoints:
 

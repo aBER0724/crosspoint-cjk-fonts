@@ -77,7 +77,7 @@ python scripts/build_pages.py \
 
 ## GitHub Actions
 
-- **Build font catalog**：在相关 Pull Request 和 `main` push 上验证配置、Python 代码、上传字体路径、`.cpfont v4` 解析器、预览渲染器、Pages 投影和工作流。手动运行可以选择一个家族（`smoke_family`），并可选地覆盖物理字号（`sizes`，逗号分隔）以构建自用目录。
+- **Build font catalog**：在相关 Pull Request 和 `main` push 上验证配置、Python 代码、上传字体路径、`.cpfont v4` 解析器、预览渲染器、Pages 投影和工作流。手动运行可以选择一个家族（`smoke_family`）、覆盖物理字号（`sizes`，逗号分隔）并选择 `mode`（`manual` / `self` / `contribute`），以构建自用目录、发布个人 Release 或向上游提交字体。
 - **Publish font release**：相关修改进入 `main` 后运行，只构建新增或变化的家族，复用未变化的已发布文件，验证完整资源清单，并更新固定的 `sd-fonts-m2-b4` Release。
 - **Deploy font catalog**：字体 Release 成功后生成 14/18/22 pt PNG 预览，并部署 Pages 字体目录。
 
@@ -93,8 +93,28 @@ python scripts/build_pages.py \
 | --- | --- | --- |
 | `smoke_family` | 空 | 只构建这一个家族用于快速 smoke run；留空则构建全部家族。 |
 | `sizes` | 空 | 要输出的物理字号，逗号分隔，如 `12,14,18`；留空使用 `config/fonts.yaml` 的七个目录字号。 |
+| `mode` | `manual` | `manual` 仅构建（不发布）；`self` 额外发布本仓库的 `sd-fonts-m2-b4` Release；`contribute` 验证后推送提交分支以便向上游开 PR。 |
 
 格式错误的 `sizes`（空列表、非整数、0 或负数）会在构建任何字体前直接让运行失败。
+
+#### 场景 1 — 为自用设备构建字体（`mode: self`）
+
+在你的 fork 上运行，构建好的目录会发布到**你自己**的 `sd-fonts-m2-b4` Release，且 manifest 的 `baseUrl` 指向你的仓库：
+
+1. Fork 本仓库，并把你的字体源文件推到默认分支的 `community-fonts/<FamilyId>/` 目录下。
+2. 以 `mode: self` 运行 **Build font catalog**（可配合 `smoke_family` 与 `sizes`）。
+3. 运行结束后，`https://github.com/<你的owner>/<你的repo>/releases/tag/sd-fonts-m2-b4` 这个 Release 里就有 `fonts.json` 和所有 `.cpfont`。
+4. 在设备上把字体仓库设为 `<你的owner>/<你的repo>`（留空则使用上游默认值）并下载字体。
+
+重复运行会覆盖更新同一个 Release 的资产（`--clobber`），所以设备 URL 永远不变。
+
+#### 场景 2 — 向上游提交字体（`mode: contribute`）
+
+GitHub 的 `GITHUB_TOKEN` 无法从 fork 直接打开跨仓库 PR，因此流程是半自动的：运行会验证并构建你的字体，把 `submit/<FamilyId>` 分支推送到你的 fork，然后打印一个链接，你点击即可打开 PR Draft：
+
+1. Fork 本仓库，并把你的字体源文件推到默认分支的 `community-fonts/<FamilyId>/` 目录下。
+2. 以 `mode: contribute` 运行 **Build font catalog**（可用 `smoke_family: <FamilyId>` 只验证你的字体）。
+3. 运行结束后，打开 **Summary** 标签页，点击打印的 compare 链接即可创建指向上游的 PR Draft。具体规范见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
 
 稳定设备端点：
 
