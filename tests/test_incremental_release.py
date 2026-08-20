@@ -179,6 +179,55 @@ class IncrementalReleaseTest(unittest.TestCase):
         for entry in manifest["families"]:
             self.assertTrue({"license", "licenseType", "licenseStatus", "licenseUrl"}.isdisjoint(entry))
 
+    def _single_family_manifest(self, name, updated_at=None):
+        manifest = {
+            "version": 2,
+            "baseUrl": "https://example.invalid/fonts/",
+            "families": [
+                {
+                    "name": name,
+                    "description": "Built",
+                    "styles": ["regular"],
+                    "files": [
+                        {"name": filename, "size": 4, "sha256": "b" * 64}
+                        for filename in self.module.expected_family_filenames(
+                            self.document, name
+                        )
+                    ],
+                    "sourceUrl": "https://example.invalid/source",
+                }
+            ],
+        }
+        if updated_at:
+            manifest["updatedAt"] = updated_at
+        return manifest
+
+    def test_merge_manifest_carries_updated_at_from_built_manifest(self):
+        current = json.loads(json.dumps(self.document))
+        current["families"] = [json.loads(json.dumps(self.family))]
+        built = self._single_family_manifest(
+            self.family["name"], updated_at="2026-08-20T07:00:00Z"
+        )
+        manifest = self.module.merge_manifest(current, None, built)
+        self.assertEqual(manifest["updatedAt"], "2026-08-20T07:00:00Z")
+
+    def test_merge_manifest_falls_back_to_previous_updated_at(self):
+        current = json.loads(json.dumps(self.document))
+        current["families"] = [json.loads(json.dumps(self.family))]
+        previous = self._single_family_manifest(
+            self.family["name"], updated_at="2026-08-19T00:00:00Z"
+        )
+        built = self._single_family_manifest(self.family["name"])
+        manifest = self.module.merge_manifest(current, previous, built)
+        self.assertEqual(manifest["updatedAt"], "2026-08-19T00:00:00Z")
+
+    def test_merge_manifest_omits_updated_at_when_absent(self):
+        current = json.loads(json.dumps(self.document))
+        current["families"] = [json.loads(json.dumps(self.family))]
+        built = self._single_family_manifest(self.family["name"])
+        manifest = self.module.merge_manifest(current, None, built)
+        self.assertNotIn("updatedAt", manifest)
+
     def test_optional_description_is_omitted_from_manifest_metadata(self):
         family = json.loads(json.dumps(self.family))
         family.pop("description")
