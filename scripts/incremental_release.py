@@ -332,7 +332,18 @@ def merge_manifest(
         validate_manifest_family(current_document, entry)
         families.append(entry)
 
-    return {"version": 2, "baseUrl": resolved_base_url, "families": families}
+    resolved_updated_at = (built_manifest or {}).get("updatedAt")
+    if not resolved_updated_at:
+        resolved_updated_at = (previous_manifest or {}).get("updatedAt")
+    result = {
+        "version": 2,
+        "baseUrl": resolved_base_url,
+        "families": families,
+        "updatedAt": resolved_updated_at,
+    }
+    if not result["updatedAt"]:
+        result.pop("updatedAt")
+    return result
 
 
 def asset_map(document: dict | list) -> dict[str, dict]:
