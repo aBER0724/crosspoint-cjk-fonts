@@ -51,6 +51,25 @@ class IncrementalReleaseWorkflowTest(unittest.TestCase):
         self.assertIn("### Updated", template)
         self.assertIn("### Removed", template)
 
+    def test_build_workflow_declares_custom_sizes_input(self):
+        import yaml
+
+        document = yaml.safe_load(BUILD_WORKFLOW.read_text(encoding="utf-8"))
+        # YAML 1.1 parses the bare workflow key `on` as boolean True.
+        triggers = document[True]
+        dispatch_sizes = triggers["workflow_dispatch"]["inputs"]["sizes"]
+        call_sizes = triggers["workflow_call"]["inputs"]["sizes"]
+        self.assertEqual(dispatch_sizes["default"], "")
+        self.assertEqual(call_sizes["default"], "")
+        self.assertEqual(call_sizes["type"], "string")
+
+    def test_build_step_passes_custom_sizes_only_when_provided(self):
+        text = BUILD_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("BUILD_SIZES: ${{ inputs.sizes }}", text)
+        self.assertIn('args+=(--sizes "$BUILD_SIZES")', text)
+        self.assertIn("Validate custom sizes", text)
+        self.assertIn("inputs.sizes != ''", text)
+
     def test_metadata_publish_runs_after_a_skipped_font_build(self):
         text = RELEASE_WORKFLOW.read_text(encoding="utf-8")
         publish_block = text.split("  publish-metadata:\n", 1)[1]

@@ -53,6 +53,34 @@ class CatalogSizeContractTest(unittest.TestCase):
         command = run.call_args.args[0]
         self.assertEqual(command[command.index("--sizes") + 1], "8,10,12,14,16,18,22")
 
+    def test_parse_sizes_accepts_custom_positive_integers(self):
+        module = load_build_module()
+        self.assertEqual(module.parse_sizes("12,14,18"), [12, 14, 18])
+        self.assertEqual(module.parse_sizes(" 20 , 22 "), [20, 22])
+
+    def test_parse_sizes_deduplicates_while_preserving_order(self):
+        module = load_build_module()
+        self.assertEqual(module.parse_sizes("14,16,14,22,16"), [14, 16, 22])
+
+    def test_parse_sizes_rejects_empty_or_invalid_values(self):
+        module = load_build_module()
+        for value in ("", ",", " ", "12,,18", "0", "-8", "12,abc", "12.5"):
+            with self.subTest(value=value):
+                with self.assertRaises(RuntimeError):
+                    module.parse_sizes(value)
+
+    def test_build_passes_an_explicit_size_override_through(self):
+        module = load_build_module()
+
+        family = self.document["families"][0]
+        with mock.patch.object(module, "resolve_source", return_value=ROOT / "source.ttf"), mock.patch.object(
+            module.subprocess, "run"
+        ) as run:
+            module.build_family(family, ROOT / "dist-test", module.parse_sizes("12,14,18"))
+
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("--sizes") + 1], "12,14,18")
+
 
 if __name__ == "__main__":
     unittest.main()

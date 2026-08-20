@@ -48,6 +48,12 @@ For a quick smoke test:
 python scripts/build_fonts.py --clean --only NotoSansSC
 ```
 
+Self-builders can emit only the sizes their device needs instead of the full catalog contract:
+
+```bash
+python scripts/build_fonts.py --clean --only NotoSansSC --sizes 12,14,18,22
+```
+
 Generated files are written under `dist/` and are ignored by Git.
 
 ## Local Pages build
@@ -71,7 +77,7 @@ Open `site-dist/index.html` through a local static HTTP server. The generated `c
 
 ## GitHub Actions
 
-- **Build font catalog** validates configuration, Python code, uploaded font paths, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on relevant pull requests and `main` pushes. Manual smoke runs may select one family.
+- **Build font catalog** validates configuration, Python code, uploaded font paths, the `.cpfont v4` parser, preview renderer, Pages projection, and workflows on relevant pull requests and `main` pushes. Manual runs may select one family (`smoke_family`) and optionally override the physical sizes (`sizes`, comma-separated) for a self-built catalog.
 - **Publish font release** runs after relevant changes reach `main`, builds new or changed families, reuses unchanged published files, verifies the complete asset inventory, and updates the fixed `sd-fonts-m2-b4` Release.
 - **Deploy font catalog** generates the 14/18/22 pt PNG previews and deploys the Pages catalog after a successful font release.
 

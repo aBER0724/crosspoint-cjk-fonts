@@ -48,6 +48,12 @@ python scripts/verify_release.py dist
 python scripts/build_fonts.py --clean --only NotoSansSC
 ```
 
+自前でビルドする方は、カタログ全体の契約ではなく、自分の端末に必要なサイズだけを生成できます：
+
+```bash
+python scripts/build_fonts.py --clean --only NotoSansSC --sizes 12,14,18,22
+```
+
 生成物は `dist/` に出力され、Git から除外されます。
 
 ## Pages のローカルビルド
@@ -71,7 +77,7 @@ python scripts/build_pages.py \
 
 ## GitHub Actions
 
-- **Build font catalog**：関連する Pull Request と `main` push ごとに、設定、Python コード、アップロードされたフォントパス、`.cpfont v4` パーサー、プレビューレンダラー、Pages 投影、ワークフローを検証します。手動 smoke run では1ファミリーを選択できます。
+- **Build font catalog**：関連する Pull Request と `main` push ごとに、設定、Python コード、アップロードされたフォントパス、`.cpfont v4` パーサー、プレビューレンダラー、Pages 投影、ワークフローを検証します。手動実行では1ファミリーを選択でき（`smoke_family`）、必要に応じて物理サイズを上書きできます（`sizes`、カンマ区切り）ので、自前カタログをビルドできます。
 - **Publish font release**：関連変更が `main` に入ると実行され、新規または変更されたファミリーだけをビルドし、未変更の公開済みファイルを再利用します。完全なアセット一覧を検証し、固定の `sd-fonts-m2-b4` Release を更新します。
 - **Deploy font catalog**：フォント Release の成功後に 14/18/22 pt の PNG プレビューを生成し、Pages カタログをデプロイします。
 

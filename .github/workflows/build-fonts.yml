@@ -28,9 +28,18 @@ on:
         description: "Optional single family for a faster manual smoke build"
         required: false
         default: ""
+      sizes:
+        description: "Comma-separated physical sizes to build (e.g. 12,14,18). Empty uses the catalog sizes from config/fonts.yaml."
+        required: false
+        default: ""
   workflow_call:
     inputs:
       smoke_family:
+        type: string
+        required: false
+        default: ""
+      sizes:
+        description: "Comma-separated physical sizes to build (e.g. 12,14,18). Empty uses the catalog sizes from config/fonts.yaml."
         type: string
         required: false
         default: ""
@@ -71,6 +80,28 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python scripts/validate_config.py
       - run: python -m py_compile scripts/*.py
+      - name: Validate custom sizes
+        if: inputs.sizes != ''
+        env:
+          BUILD_SIZES: ${{ inputs.sizes }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+
+          value = os.environ["BUILD_SIZES"]
+          parts = [part.strip() for part in value.split(",")]
+          if not parts or any(not part for part in parts):
+              raise SystemExit("sizes must be a non-empty comma-separated list of positive integers")
+          for part in parts:
+              try:
+                  size = int(part, 10)
+              except ValueError:
+                  raise SystemExit(f"sizes contains a non-integer value: {part!r}")
+              if size <= 0:
+                  raise SystemExit("sizes values must be positive integers")
+          print("custom sizes validated")
+          PY
       - run: python -m unittest discover -s tests -v
       - id: catalog
         name: Select build matrix
@@ -133,7 +164,17 @@ jobs:
         with:
           path: .cache
           key: source-${{ matrix.family }}-${{ steps.source.outputs.sha256 }}
-      - run: python scripts/build_fonts.py --clean --only "${{ matrix.family }}" --base-url "$FONT_BASE_URL"
+      - name: Build font
+        shell: bash
+        env:
+          BUILD_SIZES: ${{ inputs.sizes }}
+        run: |
+          set -euo pipefail
+          args=(--clean --only "${{ matrix.family }}" --base-url "$FONT_BASE_URL")
+          if [[ -n "$BUILD_SIZES" ]]; then
+            args+=(--sizes "$BUILD_SIZES")
+          fi
+          python scripts/build_fonts.py "${args[@]}"
       - run: python scripts/verify_release.py dist
       - uses: actions/upload-artifact@v4
         with:
