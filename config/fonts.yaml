@@ -94,6 +94,17 @@ families:
       filename: "LXGWWenKai-Regular.ttf"
       sha256: 39ad71264b588165b469e35e6afb162a378dacd1f95348160240ba9038ac3009
 
+  - name: ZhenKaiSC
+    display_names: {en: "LXGW ZhenKai", zh: "霞鹜臻楷", ja: "LXGW ZhenKai"}
+    description: "Simplified Chinese regular-script (kai) face derived from LXGW ZhenKai"
+    category: handwriting
+    languages: [zh-Hans]
+    source_url: "https://github.com/lxgw/LxgwZhenKai"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      path: community-fonts/ZhenKaiSC/ZhenKai_GBK-Regular.ttf
+
   - name: ChironGoRoundTC
     display_names: {en: "Chiron GoRound TC", zh: "昭源環方", ja: "Chiron GoRound TC"}
     description: "Traditional Chinese rounded sans-serif with Japanese kana"
