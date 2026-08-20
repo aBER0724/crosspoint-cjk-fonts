@@ -20,3 +20,14 @@ Source links are optional. They point to the font homepage, project page, or sou
 | GenWanSerifTC | [GenWan font](https://github.com/ButTaiwan/genwan-font/tree/25e718615173a3b51099ecc9a6bf4fa558c03fbc) |
 | GenYoGothicTC | [GenYoG font](https://github.com/ButTaiwan/genyog-font/tree/1f06b99e2ca9ba1aa06dc26701e1a900ffa57a91) |
 | ZenMaruGothicJP | [Google Fonts: Zen Maru Gothic](https://github.com/google/fonts/tree/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic) |
+| ZhenKaiSC | [LXGW ZhenKai](https://github.com/lxgw/LxgwZhenKai) |
+| XinXiHeiSC | [LXGW Neo XiHei](https://github.com/lxgw/LxgwXiHei) |
+| ShangZhiHeiSC | [LXGW Fasmart Gothic](https://github.com/lxgw/LxgwXiHei) |
+| MingXinSongSC | [LXGW Heart Serif](https://github.com/lxgw/LxgwHeartSerif) |
+| ZhiSongSC | [LXGW ZhiSong](https://github.com/lxgw/LxgwZhiSong) |
+| HanchanSongSC | [Hanchan Jinshu Song](https://github.com/Warren2060/ChillJinshuSong) |
+| ChuxiaMinchoTC | [Early Summer Mincho](https://github.com/GuiWonder/EarlySummerMincho) |
+| FengheKaiTC | [Fusion Kai](https://github.com/lxgw/FusionKai) |
+| YuexingKaiTC | [Moon Stars Kai](https://github.com/GuiWonder/MoonStarsKai) |
+| MaokenHeiSC | [Maoken Assorted Sans](https://github.com/Skr-ZERO/MaokenAssortedSans) |
+| WujieHeiSC | [Unbounded Sans](https://github.com/maoken-fonts/unbounded-sans) |
