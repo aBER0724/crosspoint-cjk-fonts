@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""Generate repeatable GitHub Release notes from manifest and build plan data."""
+"""Generate repeatable GitHub Release notes from manifest and build plan data.
+
+Notes accumulate an append-only, per-date, collapsible Changelog so each
+release visibly records what changed and when (optionally tied to the PR that
+contributed the fonts).
+"""
 
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 from pathlib import Path
 
@@ -49,7 +55,35 @@ def family_line(name: str, current: dict[str, dict], previous: dict[str, dict]) 
     return f"- **{name}**" + (f" — {description}" if description else "")
 
 
-def render_notes(previous_manifest: dict | None, current_manifest: dict, plan: dict, tag: str) -> str:
+def change_item(prefix: str, name: str, current: dict[str, dict], previous: dict[str, dict], pr_link: str) -> str:
+    entry = current.get(name) or previous.get(name) or {}
+    description = str(entry.get("description", "")).strip()
+    return f"- {prefix} **{name}**" + (f" — {description}" if description else "") + pr_link
+
+
+def extract_changelog(notes: str) -> str:
+    """Return the existing collapsible changelog block (without the heading)."""
+    start = notes.find("## Changelog")
+    if start == -1:
+        return ""
+    end = notes.find("### Installation", start)
+    body = notes[start + len("## Changelog"):] if end == -1 else notes[start + len("## Changelog"):end]
+    return body.strip()
+
+
+def changelog_entry(change_items: list[str], date: str) -> str:
+    return "\n".join(["<details>", f"<summary>{date}</summary>", ""] + change_items + ["", "</details>"])
+
+
+def render_notes(
+    previous_manifest: dict | None,
+    current_manifest: dict,
+    plan: dict,
+    tag: str,
+    previous_notes: str = "",
+    date: str | None = None,
+    pr: str | None = None,
+) -> str:
     previous = family_map(previous_manifest)
     current = family_map(current_manifest)
     added = list(plan.get("new", []))
@@ -57,6 +91,12 @@ def render_notes(previous_manifest: dict | None, current_manifest: dict, plan: d
     removed = list(plan.get("remove", []))
     files = [file for entry in current.values() for file in entry.get("files", [])]
     total_bytes = sum(int(file.get("size", 0)) for file in files)
+
+    if date is None:
+        date = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+    pr_link = ""
+    if pr:
+        pr_link = f" (via [PR #{pr}](https://github.com/aBER0724/crosspoint-cjk-fonts/pull/{pr}))"
 
     lines = [
         "## Catalog update",
@@ -75,6 +115,19 @@ def render_notes(previous_manifest: dict | None, current_manifest: dict, plan: d
 
     if not added and not updated and not removed:
         lines.extend(["", "### Changes", "", "- Release metadata and reproducibility records were refreshed; font family membership is unchanged."])
+
+    change_items = [change_item("Add", name, current, previous, pr_link) for name in added]
+    change_items += [change_item("Update", name, current, previous, pr_link) for name in updated]
+    change_items += [change_item("Remove", name, current, previous, pr_link) for name in removed]
+
+    previous_changelog = extract_changelog(previous_notes)
+    if change_items:
+        block = changelog_entry(change_items, date)
+        if previous_changelog:
+            block += "\n\n" + previous_changelog
+        lines.extend(["", "## Changelog", "", block])
+    elif previous_changelog:
+        lines.extend(["", "## Changelog", "", previous_changelog])
 
     lines.extend(
         [
@@ -104,6 +157,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--tag", required=True)
+    parser.add_argument("--previous-notes", type=Path)
+    parser.add_argument("--date")
+    parser.add_argument("--pr")
     return parser.parse_args()
 
 
@@ -114,8 +170,15 @@ def main() -> int:
     plan = load_json(args.plan)
     if current is None or plan is None:
         raise RuntimeError("Current manifest and plan are required")
+    previous_notes = ""
+    if args.previous_notes is not None and args.previous_notes.is_file():
+        previous_notes = args.previous_notes.read_text(encoding="utf-8")
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(render_notes(previous, current, plan, args.tag), encoding="utf-8", newline="\n")
+    args.output.write_text(
+        render_notes(previous, current, plan, args.tag, previous_notes=previous_notes, date=args.date, pr=args.pr),
+        encoding="utf-8",
+        newline="\n",
+    )
     print(f"Generated Release notes for {len(current.get('families', []))} families.")
     return 0
 

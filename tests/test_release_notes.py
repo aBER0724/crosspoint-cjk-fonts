@@ -26,7 +26,16 @@ def family(name: str, *, description: str = "Description") -> dict:
 
 
 class ReleaseNotesTest(unittest.TestCase):
-    def run_generator(self, previous: dict | None, current: dict, plan: dict) -> str:
+    def run_generator(
+        self,
+        previous: dict | None,
+        current: dict,
+        plan: dict,
+        *,
+        previous_notes: str | None = None,
+        date: str | None = None,
+        pr: str | None = None,
+    ) -> str:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             current_path = root / "current.json"
@@ -50,6 +59,14 @@ class ReleaseNotesTest(unittest.TestCase):
                 previous_path = root / "previous.json"
                 previous_path.write_text(json.dumps(previous), encoding="utf-8")
                 command.extend(["--previous-manifest", str(previous_path)])
+            if previous_notes is not None:
+                notes_path = root / "previous_notes.md"
+                notes_path.write_text(previous_notes, encoding="utf-8")
+                command.extend(["--previous-notes", str(notes_path)])
+            if date is not None:
+                command.extend(["--date", date])
+            if pr is not None:
+                command.extend(["--pr", str(pr)])
             subprocess.run(command, cwd=ROOT, check=True)
             return output_path.read_text(encoding="utf-8")
 
@@ -91,6 +108,134 @@ class ReleaseNotesTest(unittest.TestCase):
         self.assertIn("**Existing** — Updated description", notes)
         self.assertIn("### Removed", notes)
         self.assertIn("**Removed**", notes)
+
+    def test_changelog_accumulates_oldest_last_and_links_pr(self):
+        previous = {"version": 2, "families": [family("Existing")]}
+        current = {"version": 2, "families": [family("Existing"), family("ZenMaruGothicJP", description="Japanese rounded sans-serif")]}
+        plan = {
+            "new": ["ZenMaruGothicJP"],
+            "changedExisting": [],
+            "remove": [],
+        }
+        previous_notes = "\n".join(
+            [
+                "## Catalog update",
+                "",
+                "This update keeps the stable `sd-fonts-m2-b4` compatibility channel.",
+                "",
+                "### Added",
+                "",
+                "- **Existing** — Description",
+                "",
+                "## Changelog",
+                "",
+                "<details>",
+                "<summary>2026-08-18</summary>",
+                "",
+                "- Add **Existing** — Description",
+                "",
+                "</details>",
+                "",
+                "### Installation",
+                "",
+                "Install me.",
+            ]
+        )
+
+        notes = self.run_generator(
+            previous,
+            current,
+            plan,
+            previous_notes=previous_notes,
+            date="2026-08-20",
+            pr="32",
+        )
+
+        self.assertIn("## Changelog", notes)
+        self.assertIn("<summary>2026-08-20</summary>", notes)
+        self.assertIn("<summary>2026-08-18</summary>", notes)
+        self.assertIn("Add **ZenMaruGothicJP** — Japanese rounded sans-serif", notes)
+        self.assertIn("via [PR #32](https://github.com/aBER0724/crosspoint-cjk-fonts/pull/32)", notes)
+        self.assertLess(
+            notes.index("<summary>2026-08-20</summary>"),
+            notes.index("<summary>2026-08-18</summary>"),
+            "newest changelog entry must appear before older ones",
+        )
+
+    def test_first_changelog_without_previous_notes_has_only_current_entry(self):
+        previous = {"version": 2, "families": [family("Existing")]}
+        current = {"version": 2, "families": [family("Existing"), family("ZenMaruGothicJP", description="Japanese rounded sans-serif")]}
+        plan = {
+            "new": ["ZenMaruGothicJP"],
+            "changedExisting": [],
+            "remove": [],
+        }
+
+        notes = self.run_generator(previous, current, plan, date="2026-08-20")
+
+        self.assertIn("<summary>2026-08-20</summary>", notes)
+        self.assertNotIn("<summary>2026-08-18</summary>", notes)
+        self.assertNotIn("via [PR", notes)
+
+    def test_changelog_preserved_when_families_unchanged(self):
+        previous = {"version": 2, "families": [family("Existing")]}
+        current = {"version": 2, "families": [family("Existing")]}
+        plan = {
+            "new": [],
+            "changedExisting": [],
+            "remove": [],
+        }
+        previous_notes = "\n".join(
+            [
+                "## Catalog update",
+                "",
+                "This update keeps the stable `sd-fonts-m2-b4` compatibility channel.",
+                "",
+                "### Changes",
+                "",
+                "- Release metadata refreshed.",
+                "",
+                "## Changelog",
+                "",
+                "<details>",
+                "<summary>2026-08-18</summary>",
+                "",
+                "- Add **Existing** — Description",
+                "",
+                "</details>",
+                "",
+                "### Installation",
+                "",
+                "Install me.",
+            ]
+        )
+
+        notes = self.run_generator(
+            previous,
+            current,
+            plan,
+            previous_notes=previous_notes,
+            date="2026-08-20",
+        )
+
+        self.assertIn("## Changelog", notes)
+        self.assertIn("<summary>2026-08-18</summary>", notes)
+        self.assertNotIn("<summary>2026-08-20</summary>", notes)
+        self.assertNotIn("via [PR", notes)
+
+    def test_no_changelog_when_nothing_changed_and_no_history(self):
+        previous = {"version": 2, "families": [family("Existing")]}
+        current = {"version": 2, "families": [family("Existing")]}
+        plan = {
+            "new": [],
+            "changedExisting": [],
+            "remove": [],
+        }
+
+        notes = self.run_generator(previous, current, plan)
+
+        self.assertNotIn("## Changelog", notes)
+        self.assertNotIn("<details>", notes)
 
 
 if __name__ == "__main__":

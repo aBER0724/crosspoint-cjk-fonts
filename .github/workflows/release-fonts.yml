@@ -77,6 +77,7 @@ jobs:
             gh release download "$RELEASE_TAG" --pattern fonts.json --dir previous
             gh release download "$RELEASE_TAG" --pattern build-index.json --dir previous || true
             gh release view "$RELEASE_TAG" --json assets > previous/assets.json
+            gh release view "$RELEASE_TAG" --json body --jq .body > previous/notes.md || true
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
@@ -121,6 +122,7 @@ jobs:
             previous/fonts.json
             previous/build-index.json
             previous/assets.json
+            previous/notes.md
           if-no-files-found: ignore
           retention-days: 7
 
@@ -182,9 +184,20 @@ jobs:
             args+=(--built-manifest built/fonts.json)
           fi
           python scripts/incremental_release.py "${args[@]}"
+      - name: Resolve contributing pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          pr=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq '.[0].number // empty' 2>/dev/null || true)
+          if [[ -n "$pr" ]]; then
+            echo "number=$pr" >> "$GITHUB_OUTPUT"
+          fi
       - name: Copy changed font files and notices
         env:
           FAMILIES_JSON: ${{ needs.plan.outputs.families_json }}
+          CONTRIBUTING_PR: ${{ steps.pr.outputs.number }}
         shell: bash
         run: |
           if [[ "$FAMILIES_JSON" != "[]" ]]; then
@@ -200,12 +213,18 @@ jobs:
               --directory dist \
               --families-json "$FAMILIES_JSON"
           fi
-          python scripts/generate_release_notes.py \
-            --previous-manifest state/previous/fonts.json \
-            --current-manifest dist/fonts.json \
-            --plan state/plan.json \
-            --output dist/RELEASE_NOTES.md \
+          notes_args=(
+            --previous-manifest state/previous/fonts.json
+            --current-manifest dist/fonts.json
+            --plan state/plan.json
+            --output dist/RELEASE_NOTES.md
             --tag "$RELEASE_TAG"
+            --previous-notes state/previous/notes.md
+          )
+          if [[ -n "${CONTRIBUTING_PR:-}" ]]; then
+            notes_args+=(--pr "$CONTRIBUTING_PR")
+          fi
+          python scripts/generate_release_notes.py "${notes_args[@]}"
           cp SOURCES.md dist/FONT-SOURCES.md
       - uses: actions/upload-artifact@v4
         with:
