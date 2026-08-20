@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import re
 from pathlib import Path
 
 
@@ -71,9 +72,66 @@ def extract_changelog(notes: str) -> str:
     return body.strip()
 
 
+_CHANGELOG_ENTRY_RE = re.compile(r"<details>\s*<summary>([^<]+)</summary>\s*(.*?)\s*</details>", re.S)
+
+
+def parse_changelog(notes: str) -> list[dict]:
+    """Parse a changelog block (heading already stripped) into [{date, items}], newest first."""
+    entries: list[dict] = []
+    for match in _CHANGELOG_ENTRY_RE.finditer(notes):
+        items = [line for line in match.group(2).splitlines() if line.strip()]
+        entries.append({"date": match.group(1).strip(), "items": items})
+    return entries
+
+
+def serialize_changelog(entries: list[dict]) -> str:
+    """Render parsed changelog entries back to a collapsible block (no heading)."""
+    blocks = []
+    for entry in entries:
+        blocks.append(
+            "\n".join(
+                ["<details>", f"<summary>{entry['date']}</summary>", ""] + entry["items"] + ["", "</details>"]
+            )
+        )
+    return "\n\n".join(blocks)
+
+
+def change_item_key(item: str) -> str:
+    """Normalize a change item to its (prefix, family) key for same-day dedup."""
+    text = item.strip()
+    for prefix in ("Add", "Update", "Remove"):
+        marker = f"- {prefix} **"
+        if text.startswith(marker):
+            rest = text[len(marker):]
+            return f"{prefix} {rest.split('**', 1)[0]}"
+    return text
+
+
 def changelog_entry(change_items: list[str], date: str) -> str:
     return "\n".join(["<details>", f"<summary>{date}</summary>", ""] + change_items + ["", "</details>"])
 
+
+def merge_same_day_changelog(change_items: list[str], date: str, previous_changelog: str) -> str:
+    """Merge today's changes into the newest changelog entry when it is for the same date.
+
+    Rebuilding the same families several times in one day (e.g. a forced full
+    re-publish) would otherwise stack near-identical per-date entries. When the
+    newest entry already covers every changed family, the existing entry is kept
+    as-is; when new families appear, they are appended to that entry.
+    """
+    entries = parse_changelog(previous_changelog)
+    if not entries or entries[0]["date"] != date:
+        block = changelog_entry(change_items, date)
+        if previous_changelog:
+            block += "\n\n" + previous_changelog
+        return block
+    existing_items = entries[0]["items"]
+    existing_keys = {change_item_key(item) for item in existing_items}
+    new_items = [item for item in change_items if change_item_key(item) not in existing_keys]
+    if not new_items:
+        return previous_changelog
+    entries[0]["items"] = existing_items + new_items
+    return serialize_changelog(entries)
 
 def render_notes(
     previous_manifest: dict | None,
@@ -114,9 +172,7 @@ def render_notes(
 
     previous_changelog = extract_changelog(previous_notes)
     if change_items:
-        block = changelog_entry(change_items, date)
-        if previous_changelog:
-            block += "\n\n" + previous_changelog
+        block = merge_same_day_changelog(change_items, date, previous_changelog)
         lines.extend(["", "## Changelog", "", block])
     elif previous_changelog:
         lines.extend(["", "## Changelog", "", previous_changelog])
