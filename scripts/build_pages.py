@@ -253,6 +253,9 @@ def build_site(
             "previewSizes": preview_sizes,
             "families": catalog_families,
         }
+        # Optional top-level update timestamp mirroring the release manifest.
+        if manifest.get("updatedAt"):
+            catalog["updatedAt"] = manifest["updatedAt"]
         (output_dir / "catalog.json").write_text(
             json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )

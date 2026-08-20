@@ -23,6 +23,7 @@ import hashlib
 import json
 import struct
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Import canonical version constants from the shared file in lib/EpdFont/scripts/
@@ -167,9 +168,11 @@ def scan_cpfont_files(input_dir: Path) -> dict[str, list[Path]]:
 
 
 def build_manifest(
-    families: dict[str, list[Path]], base_url: str
+    families: dict[str, list[Path]], base_url: str, updated_at: str | None = None
 ) -> dict:
     """Build the manifest dict from discovered font families."""
+    if updated_at is None:
+        updated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     manifest_families = []
 
     for family_name in sorted(families.keys()):
@@ -215,6 +218,7 @@ def build_manifest(
         "version": FONTS_MANIFEST_VERSION,
         "baseUrl": base_url,
         "families": manifest_families,
+        "updatedAt": updated_at,
     }
 
 
@@ -241,6 +245,12 @@ def main():
         "--descriptions-from",
         default=None,
         help="Path to the font catalog YAML used for descriptions and source metadata",
+    )
+    parser.add_argument(
+        "--updated-at",
+        default=None,
+        help="ISO-8601 timestamp marking when the font catalog content last changed "
+        "(defaults to the current UTC time when omitted)",
     )
     args = parser.parse_args()
 
@@ -275,7 +285,7 @@ def main():
     for name, files in sorted(families.items()):
         print(f"  {name}: {len(files)} files")
 
-    manifest = build_manifest(families, base_url)
+    manifest = build_manifest(families, base_url, updated_at=args.updated_at)
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)

@@ -195,22 +195,22 @@ def build_family(family: dict, output: Path, sizes: list[int]) -> None:
     subprocess.run(command, check=True)
 
 
-def run_manifest(output: Path, base_url: str) -> None:
-    subprocess.run(
-        [
-            sys.executable,
-            str(ROOT / "scripts" / "generate_manifest.py"),
-            "--input",
-            str(output),
-            "--base-url",
-            base_url,
-            "--output",
-            str(output / "fonts.json"),
-            "--descriptions-from",
-            str(CONFIG),
-        ],
-        check=True,
-    )
+def run_manifest(output: Path, base_url: str, updated_at: str | None = None) -> None:
+    command = [
+        sys.executable,
+        str(ROOT / "scripts" / "generate_manifest.py"),
+        "--input",
+        str(output),
+        "--base-url",
+        base_url,
+        "--output",
+        str(output / "fonts.json"),
+        "--descriptions-from",
+        str(CONFIG),
+    ]
+    if updated_at:
+        command += ["--updated-at", updated_at]
+    subprocess.run(command, check=True)
 
 
 def main() -> int:
@@ -224,6 +224,12 @@ def main() -> int:
         "(e.g. '12,14,18' for a self-built catalog)",
     )
     parser.add_argument("--clean", action="store_true")
+    parser.add_argument(
+        "--updated-at",
+        default=None,
+        help="ISO-8601 timestamp marking when the font catalog content last changed "
+        "(defaults to generation time when omitted)",
+    )
     args = parser.parse_args()
 
     config = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
@@ -245,7 +251,7 @@ def main() -> int:
     args.output.mkdir(parents=True, exist_ok=True)
     for family in families:
         build_family(family, args.output, sizes)
-    run_manifest(args.output, args.base_url)
+    run_manifest(args.output, args.base_url, updated_at=args.updated_at)
     return 0
 
 

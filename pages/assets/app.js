@@ -7,7 +7,7 @@ const COPY = {
     categories: { "sans-serif": "Sans serif", serif: "Serif", handwriting: "Handwriting", "rounded-sans": "Rounded sans", display: "Display", fangsong: "Fangsong" },
     downloads: "Download physical sizes", source: "Source", manifest: "Release manifest", maker: "Make a custom font", theme: "Theme", themeLight: "Light", themeDark: "Dark", themeSystem: "System",
     footer: "Pages hosts only this catalog and compact PNG previews. Font binaries remain on GitHub Release.",
-    loading: "Loading catalog…", empty: "No matching fonts.", error: "Catalog unavailable. Try again later.", families: count => `${count} font ${count === 1 ? "family" : "families"}`,
+    loading: "Loading catalog…", empty: "No matching fonts.", error: "Catalog unavailable. Try again later.", families: count => `${count} font ${count === 1 ? "family" : "families"}`, lastUpdated: "Last updated",
   },
   zh: {
     title: "CJK 字体目录",
@@ -17,7 +17,7 @@ const COPY = {
     categories: { "sans-serif": "无衬线体", serif: "衬线体", handwriting: "手写体", "rounded-sans": "圆体", display: "展示体", fangsong: "仿宋体" },
     downloads: "下载物理字号", source: "字体来源", manifest: "Release 清单", maker: "制作自制字体", theme: "主题", themeLight: "浅色", themeDark: "深色", themeSystem: "跟随系统",
     footer: "Pages 只托管目录和轻量 PNG 预览；字体二进制仍由 GitHub Release 分发。",
-    loading: "正在加载字体目录…", empty: "没有匹配的字体。", error: "字体目录暂时不可用，请稍后重试。", families: count => `${count} 个字体家族`,
+    loading: "正在加载字体目录…", empty: "没有匹配的字体。", error: "字体目录暂时不可用，请稍后重试。", families: count => `${count} 个字体家族`, lastUpdated: "最后更新",
   },
   ja: {
     title: "CJK フォントカタログ",
@@ -27,7 +27,7 @@ const COPY = {
     categories: { "sans-serif": "ゴシック体", serif: "明朝体", handwriting: "手書き体", "rounded-sans": "丸ゴシック体", display: "ディスプレイ体", fangsong: "仿宋体" },
     downloads: "物理サイズをダウンロード", source: "入手元", manifest: "Release マニフェスト", maker: "個人用フォントを作成", theme: "テーマ", themeLight: "ライト", themeDark: "ダーク", themeSystem: "システム",
     footer: "Pages はカタログと軽量 PNG のみを配信し、フォント本体は GitHub Release に置かれます。",
-    loading: "カタログを読み込み中…", empty: "該当するフォントはありません。", error: "カタログを読み込めませんでした。", families: count => `${count} ファミリー`,
+    loading: "カタログを読み込み中…", empty: "該当するフォントはありません。", error: "カタログを読み込めませんでした。", families: count => `${count} ファミリー`, lastUpdated: "最終更新",
   },
 };
 
@@ -38,7 +38,7 @@ const state = { catalog: null, locale: "en", themeMode: "system", prefersDark: f
 const nodes = {
   catalog: document.querySelector("#catalog"), status: document.querySelector("#status"), search: document.querySelector("#search"),
   language: document.querySelector("#language-filter"), category: document.querySelector("#category-filter"), previewSize: document.querySelector("#preview-size"), theme: document.querySelector("#theme-switcher"),
-  template: document.querySelector("#font-card-template"), manifest: document.querySelector("#manifest-link"),
+  template: document.querySelector("#font-card-template"), manifest: document.querySelector("#manifest-link"), lastUpdated: document.querySelector("#last-updated"),
 };
 
 function preferredLocale() {
@@ -106,7 +106,19 @@ function applyCopy() {
   document.querySelectorAll("[data-locale]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.locale === state.locale)));
   populateThemeSwitcher();
   applyTheme();
+  updateLastUpdated();
   render();
+}
+
+function formatDate(iso) {
+  const date = String(iso || "").slice(0, 10);
+  return date.length === 10 ? date : "";
+}
+
+function updateLastUpdated() {
+  const copy = COPY[state.locale];
+  const date = state.catalog?.updatedAt ? formatDate(state.catalog.updatedAt) : "";
+  nodes.lastUpdated.textContent = date ? `${copy.lastUpdated} ${date}` : "";
 }
 
 function optionValues(key) {
@@ -224,6 +236,7 @@ async function loadCatalog() {
       ? DEFAULT_PREVIEW_SIZE
       : String(state.catalog.previewSizes[0]);
     nodes.manifest.href = state.catalog.manifestUrl;
+    updateLastUpdated();
     render();
   } catch (error) {
     console.error(error);
