@@ -114,6 +114,13 @@ h1 {
   line-height: 1.55;
 }
 
+.last-updated {
+  margin: 6px 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .maker-link {
   display: inline-flex;
   min-height: 40px;

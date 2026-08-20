@@ -108,6 +108,7 @@ class PagesCatalogTest(unittest.TestCase):
         self.manifest = {
             "version": 2,
             "baseUrl": "https://github.com/aBER0724/crosspoint-cjk-fonts/releases/download/sd-fonts-m2-b4/",
+            "updatedAt": "2026-08-20T06:11:03Z",
             "families": [
                 {
                     "name": "ExampleCJK",
@@ -142,6 +143,7 @@ class PagesCatalogTest(unittest.TestCase):
         self.assertEqual(catalog["cpfontVersion"], 4)
         self.assertEqual(catalog["manifestVersion"], 2)
         self.assertEqual(catalog["previewSizes"], [14, 18, 22])
+        self.assertEqual(catalog["updatedAt"], "2026-08-20T06:11:03Z")
         family = catalog["families"][0]
         self.assertEqual(family["name"], "ExampleCJK")
         self.assertEqual(
@@ -165,6 +167,12 @@ class PagesCatalogTest(unittest.TestCase):
         self.assertEqual(preview.mode, "RGBA")
         self.assertEqual(preview.getextrema()[3], (0, 255))
         self.assertEqual(preview.getpixel((0, 0)), (255, 255, 255, 0))
+
+    def test_catalog_omits_updated_at_when_manifest_lacks_it(self):
+        del self.manifest["updatedAt"]
+        self.manifest_path.write_text(json.dumps(self.manifest), encoding="utf-8")
+        catalog = self.build()
+        self.assertNotIn("updatedAt", catalog)
 
     def test_preview_sample_follows_declared_languages_and_adds_symbols(self):
         samples = {
