@@ -303,7 +303,13 @@ jobs:
           branch="submit/${family:-font-submission}"
           git checkout -b "$branch"
           git add -- community-fonts/ config/
-          git commit -m "chore(fonts): submit ${family:-font} for upstream review"
+          # The font changes may already be committed in HEAD when the dispatch
+          # ref is a feature branch; only add a wrapper commit if there is
+          # actually something staged, otherwise the empty commit would abort
+          # the script under `set -e`.
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(fonts): submit ${family:-font} for upstream review"
+          fi
           # Force-update the long-lived submit/<family> branch so repeat runs
           # refine the same PR draft instead of piling up branches.
           git push -u origin "$branch" --force

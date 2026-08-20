@@ -137,6 +137,16 @@ class IncrementalReleaseWorkflowTest(unittest.TestCase):
         self.assertIn("git push -u origin \"$branch\" --force", text)
         self.assertIn("compare", text)
 
+    def test_push_submit_survives_when_changes_are_already_in_head(self):
+        # The dispatch ref may already carry the font changes in its history
+        # (e.g. running from a feature branch). After `git checkout -b` there
+        # is then nothing new to stage, so the script must not fail on an
+        # empty `git commit` under `set -e`.
+        text = BUILD_WORKFLOW.read_text(encoding="utf-8")
+        push_block = text.split("  push-submit:\n", 1)[1]
+        self.assertIn("if ! git diff --cached --quiet; then", push_block)
+        self.assertIn('git commit -m "chore(fonts): submit ${family:-font} for upstream review"', push_block)
+
     def test_base_url_and_permissions_allow_self_managed_releases(self):
         import yaml
 
