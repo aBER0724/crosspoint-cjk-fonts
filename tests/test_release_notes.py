@@ -241,6 +241,136 @@ class ReleaseNotesTest(unittest.TestCase):
         self.assertNotIn("## Changelog", notes)
         self.assertNotIn("<details>", notes)
 
+    def test_same_day_duplicate_rebuild_does_not_add_entry(self):
+        previous = {"version": 2, "families": [family("Existing")]}
+        current = {"version": 2, "families": [family("Existing")]}
+        plan = {
+            "new": [],
+            "changedExisting": ["Existing"],
+            "remove": [],
+        }
+        previous_notes = "\n".join(
+            [
+                "## Catalog update",
+                "",
+                "This update keeps the stable `sd-fonts-m2-b4` compatibility channel.",
+                "",
+                "## Changelog",
+                "",
+                "<details>",
+                "<summary>2026-08-20</summary>",
+                "",
+                "- Update **Existing** — Description (via [PR #35](https://github.com/aBER0724/crosspoint-cjk-fonts/pull/35))",
+                "",
+                "</details>",
+                "",
+                "### Installation",
+                "",
+                "Install me.",
+            ]
+        )
+
+        notes = self.run_generator(
+            previous,
+            current,
+            plan,
+            previous_notes=previous_notes,
+            date="2026-08-20",
+            pr="36",
+        )
+
+        self.assertIn("## Changelog", notes)
+        self.assertEqual(notes.count("<summary>2026-08-20</summary>"), 1)
+        self.assertEqual(notes.count("via [PR #35"), 1)
+        self.assertNotIn("via [PR #36", notes)
+
+    def test_same_day_new_family_merges_into_existing_entry(self):
+        previous = {"version": 2, "families": [family("Existing")]}
+        current = {
+            "version": 2,
+            "families": [family("Existing"), family("ZenMaruGothicJP", description="Japanese rounded sans-serif")],
+        }
+        plan = {
+            "new": ["ZenMaruGothicJP"],
+            "changedExisting": ["Existing"],
+            "remove": [],
+        }
+        previous_notes = "\n".join(
+            [
+                "## Catalog update",
+                "",
+                "This update keeps the stable `sd-fonts-m2-b4` compatibility channel.",
+                "",
+                "## Changelog",
+                "",
+                "<details>",
+                "<summary>2026-08-20</summary>",
+                "",
+                "- Update **Existing** — Description (via [PR #35](https://github.com/aBER0724/crosspoint-cjk-fonts/pull/35))",
+                "",
+                "</details>",
+                "",
+                "### Installation",
+                "",
+                "Install me.",
+            ]
+        )
+
+        notes = self.run_generator(
+            previous,
+            current,
+            plan,
+            previous_notes=previous_notes,
+            date="2026-08-20",
+            pr="36",
+        )
+
+        self.assertEqual(notes.count("<summary>2026-08-20</summary>"), 1)
+        self.assertIn("Add **ZenMaruGothicJP** — Japanese rounded sans-serif", notes)
+        self.assertIn("via [PR #36", notes)
+        self.assertLess(notes.index("Add **ZenMaruGothicJP"), notes.index("### Installation"))
+
+    def test_different_day_still_appends_new_entry(self):
+        previous = {"version": 2, "families": [family("Existing")]}
+        current = {"version": 2, "families": [family("Existing")]}
+        plan = {
+            "new": [],
+            "changedExisting": ["Existing"],
+            "remove": [],
+        }
+        previous_notes = "\n".join(
+            [
+                "## Catalog update",
+                "",
+                "This update keeps the stable `sd-fonts-m2-b4` compatibility channel.",
+                "",
+                "## Changelog",
+                "",
+                "<details>",
+                "<summary>2026-08-19</summary>",
+                "",
+                "- Update **Existing** — Description",
+                "",
+                "</details>",
+                "",
+                "### Installation",
+                "",
+                "Install me.",
+            ]
+        )
+
+        notes = self.run_generator(
+            previous,
+            current,
+            plan,
+            previous_notes=previous_notes,
+            date="2026-08-20",
+        )
+
+        self.assertEqual(notes.count("<summary>2026-08-20</summary>"), 1)
+        self.assertEqual(notes.count("<summary>2026-08-19</summary>"), 1)
+        self.assertLess(notes.index("<summary>2026-08-20</summary>"), notes.index("<summary>2026-08-19</summary>"))
+
 
 if __name__ == "__main__":
     unittest.main()
