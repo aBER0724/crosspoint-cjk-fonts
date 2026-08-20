@@ -222,3 +222,133 @@ families:
       url: "https://raw.githubusercontent.com/google/fonts/92503f07b74eab956c1abf4956fbf46170716caa/ofl/zenmarugothic/ZenMaruGothic-Regular.ttf"
       filename: "ZenMaruGothic-Regular.ttf"
       sha256: a0c0b53543e0993ae2225e629c833f3d51495ad31720694ff112ce4ce11111ef
+
+  - name: XinXiHeiSC
+    display_names: {en: "LXGW Neo XiHei", zh: "霞鹜新晰黑", ja: "霞鹜新晰黑"}
+    description: "Modern Simplified Chinese sans-serif derived from LXGW Neo XiHei"
+    category: sans-serif
+    languages: [zh-Hans]
+    source_url: "https://github.com/lxgw/LxgwXiHei"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E9%9C%9E%E9%B9%9C/%E9%BB%91%E4%BD%93/%E9%9C%9E%E9%B9%9C%E6%96%B0%E6%99%B0%E9%BB%91.ttf"
+      filename: "XinXiHeiSC.ttf"
+      sha256: 76f7736d46053aea81c30d370e1f2dde8713241cef64f95c023c1d15b0e6f58b
+
+  - name: ShangZhiHeiSC
+    display_names: {en: "LXGW Fasmart Gothic", zh: "霞鹜尚智黑", ja: "霞鹜尚智黑"}
+    description: "Elegant Simplified Chinese sans-serif derived from LXGW Fasmart Gothic"
+    category: sans-serif
+    languages: [zh-Hans]
+    source_url: "https://github.com/lxgw/LxgwXiHei"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E9%9C%9E%E9%B9%9C/%E9%BB%91%E4%BD%93/%E9%9C%9E%E9%B9%9C%E5%B0%9A%E6%99%BA%E9%BB%91.ttf"
+      filename: "ShangZhiHeiSC.ttf"
+      sha256: fdd76652cda628b3b7fe9e6dacde8a5c45ff0808712ebc512bc9287a56a22cc1
+
+  - name: MingXinSongSC
+    display_names: {en: "LXGW Heart Serif", zh: "霞鹜铭心宋", ja: "霞鹜铭心宋"}
+    description: "Refined Simplified Chinese Song-style serif derived from LXGW Heart Serif MN"
+    category: serif
+    languages: [zh-Hans]
+    source_url: "https://github.com/lxgw/LxgwHeartSerif"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E9%9C%9E%E9%B9%9C/%E5%AE%8B%E4%BD%93/%E9%9C%9E%E9%B9%9C%E9%93%AD%E5%BF%83%E5%AE%8B-%E7%8E%B0%E4%BB%A3.ttf"
+      filename: "MingXinSongSC.ttf"
+      sha256: 6c558bab89ecd0c273a4e6f12ceb1749babe3d5266fe29eea264ef99b82671b8
+
+  - name: ZhiSongSC
+    display_names: {en: "LXGW ZhiSong", zh: "霞鶩緻宋", ja: "霞鶩緻宋"}
+    description: "Classic Simplified Chinese Song-style serif derived from LXGW ZhiSong MN"
+    category: serif
+    languages: [zh-Hans]
+    source_url: "https://github.com/lxgw/LxgwZhiSong"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E9%9C%9E%E9%B9%9C/%E5%AE%8B%E4%BD%93/%E9%9C%9E%E9%B6%A9%E7%B7%BB%E5%AE%8B-%E7%8E%B0%E4%BB%A3.ttf"
+      filename: "ZhiSongSC.ttf"
+      sha256: 96229988e282bd5b032d5815f2bc3ff142123e7177d8f381eb5d5a379539cf8e
+
+  - name: HanchanSongSC
+    display_names: {en: "Hanchan Jinshu Song", zh: "寒蝉锦书宋", ja: "寒蝉锦书宋"}
+    description: "Warm Simplified Chinese Song-style serif from Hanchan Jinshu Song Pro"
+    category: serif
+    languages: [zh-Hans]
+    source_url: "https://github.com/Warren2060/ChillJinshuSong"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E5%AF%92%E8%9D%89%E5%AD%97%E5%9E%8B/%E5%AF%92%E8%9D%89%E9%94%A6%E4%B9%A6%E5%AE%8B/%E5%AF%92%E8%9D%89%E9%94%A6%E4%B9%A6%E5%AE%8BPro_Regular.otf"
+      filename: "HanchanSongSC.otf"
+      sha256: c21b75df0b328b1773f9023b5625e026d023a32ee85786f869f8827627f61e33
+
+  - name: ChuxiaMinchoTC
+    display_names: {en: "Early Summer Mincho", zh: "初夏明朝體", ja: "初夏明朝體"}
+    description: "Taiwanese Traditional Chinese Ming-style serif with a fresh bookish feel"
+    category: serif
+    languages: [zh-Hant]
+    source_url: "https://github.com/GuiWonder/EarlySummerMincho"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E5%88%9D%E5%A4%8F%E6%98%8E%E6%9C%9D%E9%AB%94/%E5%88%9D%E5%A4%8F%E6%98%8E%E6%9C%9D%E9%AB%94-Regular.ttf"
+      filename: "ChuxiaMinchoTC.ttf"
+      sha256: 1eaefc060eaef32b694b6a5cf19f10ef22dde48eeca9cdd6acd224175f2ad89f
+
+  - name: FengheKaiTC
+    display_names: {en: "Fusion Kai", zh: "缝合楷", ja: "缝合楷"}
+    description: "Traditional Chinese regular-script (kai) face merged from multiple sources"
+    category: handwriting
+    languages: [zh-Hant]
+    source_url: "https://github.com/lxgw/FusionKai"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E7%BC%9D%E5%90%88%E6%A5%B7/%E7%BC%9D%E5%90%88%E6%A5%B7-%E5%8F%B0%E6%B9%BE%E5%AD%97%E5%BD%A2%E4%BC%98%E5%85%88.ttf"
+      filename: "FengheKaiTC.ttf"
+      sha256: 3043a7637fdd5e3ae1d55ee6820b41396c7d72de0575b8a49c24d09053f5f542
+
+  - name: YuexingKaiTC
+    display_names: {en: "Moon Stars Kai", zh: "月星楷", ja: "月星楷"}
+    description: "Bookish Traditional Chinese regular-script (kai) face with a starlit mood"
+    category: handwriting
+    languages: [zh-Hant]
+    source_url: "https://github.com/GuiWonder/MoonStarsKai"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E6%9C%88%E6%98%9F%E6%A5%B7/%E6%9C%88%E6%98%9F%E6%A5%B7-Regular.ttf"
+      filename: "YuexingKaiTC.ttf"
+      sha256: 6d6f94d2f9fe83121ecb72622a8083cc32f6f471c6f0cf2394b509167a7fadbb
+
+  - name: MaokenHeiSC
+    display_names: {en: "Maoken Assorted Sans", zh: "猫啃什锦黑", ja: "猫啃什锦黑"}
+    description: "Rounded Simplified Chinese sans-serif with mixed design weights"
+    category: sans-serif
+    languages: [zh-Hans]
+    source_url: "https://github.com/Skr-ZERO/MaokenAssortedSans"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E7%8C%AB%E5%95%83%E4%BB%80%E9%94%A6%E9%BB%91/%E7%8C%AB%E5%95%83%E4%BB%80%E9%94%A6%E9%BB%91.ttf"
+      filename: "MaokenHeiSC.ttf"
+      sha256: 8097886e741f7112b10ea1dd56701431865cecea36cf181357bdcdc05451300d
+
+  - name: WujieHeiSC
+    display_names: {en: "Unbounded Sans", zh: "无界黑", ja: "无界黑"}
+    description: "Compact Simplified Chinese sans-serif with an open, unbounded look"
+    category: sans-serif
+    languages: [zh-Hans]
+    source_url: "https://github.com/maoken-fonts/unbounded-sans"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E6%97%A0%E7%95%8C%E9%BB%91/%E6%97%A0%E7%95%8C%E9%BB%91.ttf"
+      filename: "WujieHeiSC.ttf"
+      sha256: d37d10dbb85c7403b164a4565e4e2c837cbbb10005ec812a721104600fc9686d
