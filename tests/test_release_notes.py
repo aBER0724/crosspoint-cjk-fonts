@@ -79,17 +79,19 @@ class ReleaseNotesTest(unittest.TestCase):
             "remove": [],
         }
 
-        notes = self.run_generator(previous, current, plan)
+        notes = self.run_generator(previous, current, plan, date="2026-08-20")
 
         self.assertIn("## Catalog update", notes)
         self.assertIn("2 font families", notes)
         self.assertIn("14 `.cpfont` files", notes)
-        self.assertIn("### Added", notes)
-        self.assertIn("**ZenMaruGothicJP** — Japanese rounded sans-serif", notes)
+        self.assertIn("## Changelog", notes)
+        self.assertIn("Add **ZenMaruGothicJP** — Japanese rounded sans-serif", notes)
+        self.assertIn("<summary>2026-08-20</summary>", notes)
         self.assertIn("### Installation", notes)
         self.assertIn("### Verification", notes)
         self.assertNotIn("licens", notes.lower())
         self.assertIn("Source links", notes)
+        self.assertNotIn("### Added", notes)
         self.assertNotIn("### Updated", notes)
         self.assertNotIn("### Removed", notes)
 
@@ -102,12 +104,14 @@ class ReleaseNotesTest(unittest.TestCase):
             "remove": ["Removed"],
         }
 
-        notes = self.run_generator(previous, current, plan)
+        notes = self.run_generator(previous, current, plan, date="2026-08-20")
 
-        self.assertIn("### Updated", notes)
-        self.assertIn("**Existing** — Updated description", notes)
-        self.assertIn("### Removed", notes)
-        self.assertIn("**Removed**", notes)
+        self.assertIn("## Changelog", notes)
+        self.assertIn("Update **Existing** — Updated description", notes)
+        self.assertIn("Remove **Removed**", notes)
+        self.assertNotIn("### Added", notes)
+        self.assertNotIn("### Updated", notes)
+        self.assertNotIn("### Removed", notes)
 
     def test_changelog_accumulates_oldest_last_and_links_pr(self):
         previous = {"version": 2, "families": [family("Existing")]}

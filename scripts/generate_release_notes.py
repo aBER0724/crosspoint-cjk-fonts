@@ -108,14 +108,6 @@ def render_notes(
         "CrossPoint Reader selects a real installed size and does not scale CJK glyphs on the device.",
     ]
 
-    for heading, names in (("Added", added), ("Updated", updated), ("Removed", removed)):
-        if names:
-            lines.extend(["", f"### {heading}", ""])
-            lines.extend(family_line(name, current, previous) for name in names)
-
-    if not added and not updated and not removed:
-        lines.extend(["", "### Changes", "", "- Release metadata and reproducibility records were refreshed; font family membership is unchanged."])
-
     change_items = [change_item("Add", name, current, previous, pr_link) for name in added]
     change_items += [change_item("Update", name, current, previous, pr_link) for name in updated]
     change_items += [change_item("Remove", name, current, previous, pr_link) for name in removed]
