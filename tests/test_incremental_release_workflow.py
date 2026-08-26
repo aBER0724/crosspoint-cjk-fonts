@@ -40,6 +40,8 @@ class IncrementalReleaseWorkflowTest(unittest.TestCase):
         self.assertNotIn("name: crosspoint-cjk-fonts\n          path: built", text)
         self.assertIn("find built -maxdepth 1 -name '*.cpfontpkg' -print", text)
         self.assertIn('cp "$package" dist/', text)
+        self.assertIn('"dist/$family-ui.cpfontpkg"', text)
+        self.assertIn('"dist/$family.cpfontpkg"', text)
 
     def test_release_notes_are_generated_from_the_candidate_manifests(self):
         text = RELEASE_WORKFLOW.read_text(encoding="utf-8")

@@ -274,7 +274,11 @@ jobs:
                 --families-json "$CHANGED_EXISTING_JSON"
             )
             for family in $(python -c 'import json, os; print(" ".join(json.loads(os.environ["CHANGED_EXISTING_JSON"])))'); do
-              gh release upload "$RELEASE_TAG" "dist/$family.cpfontpkg" --clobber
+              for package in "dist/$family-ui.cpfontpkg" "dist/$family.cpfontpkg"; do
+                if [[ -f "$package" ]]; then
+                  gh release upload "$RELEASE_TAG" "$package" --clobber
+                fi
+              done
             done
           fi
           if [[ "$NEW_JSON" != "[]" ]]; then
@@ -286,7 +290,11 @@ jobs:
                 --families-json "$NEW_JSON"
             )
             for family in $(python -c 'import json, os; print(" ".join(json.loads(os.environ["NEW_JSON"])))'); do
-              gh release upload "$RELEASE_TAG" "dist/$family.cpfontpkg"
+              for package in "dist/$family-ui.cpfontpkg" "dist/$family.cpfontpkg"; do
+                if [[ -f "$package" ]]; then
+                  gh release upload "$RELEASE_TAG" "$package"
+                fi
+              done
             done
           fi
 

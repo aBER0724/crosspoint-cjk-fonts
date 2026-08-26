@@ -13,7 +13,7 @@ import yaml
 
 UI_SIZES = (8, 10, 12)
 FIXED_ZIP_TIME = (1980, 1, 1, 0, 0, 0)
-
+PACKAGE_FORMAT_REVISION = 2
 
 def zip_info(path: str) -> zipfile.ZipInfo:
     info = zipfile.ZipInfo(path, FIXED_ZIP_TIME)
