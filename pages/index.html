@@ -5,25 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Real CrossPoint .cpfont v4 bitmap previews and verified Release downloads." />
     <title>CrossPoint CJK Fonts</title>
-    <link rel="stylesheet" href="assets/app.css" />
-    <script type="module" src="assets/app.js"></script>
+    <link rel="stylesheet" href="assets/app.css?v=41" />
+    <script src="assets/jszip.min.js?v=1"></script>
+    <script type="module" src="assets/app.js?v=40"></script>
   </head>
   <body>
     <header class="masthead">
       <div class="masthead__copy">
-        <p class="eyebrow">CrossPoint Reader</p>
-        <h1 data-copy="title">CJK font catalog</h1>
+        <div class="masthead__heading">
+          <div class="masthead__title-actions">
+            <h1 data-copy="title">CJK Fonts</h1>
+            <a id="maker-link" class="maker-link" href="https://crosspoint-cjk-font-maker.onrender.com/" target="_blank" rel="noopener noreferrer" data-copy="maker">Make a custom font</a>
+          </div>
+          <div class="masthead__actions">
+            <nav class="locale-switcher" aria-label="Language">
+              <button type="button" data-locale="en">EN</button>
+              <button type="button" data-locale="zh">中文</button>
+              <button type="button" data-locale="ja">日本語</button>
+            </nav>
+            <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Theme"></div>
+          </div>
+        </div>
         <p class="intro" data-copy="intro">Preview the actual 2-bit device bitmaps, then download verified physical font files from GitHub Release.</p>
-        <p id="last-updated" class="last-updated" aria-live="polite"></p>
-        <a id="maker-link" class="maker-link" href="https://crosspoint-cjk-font-maker.onrender.com/" target="_blank" rel="noopener noreferrer" data-copy="maker">Make a custom font</a>
-      </div>
-      <div class="masthead__controls">
-        <nav class="locale-switcher" aria-label="Language">
-          <button type="button" data-locale="en">EN</button>
-          <button type="button" data-locale="zh">中文</button>
-          <button type="button" data-locale="ja">日本語</button>
-        </nav>
-        <div id="theme-switcher" class="theme-switcher" role="group" aria-label="Theme"></div>
       </div>
     </header>
 
@@ -45,6 +48,14 @@
           <span id="preview-size-label" data-copy="previewLabel">Preview size</span>
           <div id="preview-size" class="preview-size-switch" role="group" aria-labelledby="preview-size-label"></div>
         </div>
+        <div class="device-option-field">
+          <span id="device-color-label" data-copy="deviceColor">Reader body color</span>
+          <div id="device-color" class="option-switch" role="group" aria-labelledby="device-color-label"></div>
+        </div>
+        <div class="device-option-field">
+          <span id="display-mode-label" data-copy="displayMode">Reader screen appearance</span>
+          <div id="display-mode" class="option-switch" role="group" aria-labelledby="display-mode-label"></div>
+        </div>
       </section>
 
       <p id="status" class="status" role="status" aria-live="polite"></p>
@@ -54,15 +65,25 @@
     <template id="font-card-template">
       <article class="font-card">
         <header class="font-card__header">
-          <div>
+          <div class="font-card__heading">
             <h2></h2>
             <p class="family-id"></p>
             <p class="description"></p>
           </div>
-        </header>
-        <div class="preview-frame"><img class="preview" alt="" loading="lazy" decoding="async" /></div>
-        <div class="font-meta">
           <p class="tags"></p>
+        </header>
+        <div class="device-preview device-preview--black">
+          <div class="device-frame">
+            <div class="device-bezel">
+              <div class="preview-frame"><img class="preview" alt="" loading="lazy" decoding="async" /></div>
+            </div>
+            <div class="device-bottom-controls" aria-hidden="true">
+              <span></span><span></span>
+            </div>
+          </div>
+          <span class="device-side-key device-side-key--top" aria-hidden="true"></span>
+          <span class="device-side-key device-side-key--middle" aria-hidden="true"></span>
+          <span class="device-side-key device-side-key--bottom" aria-hidden="true"></span>
         </div>
         <div class="downloads" role="group" aria-label="Download physical sizes"></div>
         <footer>
@@ -74,6 +95,10 @@
     <footer class="site-footer">
       <p data-copy="footer">Pages hosts only this catalog and compact PNG previews. Font binaries remain on GitHub Release.</p>
       <a id="manifest-link" target="_blank" rel="noopener noreferrer" data-copy="manifest">Release manifest</a>
+      <a class="github-link" href="https://github.com/aBER0724/crosspoint-cjk-fonts" target="_blank" rel="noopener noreferrer" aria-label="CrossPoint CJK Fonts on GitHub">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.78 1.2 1.78 1.2 1.04 1.77 2.72 1.26 3.38.97.1-.75.4-1.26.74-1.55-2.57-.29-5.28-1.29-5.28-5.74 0-1.27.45-2.3 1.2-3.11-.12-.29-.52-1.47.11-3.07 0 0 .98-.31 3.16 1.19a10.9 10.9 0 0 1 5.75 0c2.19-1.5 3.16-1.19 3.16-1.19.64 1.6.24 2.78.12 3.07.74.81 1.19 1.84 1.19 3.11 0 4.46-2.71 5.44-5.29 5.73.42.36.79 1.07.79 2.16v3.2c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z"/></svg>
+      </a>
+      <a id="last-updated" class="last-updated" target="_blank" rel="noopener noreferrer" aria-live="polite"></a>
     </footer>
   </body>
 </html>

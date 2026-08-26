@@ -1,10 +1,5 @@
 {
-  "schemaVersion": 1,
-  "byLanguage": {
-    "zh-Hans": "春风又绿江南岸，明月何时照我还。",
-    "zh-Hant": "春風又綠江南岸，明月何時照我還。",
-    "ja": "かな文字とカタカナを表示します。"
-  },
-  "symbols": "，。！？；：、（）《》「」『』—…· @#$%&*+-=/",
-  "latin": "CrossPoint Reader · 1234567890"
+  "schemaVersion": 2,
+  "source": "crosspoint-cjk-font-maker/web/app.js#DEFAULT_PREVIEW_TEXT",
+  "presetText": "中文测试：你好，世界！这是字符集显示检查，包含常用标点：。，、；：？！“”（）【】《》—…以及数字0123456789，日期2026-02-26，金额￥123.45。\n日本語テスト：こんにちは、世界！文字化け確認です。ひらがな・カタカナ：あいうえお／アイウエオ。漢字：東京、大阪、学校。記号：・「」『』〜。\nEnglish test: Hello, world! Charset check: ABC abc 123, symbols: !@#$%^&*()_+-=[]{};:’”,.<>/? \\ |."
 }

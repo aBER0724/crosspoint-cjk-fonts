@@ -49,7 +49,8 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn("github.event_name == 'workflow_call'", text)
         self.assertNotIn("github.event_name == 'push' ||", text)
         self.assertIn("python -m unittest discover -s tests -v", text)
-
+        self.assertIn("scripts/package_cpfont_families.py", text)
+        self.assertIn("-name '*.cpfontpkg'", text)
     def test_pages_source_keeps_runtime_hooks_and_font_maker_visual_tokens(self):
         html = PAGE_HTML.read_text(encoding="utf-8")
         css = PAGE_CSS.read_text(encoding="utf-8")
@@ -127,20 +128,40 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertEqual(html.count('id="maker-link"'), 1)
         self.assertNotIn("nodes.maker.href = state.catalog.fontMakerUrl;", script)
 
-    def test_locale_and_theme_controls_share_one_row_at_every_width(self):
+    def test_top_controls_wrap_like_maker_at_narrow_widths(self):
+        html = PAGE_HTML.read_text(encoding="utf-8")
         css = PAGE_CSS.read_text(encoding="utf-8")
-        base_controls = css[css.index(".masthead__controls {") : css.index(".locale-switcher,", css.index(".masthead__controls {"))]
-        mobile_css = css[css.index("@media (max-width: 640px)") :]
+        base_controls = css[css.index(".masthead__actions {") : css.index(".locale-switcher,", css.index(".masthead__actions {"))]
+        controls_html = html[html.index('<div class="masthead__actions">') : html.index('<p class="intro"')]
+        heading_html = html[html.index('<div class="masthead__heading">') : html.index('<p class="intro"')]
+        title_actions_html = html[html.index('<div class="masthead__title-actions">') : html.index('<div class="masthead__actions">')]
 
+        self.assertIn('id="maker-link"', title_actions_html)
+        self.assertLess(title_actions_html.index('data-copy="title"'), title_actions_html.index('id="maker-link"'))
+        self.assertLess(controls_html.index('class="locale-switcher"'), controls_html.index('id="theme-switcher"'))
+        self.assertNotIn('id="device-color"', controls_html)
+        self.assertNotIn('id="display-mode"', controls_html)
+        toolbar_html = html[html.index('<section class="toolbar"') : html.index('</section>', html.index('<section class="toolbar"'))]
+        self.assertLess(toolbar_html.index('id="preview-size"'), toolbar_html.index('id="device-color"'))
+        self.assertLess(toolbar_html.index('id="device-color"'), toolbar_html.index('id="display-mode"'))
         self.assertIn("display: flex;", base_controls)
-        self.assertIn("align-items: center;", base_controls)
         self.assertIn("justify-content: flex-end;", base_controls)
-        self.assertIn("overflow-x: auto;", base_controls)
-        self.assertNotIn("display: grid;", base_controls)
-        mobile_controls = mobile_css[mobile_css.index(".masthead__controls {") : mobile_css.index(".locale-switcher,")]
-        self.assertNotIn("grid-template-columns:", mobile_controls)
-        self.assertNotIn("justify-self: end;", mobile_controls)
-
+        self.assertIn("overflow: visible;", base_controls)
+        self.assertIn("min-width: 0;", base_controls)
+        self.assertIn("body {\n  min-width: 360px;", css)
+        self.assertNotIn("body {\n  min-width: 720px;", css)
+        self.assertIn("grid-template-columns: repeat(12, minmax(0, 1fr));", css)
+        self.assertIn("grid-column: span 4;", css)
+        self.assertIn("grid-column: span 6;", css)
+        self.assertIn(".masthead__heading {\n    display: grid;\n    width: 100%;\n    grid-template-columns: minmax(0, 1fr);", css)
+        self.assertIn(".masthead__title-actions {\n    width: 100%;\n    justify-content: space-between;", css)
+        self.assertIn(".masthead__actions {\n    width: 100%;\n    justify-content: center;", css)
+        self.assertNotIn("CrossPoint Reader", html)
+        self.assertIn('<footer class="site-footer">', html)
+        self.assertGreater(html.index('id="last-updated"'), html.index('id="manifest-link"'))
+        self.assertIn('replace(/\\/download\\/([^/]+)\\/fonts\\.json$/, "/tag/$1")', PAGE_JS.read_text(encoding="utf-8"))
+        self.assertIn('class="github-link"', html)
+        self.assertIn('href="https://github.com/aBER0724/crosspoint-cjk-fonts"', html)
     def test_theme_switcher_matches_maker_dark_mode_and_uses_transparent_device_previews(self):
         html = PAGE_HTML.read_text(encoding="utf-8")
         css = PAGE_CSS.read_text(encoding="utf-8")
@@ -153,16 +174,22 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertIn('window.matchMedia("(prefers-color-scheme: dark)")', script)
         self.assertIn('document.documentElement.dataset.theme = theme;', script)
         self.assertIn('localStorage.setItem(THEME_STORAGE_KEY, mode);', script)
-        self.assertIn('updatePreviewAppearance(preview, theme === "dark");', script)
+        self.assertIn('updatePreviewAppearance(preview, state.displayMode === "dark");', script)
+        self.assertIn('id="device-color"', html)
+        self.assertIn('id="display-mode"', html)
+        self.assertIn('device.classList.add(`device-preview--${state.deviceColor}`);', script)
         self.assertNotIn('preview.style.filter = dark ? "invert(93.3%)" : "";', script)
         self.assertIn(':root[data-theme="dark"]', css)
         self.assertIn('--preview-dark-paper: #111111;', css)
         self.assertIn('<div class="preview-frame"><img class="preview"', html)
+        self.assertIn('class="device-preview device-preview--black"', html)
+        self.assertIn('class="device-bottom-controls"', html)
         self.assertIn('preview.classList.toggle("preview--light", !dark);', script)
         self.assertIn('preview.closest(".preview-frame")?.classList.toggle("preview-frame--dark", dark);', script)
+        self.assertIn('.device-preview {', css)
+        self.assertIn('aspect-ratio: 480 / 800;', css)
         self.assertIn('.preview-frame {', css)
         self.assertIn('background: var(--preview-paper);', css)
-        self.assertIn('.preview-frame.preview-frame--dark', css)
         self.assertIn('background: var(--preview-dark-paper);', css)
         self.assertIn('.preview.preview--light', css)
         self.assertIn('filter: invert(1);', css)
@@ -175,16 +202,27 @@ class PagesWorkflowTest(unittest.TestCase):
         css = PAGE_CSS.read_text(encoding="utf-8")
         script = PAGE_JS.read_text(encoding="utf-8")
 
+        self.assertIn('<p class="tags"></p>', html)
+        self.assertNotIn('class="device-preview-meta"', html)
         self.assertIn('<div class="downloads" role="group" aria-label="Download physical sizes"></div>', html)
         self.assertNotIn("<details>", html)
         self.assertNotIn("<summary", html)
         self.assertNotIn('fragment.querySelector("summary")', script)
+        self.assertIn('if (family.role !== "ui")', script)
+        self.assertIn('const badge = document.createElement("a");', script)
+        self.assertIn('badge.textContent = copy.uiFont;', script)
+        self.assertIn('downloadUiFontPackage(family, badge)', script)
+        self.assertIn('anchor.download = `${family.name}.cpfontpkg`;', script)
+        self.assertIn('uiFont: "UI 字体包"', script)
+        self.assertIn('family.files.filter(file => ![8, 10, 12].includes(file.physicalSize))', script)
         self.assertIn('downloads.setAttribute("aria-label", `${family.name}: ${copy.downloads}`);', script)
         self.assertIn('link.textContent = `${file.physicalSize} pt`;', script)
         self.assertIn('link.setAttribute("aria-label", `${file.physicalSize} pt, ${humanBytes(file.byteSize)}`);', script)
         self.assertNotIn("white-space: pre-line;", css)
-        self.assertIn("grid-template-columns: repeat(4, minmax(0, 1fr));", css)
+        self.assertIn("grid-template-columns: repeat(6, minmax(0, 1fr));", css)
         self.assertIn("min-height: 30px;", css)
+        self.assertIn(".downloads .ui-font-badge {\n  grid-column: span 2;", css)
+        self.assertIn(".downloads a {\n  grid-column: span 1;", css)
         mobile_css = css[css.index("@media (max-width: 640px)") :]
         self.assertNotIn(".downloads {", mobile_css)
 

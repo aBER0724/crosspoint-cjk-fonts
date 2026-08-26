@@ -10,7 +10,7 @@ from pathlib import Path
 import yaml
 from PIL import Image
 
-from scripts.build_pages import CatalogBuildError, build_site, preview_text_for_languages
+from scripts.build_pages import CatalogBuildError, build_site, preview_text_from_preset
 from scripts.fetch_release_previews import download_preview_assets
 
 
@@ -54,10 +54,9 @@ class PagesCatalogTest(unittest.TestCase):
         (self.source_dir / "samples.json").write_text(
             json.dumps(
                 {
-                    "schemaVersion": 1,
-                    "byLanguage": {"zh-Hans": "A", "ja": "A"},
-                    "symbols": "A",
-                    "latin": "A",
+                    "schemaVersion": 2,
+                    "source": "crosspoint-cjk-font-maker/web/app.js#DEFAULT_PREVIEW_TEXT",
+                    "presetText": "A",
                 }
             ),
             encoding="utf-8",
@@ -81,6 +80,7 @@ class PagesCatalogTest(unittest.TestCase):
                     "description": "Example catalog font",
                     "category": "sans-serif",
                     "languages": ["zh-Hans", "ja"],
+                    "role": "ui",
                     "source_url": "https://example.com/source",
                     "intervals": "latin-ext,cjk",
                     "source": {
@@ -155,6 +155,7 @@ class PagesCatalogTest(unittest.TestCase):
         self.assertNotIn("licenseType", family)
         self.assertEqual(family["sourceUrl"], "https://example.com/source")
         self.assertEqual(family["languages"], ["zh-Hans", "ja"])
+        self.assertEqual(family["role"], "ui")
         self.assertEqual(family["category"], "sans-serif")
         self.assertEqual([entry["physicalSize"] for entry in family["files"]], [8, 10, 12, 14, 16, 18, 22])
         self.assertTrue(all(entry["downloadUrl"].startswith(self.manifest["baseUrl"]) for entry in family["files"]))
@@ -174,26 +175,19 @@ class PagesCatalogTest(unittest.TestCase):
         catalog = self.build()
         self.assertNotIn("updatedAt", catalog)
 
-    def test_preview_sample_follows_declared_languages_and_adds_symbols(self):
+    def test_preview_sample_uses_maker_preset_text(self):
         samples = {
-            "schemaVersion": 1,
-            "byLanguage": {"zh-Hans": "简体", "zh-Hant": "繁體", "ja": "日本語"},
-            "symbols": "，。！？—…· @#$%&*+-=/",
-            "latin": "CrossPoint Reader · 1234567890",
+            "schemaVersion": 2,
+            "source": "crosspoint-cjk-font-maker/web/app.js#DEFAULT_PREVIEW_TEXT",
+            "presetText": "中文测试\n日本語テスト\nEnglish test",
         }
 
         self.assertEqual(
-            preview_text_for_languages(samples, ["zh-Hans", "ja"]),
-            "简体\n日本語\n，。！？—…· @#$%&*+-=/\nCrossPoint Reader · 1234567890",
+            preview_text_from_preset(samples),
+            "中文测试\n日本語テスト\nEnglish test",
         )
-        self.assertEqual(
-            preview_text_for_languages(samples, ["zh-Hant"]),
-            "繁體\n，。！？—…· @#$%&*+-=/\nCrossPoint Reader · 1234567890",
-        )
-        with self.assertRaisesRegex(CatalogBuildError, "at least one preview language"):
-            preview_text_for_languages(samples, [])
-        with self.assertRaisesRegex(CatalogBuildError, "no sample for language ko"):
-            preview_text_for_languages(samples, ["ko"])
+        with self.assertRaisesRegex(CatalogBuildError, "non-empty Maker presetText"):
+            preview_text_from_preset({"schemaVersion": 2, "presetText": ""})
 
     def test_pages_artifact_contains_no_font_or_archive_payloads(self):
         self.build()

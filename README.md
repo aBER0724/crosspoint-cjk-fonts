@@ -19,11 +19,15 @@ The [contribution guide](CONTRIBUTING.md) has the field table and full examples.
 
 ## Catalog
 
-The current catalog contains 16 families for Simplified Chinese, Traditional Chinese, and Japanese. Pages shows each family's original/localized name for the selected UI language and keeps the stable ASCII build ID below it; search accepts either form. Each family is rendered at the seven catalog sizes defined once in [`config/fonts.yaml`](config/fonts.yaml): UI fallback at 8/10/12 pt and reader text at 14/16/18/22 pt.
+The current catalog contains 16 families for Simplified Chinese, Traditional Chinese, and Japanese. Pages shows each family's original/localized name for the selected UI language and keeps the stable ASCII build ID below it; search accepts either form. Catalog metadata can classify a family as `reader` (the default) or `ui`.
 
-- 8/10/12 pt provide CJK UI fallback glyphs.
+- UI families are presented as **UI font** families instead of exposing separate 8/10/12 pt download buttons.
+- Reader families expose their configured reader sizes while keeping the fixed 8/10/12 pt UI fallback files out of the download-button list.
+- The standard catalog build still emits 8/10/12 pt for CJK UI fallback and 14/16/18/22 pt for reader text.
 - 14/16/18/22 pt map to the reader's four persisted size slots and show roughly 16/14/12/10 full-width CJK characters per line at the default portrait margin.
 - The firmware selects an installed physical file; it never scales a CJK font on the device.
+
+For private font conversion, [CrossPoint CJK Font Maker](https://github.com/aBER0724/crosspoint-cjk-font-maker) produces a single `.cpfontpkg` family package. The package keeps one `.cpfont v4` file per physical size, always includes UI sizes 8/10/12 pt, and accepts a custom positive-integer reader-size list (default 14/16/18/22 pt).
 
 See [`SOURCES.md`](SOURCES.md) for the source links recorded for each family.
 

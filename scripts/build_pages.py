@@ -30,27 +30,11 @@ class CatalogBuildError(RuntimeError):
     pass
 
 
-def preview_text_for_languages(samples: dict, languages: list[str]) -> str:
-    by_language = samples.get("byLanguage")
-    symbols = samples.get("symbols")
-    latin = samples.get("latin")
-    if not isinstance(by_language, dict) or not isinstance(symbols, str) or not symbols:
-        raise CatalogBuildError("pages/samples.json must define non-empty byLanguage and symbols samples")
-    if not isinstance(latin, str) or not latin:
-        raise CatalogBuildError("pages/samples.json must define a non-empty latin sample")
-
-    if not isinstance(languages, list) or not languages:
-        raise CatalogBuildError("font family must declare at least one preview language")
-
-    lines = []
-    for language in languages:
-        line = by_language.get(language)
-        if not isinstance(line, str) or not line:
-            raise CatalogBuildError(f"pages/samples.json has no sample for language {language}")
-        if line not in lines:
-            lines.append(line)
-    return "\n".join([*lines, symbols, latin])
-
+def preview_text_from_preset(samples: dict) -> str:
+    preset_text = samples.get("presetText")
+    if not isinstance(preset_text, str) or not preset_text.strip():
+        raise CatalogBuildError("pages/samples.json must define a non-empty Maker presetText")
+    return preset_text
 
 def _load_yaml(path: Path) -> dict:
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -158,8 +142,9 @@ def build_site(
     samples = _load_json(source_dir / "samples.json")
     if manifest.get("version") != MANIFEST_VERSION:
         raise CatalogBuildError(f"release manifest version must be {MANIFEST_VERSION}")
-    if samples.get("schemaVersion") != 1:
-        raise CatalogBuildError("pages/samples.json must use schemaVersion 1")
+    if samples.get("schemaVersion") != 2:
+        raise CatalogBuildError("pages/samples.json must use schemaVersion 2")
+    preview_text = preview_text_from_preset(samples)
 
     base_url = _https_url(manifest.get("baseUrl"), "release base URL", trailing_slash=True)
     site_url = _https_url(site_url, "site URL", trailing_slash=True)
@@ -201,7 +186,6 @@ def build_site(
 
             languages = editorial.get("languages", [])
             display_names = _localized_display_names(editorial.get("display_names"), family_name)
-            preview_text = preview_text_for_languages(samples, languages)
             previews = {}
             entries_by_size = {entry["physicalSize"]: entry for entry in files}
             for size in preview_sizes:
@@ -216,8 +200,8 @@ def build_site(
                     result = render_text(
                         font,
                         preview_text,
-                        canvas_width=880,
-                        padding=24,
+                        canvas_width=600,
+                        padding=6,
                         transparent_background=True,
                     )
                 except (CpfontError, ValueError) as error:
@@ -231,6 +215,7 @@ def build_site(
                 "displayNames": display_names,
                 "category": editorial.get("category", "other"),
                 "languages": languages,
+                "role": editorial.get("role", "reader"),
                 "styles": published.get("styles", []),
                 "files": files,
                 "previews": previews,

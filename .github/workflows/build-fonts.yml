@@ -231,6 +231,7 @@ jobs:
           --output dist/fonts.json
           --descriptions-from config/fonts.yaml
       - run: python scripts/verify_release.py dist
+      - run: python scripts/package_cpfont_families.py --directory dist --config config/fonts.yaml
       - uses: actions/upload-artifact@v4
         with:
           name: crosspoint-cjk-fonts
@@ -268,7 +269,7 @@ jobs:
           Point your device's font repository at ${{ github.repository }} and reuse tag $RELEASE_TAG."
           fi
           gh release upload "$RELEASE_TAG" dist/fonts.json --clobber
-          find dist -maxdepth 1 -name '*.cpfont' -print0 | while IFS= read -r -d '' file; do
+          find dist -maxdepth 1 \( -name '*.cpfont' -o -name '*.cpfontpkg' \) -print0 | while IFS= read -r -d '' file; do
             gh release upload "$RELEASE_TAG" "$file" --clobber
           done
           echo "Self-build published: https://github.com/${{ github.repository }}/releases/tag/$RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"
