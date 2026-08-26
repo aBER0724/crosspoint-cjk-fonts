@@ -23,8 +23,7 @@ class CpfontPackageTest(unittest.TestCase):
                 (root / name).write_bytes(data)
                 files.append({
                     "name": name,
-                    "physicalSize": size,
-                    "byteSize": len(data),
+                    "size": len(data),
                     "sha256": hashlib.sha256(data).hexdigest(),
                 })
             (root / "fonts.json").write_text(json.dumps({

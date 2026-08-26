@@ -26,6 +26,20 @@ def write_entry(archive: zipfile.ZipFile, path: str, data: bytes) -> None:
     archive.writestr(zip_info(path), data, compresslevel=6)
 
 
+def normalize_file(item: dict) -> dict:
+    name = item["name"]
+    try:
+        physical_size = int(Path(name).stem.rsplit("_", 1)[1])
+    except (IndexError, ValueError) as error:
+        raise RuntimeError(f"Cannot determine physical size from {name}") from error
+    return {
+        "name": name,
+        "physicalSize": item.get("physicalSize", physical_size),
+        "byteSize": item.get("byteSize", item.get("size")),
+        "sha256": item["sha256"],
+    }
+
+
 def write_package(
     directory: Path,
     family_id: str,
@@ -97,7 +111,7 @@ def package_families(directory: Path, config_path: Path, only: set[str] | None =
         family_id = family["name"]
         if only is not None and family_id not in only:
             continue
-        files = sorted(family["files"], key=lambda item: item["physicalSize"])
+        files = sorted((normalize_file(item) for item in family["files"]), key=lambda item: item["physicalSize"])
         ui_files = [item for item in files if item["physicalSize"] in UI_SIZES]
         if [item["physicalSize"] for item in ui_files] != list(UI_SIZES):
             raise RuntimeError(f"{family_id}: UI package requires sizes {list(UI_SIZES)}")
