@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package each built .cpfont family into an installable .cpfontpkg ZIP."""
+"""Package built .cpfont families into installable .cpfontpkg ZIP files."""
 
 from __future__ import annotations
 
@@ -26,6 +26,67 @@ def write_entry(archive: zipfile.ZipFile, path: str, data: bytes) -> None:
     archive.writestr(zip_info(path), data, compresslevel=6)
 
 
+def write_package(
+    directory: Path,
+    family_id: str,
+    styles: list[str],
+    files: list[dict],
+    role: str,
+    output_name: str,
+) -> Path:
+    sizes = [item["physicalSize"] for item in files]
+    reader_sizes = [] if role == "ui" else [size for size in sizes if size not in UI_SIZES]
+    manifest_files = []
+    sums = []
+    payloads: list[tuple[str, bytes]] = []
+    for item in files:
+        source = directory / item["name"]
+        data = source.read_bytes()
+        digest = hashlib.sha256(data).hexdigest()
+        if len(data) != item["byteSize"] or digest != item["sha256"]:
+            raise RuntimeError(f"{family_id}: manifest mismatch for {source.name}")
+        payloads.append((source.name, data))
+        sums.append(f"{digest}  {source.name}")
+        manifest_files.append({
+            "size": item["physicalSize"],
+            "role": "ui" if item["physicalSize"] in UI_SIZES else "reader",
+            "file": source.name,
+            "styles": styles,
+            "sizeBytes": len(data),
+            "sha256": digest,
+        })
+
+    manifest = {
+        "format": 1,
+        "family": family_id,
+        "id": family_id,
+        "role": role,
+        "cpfontVersion": 4,
+        "uiSizes": list(UI_SIZES),
+        "readerSizes": reader_sizes,
+        "styles": styles,
+        "fonts": manifest_files,
+    }
+    build = {
+        "schemaVersion": 1,
+        "cpfontVersion": 4,
+        "physicalSizes": sizes,
+        "uiSizes": list(UI_SIZES),
+        "readerSizes": reader_sizes,
+        "source": "crosspoint-cjk-fonts GitHub Actions",
+        "files": manifest_files,
+    }
+    output = directory / output_name
+    prefix = f"{family_id}/"
+    with zipfile.ZipFile(output, "w") as archive:
+        for name, data in payloads:
+            write_entry(archive, prefix + name, data)
+        write_entry(archive, prefix + "SHA256SUMS", ("\n".join(sums) + "\n").encode())
+        write_entry(archive, prefix + "manifest.json", (json.dumps(manifest, ensure_ascii=False, indent=2) + "\n").encode())
+        write_entry(archive, prefix + "build.json", (json.dumps(build, ensure_ascii=False, indent=2) + "\n").encode())
+    return output
+
+
 def package_families(directory: Path, config_path: Path, only: set[str] | None = None) -> list[Path]:
     catalog = json.loads((directory / "fonts.json").read_text(encoding="utf-8"))
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
@@ -37,62 +98,13 @@ def package_families(directory: Path, config_path: Path, only: set[str] | None =
         if only is not None and family_id not in only:
             continue
         files = sorted(family["files"], key=lambda item: item["physicalSize"])
-        sizes = [item["physicalSize"] for item in files]
-        missing_ui = sorted(set(UI_SIZES) - set(sizes))
-        if missing_ui:
-            raise RuntimeError(f"{family_id}: missing UI sizes {missing_ui}")
-
-        role = roles.get(family_id, "reader")
-        reader_sizes = [] if role == "ui" else [size for size in sizes if size not in UI_SIZES]
-        manifest_files = []
-        sums = []
-        payloads: list[tuple[str, bytes]] = []
-        for item in files:
-            source = directory / item["name"]
-            data = source.read_bytes()
-            digest = hashlib.sha256(data).hexdigest()
-            if len(data) != item["byteSize"] or digest != item["sha256"]:
-                raise RuntimeError(f"{family_id}: manifest mismatch for {source.name}")
-            payloads.append((source.name, data))
-            sums.append(f"{digest}  {source.name}")
-            manifest_files.append({
-                "size": item["physicalSize"],
-                "role": "ui" if item["physicalSize"] in UI_SIZES else "reader",
-                "file": source.name,
-                "styles": family.get("styles", ["regular"]),
-                "sizeBytes": len(data),
-                "sha256": digest,
-            })
-
-        manifest = {
-            "format": 1,
-            "family": family_id,
-            "id": family_id,
-            "role": "ui" if role == "ui" else "family",
-            "cpfontVersion": 4,
-            "uiSizes": list(UI_SIZES),
-            "readerSizes": reader_sizes,
-            "styles": family.get("styles", ["regular"]),
-            "fonts": manifest_files,
-        }
-        build = {
-            "schemaVersion": 1,
-            "cpfontVersion": 4,
-            "physicalSizes": sizes,
-            "uiSizes": list(UI_SIZES),
-            "readerSizes": reader_sizes,
-            "source": "crosspoint-cjk-fonts GitHub Actions",
-            "files": manifest_files,
-        }
-        output = directory / f"{family_id}.cpfontpkg"
-        prefix = f"{family_id}/"
-        with zipfile.ZipFile(output, "w") as archive:
-            for name, data in payloads:
-                write_entry(archive, prefix + name, data)
-            write_entry(archive, prefix + "SHA256SUMS", ("\n".join(sums) + "\n").encode())
-            write_entry(archive, prefix + "manifest.json", (json.dumps(manifest, ensure_ascii=False, indent=2) + "\n").encode())
-            write_entry(archive, prefix + "build.json", (json.dumps(build, ensure_ascii=False, indent=2) + "\n").encode())
-        outputs.append(output)
+        ui_files = [item for item in files if item["physicalSize"] in UI_SIZES]
+        if [item["physicalSize"] for item in ui_files] != list(UI_SIZES):
+            raise RuntimeError(f"{family_id}: UI package requires sizes {list(UI_SIZES)}")
+        styles = family.get("styles", ["regular"])
+        outputs.append(write_package(directory, family_id, styles, ui_files, "ui", f"{family_id}-ui.cpfontpkg"))
+        if roles.get(family_id, "reader") != "ui":
+            outputs.append(write_package(directory, family_id, styles, files, "family", f"{family_id}.cpfontpkg"))
 
     return outputs
 

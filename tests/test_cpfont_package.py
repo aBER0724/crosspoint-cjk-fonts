@@ -34,8 +34,14 @@ class CpfontPackageTest(unittest.TestCase):
             config = root / "fonts.yaml"
             config.write_text(yaml.safe_dump({"families": [{"name": "Example", "role": "reader"}]}), encoding="utf-8")
 
-            [output] = package_families(root, config)
-            with zipfile.ZipFile(output) as archive:
+            outputs = package_families(root, config)
+            self.assertEqual([output.name for output in outputs], ["Example-ui.cpfontpkg", "Example.cpfontpkg"])
+            with zipfile.ZipFile(root / "Example-ui.cpfontpkg") as archive:
+                manifest = json.loads(archive.read("Example/manifest.json"))
+                self.assertEqual(manifest["role"], "ui")
+                self.assertEqual(manifest["readerSizes"], [])
+                self.assertEqual(len([name for name in archive.namelist() if name.endswith(".cpfont")]), 3)
+            with zipfile.ZipFile(root / "Example.cpfontpkg") as archive:
                 manifest = json.loads(archive.read("Example/manifest.json"))
                 self.assertEqual(manifest["role"], "family")
                 self.assertEqual(manifest["uiSizes"], [8, 10, 12])

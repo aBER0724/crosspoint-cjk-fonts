@@ -201,43 +201,9 @@ function humanBytes(value) {
   while (size >= 1024 && unit < units.length - 1) { size /= 1024; unit += 1; }
   return `${size.toFixed(unit === 0 ? 0 : 1)} ${units[unit]}`;
 }
-async function sha256Hex(buffer) {
-  const digest = await crypto.subtle.digest("SHA-256", buffer);
-  return Array.from(new Uint8Array(digest), value => value.toString(16).padStart(2, "0")).join("");
-}
 
-async function downloadUiFontPackage(family, link) {
-  const copy = COPY[state.locale];
-  const uiFiles = family.files.filter(file => [8, 10, 12].includes(file.physicalSize));
-  if (uiFiles.length !== 3 || typeof JSZip === "undefined") throw new Error("UI package unavailable");
-  const originalText = link.textContent;
-  link.textContent = `${originalText}…`;
-  link.setAttribute("aria-busy", "true");
-  try {
-    const zip = new JSZip();
-    const folder = zip.folder(family.name);
-    const fonts = [];
-    for (const file of uiFiles) {
-      const response = await fetch(file.downloadUrl);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const buffer = await response.arrayBuffer();
-      if (buffer.byteLength !== file.byteSize || await sha256Hex(buffer) !== file.sha256) throw new Error("Font verification failed");
-      folder.file(file.name, buffer);
-      fonts.push({ size: file.physicalSize, role: "ui", file: file.name, styles: family.styles, sizeBytes: file.byteSize, sha256: file.sha256 });
-    }
-    folder.file("manifest.json", JSON.stringify({ format: 1, family: familyDisplayName(family), id: family.name, role: "ui", cpfontVersion: 4, uiSizes: [8, 10, 12], readerSizes: [], styles: family.styles, fonts }, null, 2) + "\n");
-    folder.file("SHA256SUMS", uiFiles.map(file => `${file.sha256}  ${file.name}`).join("\n") + "\n");
-    const blob = await zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `${family.name}.cpfontpkg`;
-    anchor.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  } finally {
-    link.textContent = originalText;
-    link.removeAttribute("aria-busy");
-  }
+function uiFontPackageUrl(family) {
+  return new URL(`${family.name}-ui.cpfontpkg`, family.files[0].downloadUrl).href;
 }
 
 function familyDisplayName(family) {
@@ -278,14 +244,11 @@ function render() {
     downloads.setAttribute("aria-label", `${family.name}: ${copy.downloads}`);
     const badge = document.createElement("a");
     badge.className = "ui-font-badge";
-    badge.href = "#";
+    badge.href = uiFontPackageUrl(family);
     badge.textContent = copy.uiFont;
     badge.setAttribute("aria-label", `${copy.uiFont}: ${family.name}`);
-    badge.addEventListener("click", async event => {
-      event.preventDefault();
-      try { await downloadUiFontPackage(family, badge); }
-      catch (error) { nodes.status.textContent = `${copy.uiFont}: ${error.message}`; }
-    });
+    badge.download = `${family.name}-ui.cpfontpkg`;
+    badge.rel = "noopener noreferrer";
     downloads.append(badge);
     if (family.role !== "ui") {
       family.files.filter(file => ![8, 10, 12].includes(file.physicalSize)).forEach(file => {
