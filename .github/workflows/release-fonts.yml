@@ -209,6 +209,9 @@ jobs:
                 --manifest dist/fonts.json \
                 --families-json "$FAMILIES_JSON"
             )
+            while IFS= read -r package; do
+              cp "$package" dist/
+            done < <(find built -maxdepth 1 -name '*.cpfontpkg' -print)
             python scripts/incremental_release.py verify-files \
               --manifest dist/fonts.json \
               --directory dist \

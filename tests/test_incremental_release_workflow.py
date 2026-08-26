@@ -38,6 +38,8 @@ class IncrementalReleaseWorkflowTest(unittest.TestCase):
         self.assertIn("python scripts/generate_manifest.py", text)
         self.assertIn("--output built/fonts.json", text)
         self.assertNotIn("name: crosspoint-cjk-fonts\n          path: built", text)
+        self.assertIn("find built -maxdepth 1 -name '*.cpfontpkg' -print", text)
+        self.assertIn('cp "$package" dist/', text)
 
     def test_release_notes_are_generated_from_the_candidate_manifests(self):
         text = RELEASE_WORKFLOW.read_text(encoding="utf-8")
