@@ -352,3 +352,225 @@ families:
       url: "https://raw.githubusercontent.com/jaywcjlove/free-font/main/docs/fonts/%E6%97%A0%E7%95%8C%E9%BB%91/%E6%97%A0%E7%95%8C%E9%BB%91.ttf"
       filename: "WujieHeiSC.ttf"
       sha256: d37d10dbb85c7403b164a4565e4e2c837cbbb10005ec812a721104600fc9686d
+
+  - name: HuninnRoundedTC
+    display_names: {en: "粉圓", zh: "粉圓", ja: "粉圓"}
+    description: "粉圓 open-source CJK typeface for comfortable reading"
+    category: rounded-sans
+    languages: [zh-Hant]
+    source_url: "https://github.com/justfont/Huninn"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E5%85%B6%E4%BB%96%E5%AD%97%E4%BD%93/%E7%B2%89%E5%9C%93.ttf"
+      filename: "粉圓.ttf"
+      sha256: 6f2b79de0ee013f260fc88b4c668969e34fdfe87b7daeecaeeb5ad5a97eb9883
+
+  - name: DelivlogRoundedTC
+    display_names: {en: "伴旅圓體", zh: "伴旅圓體", ja: "伴旅圓體"}
+    description: "伴旅圓體 open-source CJK typeface for comfortable reading"
+    category: rounded-sans
+    languages: [zh-Hant]
+    source_url: "https://github.com/tomben479/delivlog-rounded"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E5%85%B6%E4%BB%96%E5%AD%97%E4%BD%93/%E4%BC%B4%E6%97%85%E5%9C%93%E9%AB%94.ttf"
+      filename: "伴旅圓體.ttf"
+      sha256: bfb0d91063c25d51dce531fa2c6b981af388f0f83bb7f5e5a3ee9b086173c766
+
+  - name: NaniHandTC
+    display_names: {en: "何某手寫體", zh: "何某手寫體", ja: "何某手寫體"}
+    description: "何某手寫體 open-source CJK typeface for comfortable reading"
+    category: handwriting
+    languages: [zh-Hant]
+    source_url: "https://github.com/max32002/nanifont"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E4%BD%95%E6%9F%90%E6%89%8B%E5%AF%AB%E9%AB%94/%E4%BD%95%E6%9F%90%E6%89%8B%E5%AF%AB%E9%AB%94-Regular.ttf"
+      filename: "何某手寫體-Regular.ttf"
+      sha256: 9e36860fd6656269c5a44e55c5dfb1bff8bf424773475551346b7d48c3bc2003
+
+  - name: NaikaiTC
+    display_names: {en: "內海字體", zh: "內海字體", ja: "內海字體"}
+    description: "內海字體 open-source CJK typeface for comfortable reading"
+    category: handwriting
+    languages: [zh-Hant]
+    source_url: "https://github.com/max32002/naikaifont"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E5%85%A7%E6%B5%B7%E5%AD%97%E9%AB%94/%E5%85%A7%E6%B5%B7%E5%AD%97%E9%AB%94-Regular.ttf"
+      filename: "內海字體-Regular.ttf"
+      sha256: d3320b822131540d5e3cc9737f7b458aeb1c0ca76fe89aeaa1b76001f54e503e
+
+  - name: ChillKaiSC
+    display_names: {en: "寒蝉正楷体", zh: "寒蝉正楷体", ja: "寒蝉正楷体"}
+    description: "寒蝉正楷体 open-source CJK typeface for comfortable reading"
+    category: handwriting
+    languages: [zh-Hans]
+    source_url: "https://github.com/Warren2060/Chillkai"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E5%AF%92%E8%9D%89%E5%AD%97%E5%9E%8B/%E5%AF%92%E8%9D%89%E6%AD%A3%E6%A5%B7%E4%BD%93.ttf"
+      filename: "寒蝉正楷体.ttf"
+      sha256: 33a4f5120f80e45c2188445fe710e4cdbf7c7ed6d89fb901a188f164b6c407fc
+
+  - name: ChillRoundSC
+    display_names: {en: "寒蝉圆体", zh: "寒蝉圆体", ja: "寒蝉圆体"}
+    description: "寒蝉圆体 open-source CJK typeface for comfortable reading"
+    category: rounded-sans
+    languages: [zh-Hans]
+    source_url: "https://github.com/Warren2060/ChillRound"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E5%AF%92%E8%9D%89%E5%AD%97%E5%9E%8B/%E5%AF%92%E8%9D%89%E5%9C%86%E4%BD%93.ttf"
+      filename: "寒蝉圆体.ttf"
+      sha256: 7ccfc2cd0e971edeac7f65516df8db379f0f84d0d8ff79ee4dfe377956418d3b
+
+  - name: ChillDuanHeiSongSC
+    display_names: {en: "寒蝉端黑宋", zh: "寒蝉端黑宋", ja: "寒蝉端黑宋"}
+    description: "寒蝉端黑宋 open-source CJK typeface for comfortable reading"
+    category: serif
+    languages: [zh-Hans]
+    source_url: "https://github.com/Warren2060/ChillDuanHeiSong"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E5%AF%92%E8%9D%89%E5%AD%97%E5%9E%8B/%E5%AF%92%E8%9D%89%E7%AB%AF%E9%BB%91%E5%AE%8B.otf"
+      filename: "寒蝉端黑宋.otf"
+      sha256: edeaa2cdf9024a8ad35488a4126e9e7ee67df9ee25c0ddb4a0c96228226ec128
+
+  - name: RenOuFangsongSC
+    display_names: {en: "人偶仿宋", zh: "人偶仿宋", ja: "人偶仿宋"}
+    description: "人偶仿宋 open-source CJK typeface for comfortable reading"
+    category: fangsong
+    languages: [zh-Hans]
+    source_url: "https://github.com/yzdnn/RenOuFangSong-16"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E5%85%B6%E4%BB%96%E5%AD%97%E4%BD%93/%E4%BA%BA%E5%81%B6%E4%BB%BF%E5%AE%8B.ttf"
+      filename: "人偶仿宋.ttf"
+      sha256: 20752474027efabc16d940b4b213d3462212b85df59b632d58c79d8c6d1ce27d
+
+
+  - name: HomeworkCJK
+    display_names: {en: "快去写作业 CJK", zh: "快去写作业 CJK", ja: "快去写作业 CJK"}
+    description: "快去写作业 CJK open-source CJK typeface for comfortable reading"
+    category: handwriting
+    languages: [zh-Hans, zh-Hant, ja]
+    source_url: "https://github.com/Partyb0ssishere/cef-fonts-cjk"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E5%BF%AB%E5%8E%BB%E5%86%99%E4%BD%9C%E4%B8%9A/%E5%BF%AB%E5%8E%BB%E5%86%99%E4%BD%9C%E4%B8%9ACJK-Regular.ttf"
+      filename: "快去写作业CJK-Regular.ttf"
+      sha256: 4c9320bb01e32dd406f9014288d7fbb6b7f10b7f96420433c5817e328815fb27
+
+  - name: GenRyuMinchoTC
+    display_names: {en: "源流明體 TC", zh: "源流明體 TC", ja: "源流明體 TC"}
+    description: "源流明體 TC open-source CJK typeface for comfortable reading"
+    category: serif
+    languages: [zh-Hant]
+    source_url: "https://github.com/ButTaiwan/genryu-font"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/ButKo/%E6%BA%90%E6%B5%81%E6%98%8E%E9%AB%94TC-R.otf"
+      filename: "源流明體TC-R.otf"
+      sha256: 8b4988af4fb8e7fea14245fdd61fa309ad730cb7c79a5b861eabe84db5a16774
+
+  - name: GenSekiGothicTC
+    display_names: {en: "源石黑體 TC", zh: "源石黑體 TC", ja: "源石黑體 TC"}
+    description: "源石黑體 TC open-source CJK typeface for comfortable reading"
+    category: sans-serif
+    languages: [zh-Hant]
+    source_url: "https://github.com/ButTaiwan/genseki-font"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/ButKo/%E6%BA%90%E7%9F%B3%E9%BB%91%E9%AB%94TC-R.otf"
+      filename: "源石黑體TC-R.otf"
+      sha256: 7e84d8d9a2f2daf3e46ec3992c42d4f21355089dc6e9ab46c45df3d0aa45f990
+
+  - name: YufanDanqingSongSC
+    display_names: {en: "余繁丹青宋", zh: "余繁丹青宋", ja: "余繁丹青宋"}
+    description: "余繁丹青宋 open-source CJK typeface for comfortable reading"
+    category: serif
+    languages: [zh-Hans]
+    source_url: "https://github.com/chilingg/YufanDanQingSong"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E4%BD%99%E7%B9%81%E6%96%B0%E8%AF%AD%E4%BD%93/%E4%BD%99%E7%B9%81%E4%B8%B9%E9%9D%92%E5%AE%8B.otf"
+      filename: "余繁丹青宋.otf"
+      sha256: a21d8d4e487c2531eb266636ee4b1fa00fbc4ba3d015e19970ba04d5d9832423
+
+  - name: YozaiJP
+    display_names: {en: "悠哉字体", zh: "悠哉字体", ja: "悠哉字体"}
+    description: "悠哉字体 open-source CJK typeface for comfortable reading"
+    category: handwriting
+    languages: [ja]
+    source_url: "https://github.com/lxgw/yozai-font"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E6%82%A0%E5%93%89%E5%AD%97%E4%BD%93/%E6%82%A0%E5%93%89%E5%AD%97%E4%BD%93-Regular.ttf"
+      filename: "悠哉字体-Regular.ttf"
+      sha256: c2d042c3c4c1a75f09a4becc0ce6a31e8d6f7854abd803fd20d7fab6a6a37d8a
+
+  - name: KoseSC
+    display_names: {en: "小赖字体", zh: "小赖字体", ja: "小赖字体"}
+    description: "小赖字体 open-source CJK typeface for comfortable reading"
+    category: handwriting
+    languages: [zh-Hans]
+    source_url: "https://github.com/lxgw/kose-font"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E5%B0%8F%E8%B5%96%E5%AD%97%E4%BD%93/%E5%B0%8F%E8%B5%96%E5%AD%97%E4%BD%93SC.ttf"
+      filename: "小赖字体SC.ttf"
+      sha256: e33746183dcf4934a673b466785d280033ffe2ad8ab3fe24241636ce16755a2e
+
+  - name: JasonHandwritingTC
+    display_names: {en: "清松手寫體", zh: "清松手寫體", ja: "清松手寫體"}
+    description: "清松手寫體 open-source CJK typeface for comfortable reading"
+    category: handwriting
+    languages: [zh-Hant]
+    source_url: "https://github.com/jasonhandwriting/JasonHandwriting"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E6%B8%85%E6%9D%BE%E6%89%8B%E5%AF%AB%E9%AB%94/%E6%B8%85%E6%9D%BE%E6%89%8B%E5%AF%AB%E9%AB%945%EF%BC%9A%E8%A1%8C%E6%A5%B7.ttf"
+      filename: "清松手寫體5：行楷.ttf"
+      sha256: 2f0a54b56a79961e44f38d95ea293d113362e6eff438a2c351e60390d60f7960
+
+  - name: GenneGothicJP
+    display_names: {en: "源音黑體", zh: "源音黑體", ja: "源音黑體"}
+    description: "源音黑體 open-source CJK typeface for comfortable reading"
+    category: sans-serif
+    languages: [ja]
+    source_url: "https://github.com/MoneMizuno/Genne-Gothic"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E6%BA%90%E9%9F%B3%E9%BB%91%E9%AB%94/%E6%BA%90%E9%9F%B3%E9%BB%91%E9%AB%94-Regular.otf"
+      filename: "源音黑體-Regular.otf"
+      sha256: bfa290d05d2bd5dfc1a3b37c6698f709070a67618dbf54e0eed62702cd08232a
+
+  - name: WDXLJapanese
+    display_names: {en: "滑油字 日文 N", zh: "滑油字 日文 N", ja: "滑油字 日文 N"}
+    description: "滑油字 日文 N open-source CJK typeface for comfortable reading"
+    category: handwriting
+    languages: [ja]
+    source_url: "https://github.com/NightFurySL2001/WD-XL-font"
+    intervals: latin-ext,cjk
+    force_autohint: true
+    source:
+      url: "https://raw.githubusercontent.com/jaywcjlove/free-font/8602c6e4603516ca531e93bf98b64f0382883343/docs/fonts/%E6%BB%91%E6%B2%B9%E5%AD%97/%E6%BB%91%E6%B2%B9%E5%AD%97-%E6%97%A5%E6%96%87N-Regular.otf"
+      filename: "滑油字-日文N-Regular.otf"
+      sha256: 4a97350d9cf507c9eb57d8ad4e4d31543e236aa9e083f3c0d49811447b6b4aa4
