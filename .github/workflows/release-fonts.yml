@@ -7,6 +7,7 @@ on:
       - config/fonts.yaml
       - community-fonts/**
       - scripts/build_fonts.py
+      - scripts/package_cpfont_families.py
       - scripts/fontconvert_sdcard.py
       - scripts/cpfont_version.py
       - scripts/fetch_fallback.py
@@ -254,7 +255,7 @@ jobs:
         shell: bash
         run: |
           if [[ "$HAS_PREVIOUS_RELEASE" != "true" ]]; then
-            gh release create "$RELEASE_TAG" dist/*.cpfont \
+            gh release create "$RELEASE_TAG" dist/*.cpfont dist/*.cpfontpkg \
               --target "$GITHUB_SHA" \
               --title "CrossPoint CJK fonts (manifest 2 / cpfont 4)" \
               --notes-file dist/RELEASE_NOTES.md
@@ -269,6 +270,9 @@ jobs:
                 --manifest dist/fonts.json \
                 --families-json "$CHANGED_EXISTING_JSON"
             )
+            for family in $(python -c 'import json, os; print(" ".join(json.loads(os.environ["CHANGED_EXISTING_JSON"])))'); do
+              gh release upload "$RELEASE_TAG" "dist/$family.cpfontpkg" --clobber
+            done
           fi
           if [[ "$NEW_JSON" != "[]" ]]; then
             while IFS= read -r filename; do
@@ -278,6 +282,9 @@ jobs:
                 --manifest dist/fonts.json \
                 --families-json "$NEW_JSON"
             )
+            for family in $(python -c 'import json, os; print(" ".join(json.loads(os.environ["NEW_JSON"])))'); do
+              gh release upload "$RELEASE_TAG" "dist/$family.cpfontpkg"
+            done
           fi
 
   verify-fonts:

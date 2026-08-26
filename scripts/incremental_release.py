@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config" / "fonts.yaml"
 BUILD_INPUT_PATHS = (
     "scripts/build_fonts.py",
+    "scripts/package_cpfont_families.py",
     "scripts/fontconvert_sdcard.py",
     "scripts/cpfont_version.py",
 )

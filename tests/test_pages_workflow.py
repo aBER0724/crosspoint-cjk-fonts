@@ -50,6 +50,7 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertNotIn("github.event_name == 'push' ||", text)
         self.assertIn("python -m unittest discover -s tests -v", text)
         self.assertIn("scripts/package_cpfont_families.py", text)
+        self.assertIn("--only \"${{ matrix.family }}\"", text)
         self.assertIn("-name '*.cpfontpkg'", text)
     def test_pages_source_keeps_runtime_hooks_and_font_maker_visual_tokens(self):
         html = PAGE_HTML.read_text(encoding="utf-8")

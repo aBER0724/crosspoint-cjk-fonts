@@ -193,6 +193,7 @@ jobs:
           fi
           python scripts/build_fonts.py "${args[@]}"
       - run: python scripts/verify_release.py dist
+      - run: python scripts/package_cpfont_families.py --directory dist --config config/fonts.yaml --only "${{ matrix.family }}"
       - uses: actions/upload-artifact@v4
         with:
           name: font-${{ matrix.family }}
@@ -231,7 +232,6 @@ jobs:
           --output dist/fonts.json
           --descriptions-from config/fonts.yaml
       - run: python scripts/verify_release.py dist
-      - run: python scripts/package_cpfont_families.py --directory dist --config config/fonts.yaml
       - uses: actions/upload-artifact@v4
         with:
           name: crosspoint-cjk-fonts

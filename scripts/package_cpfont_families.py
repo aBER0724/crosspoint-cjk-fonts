@@ -26,7 +26,7 @@ def write_entry(archive: zipfile.ZipFile, path: str, data: bytes) -> None:
     archive.writestr(zip_info(path), data, compresslevel=6)
 
 
-def package_families(directory: Path, config_path: Path) -> list[Path]:
+def package_families(directory: Path, config_path: Path, only: set[str] | None = None) -> list[Path]:
     catalog = json.loads((directory / "fonts.json").read_text(encoding="utf-8"))
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     roles = {family["name"]: family.get("role", "reader") for family in config.get("families", [])}
@@ -34,6 +34,8 @@ def package_families(directory: Path, config_path: Path) -> list[Path]:
 
     for family in catalog.get("families", []):
         family_id = family["name"]
+        if only is not None and family_id not in only:
+            continue
         files = sorted(family["files"], key=lambda item: item["physicalSize"])
         sizes = [item["physicalSize"] for item in files]
         missing_ui = sorted(set(UI_SIZES) - set(sizes))
@@ -99,8 +101,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--directory", type=Path, required=True)
     parser.add_argument("--config", type=Path, default=Path("config/fonts.yaml"))
+    parser.add_argument("--only", help="Comma-separated family names to package")
     args = parser.parse_args()
-    for output in package_families(args.directory, args.config):
+    only = {name.strip() for name in args.only.split(",") if name.strip()} if args.only else None
+    for output in package_families(args.directory, args.config, only):
         print(output)
     return 0
 
