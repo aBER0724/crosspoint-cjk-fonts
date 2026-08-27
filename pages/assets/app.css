@@ -411,26 +411,11 @@ main {
   box-shadow: var(--shadow-sm);
 }
 
-.font-card__header {
-  min-height: 5.75rem;
-}
-
-.font-card__title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-.font-card__heading {
-  min-width: 0;
-}
 .tags {
-  margin: 2px 0 0;
-  max-width: 13rem;
+  margin: 4px 0 0;
   color: var(--muted-foreground);
   font-size: 0.75rem;
   line-height: 1.35;
-  text-align: right;
   overflow-wrap: anywhere;
 }
 

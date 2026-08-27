@@ -238,11 +238,12 @@ class PagesWorkflowTest(unittest.TestCase):
         css = PAGE_CSS.read_text(encoding="utf-8")
 
         self.assertIn('.replace(displayName, "")', script)
-        self.assertIn('<div class="font-card__title-row">', html)
+        self.assertIn('<p class="tags"></p>', html)
         self.assertIn('<p class="description"></p>', html)
-        self.assertIn(".font-card__title-row {\n  display: flex;", css)
-        self.assertNotIn(".font-card__header {\n  display: grid;", css)
-        self.assertIn("min-height: 5.75rem;", css)
+        self.assertNotIn("font-card__title-row", html + css)
+        self.assertNotIn('class="font-card__heading"', html)
+        self.assertNotIn(".font-card__header {", css)
+        self.assertNotIn("text-align: right;", css)
         self.assertIn("-webkit-line-clamp: 2;", css)
         self.assertIn("overflow: hidden;", css)
     def test_source_link_is_localized_and_optional(self):
