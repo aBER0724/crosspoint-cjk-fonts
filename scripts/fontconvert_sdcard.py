@@ -589,6 +589,22 @@ def rasterize_font_style(fontfile, size, intervals, style_id=0, force_autohint=F
                 continue
 
             bitmap = f.glyph.bitmap
+            if bitmap.width > 0xFF or bitmap.rows > 0xFF:
+                print(
+                    f"  [{style_label}] WARNING: U+{code_point:04X} rasterized to "
+                    f"{bitmap.width}x{bitmap.rows}; trying fallback",
+                    file=sys.stderr,
+                )
+                if fallback_face and f is not fallback_face:
+                    fallback_glyph_index = fallback_face.get_char_index(code_point)
+                    if fallback_glyph_index > 0:
+                        fallback_face.load_glyph(fallback_glyph_index, load_flags)
+                        f = fallback_face
+                        bitmap = f.glyph.bitmap
+                if bitmap.width > 0xFF or bitmap.rows > 0xFF:
+                    glyph = GlyphProps(0, 0, 0, 0, 0, 0, total_bitmap_size, code_point)
+                    all_glyphs.append((glyph, b""))
+                    continue
 
             # Build 4-bit greyscale bitmap (same logic as fontconvert.py).
             #
