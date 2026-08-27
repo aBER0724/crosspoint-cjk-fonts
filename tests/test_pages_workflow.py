@@ -20,6 +20,9 @@ class PagesWorkflowTest(unittest.TestCase):
         text = PAGES_WORKFLOW.read_text(encoding="utf-8")
 
         self.assertIn("workflow_dispatch:", text)
+        self.assertIn("push:", text)
+        self.assertIn("pages/**", text)
+        self.assertIn("github.event_name == 'push'", text)
         self.assertIn("workflow_run:", text)
         self.assertIn("release:", text)
         self.assertIn("types: [published]", text)

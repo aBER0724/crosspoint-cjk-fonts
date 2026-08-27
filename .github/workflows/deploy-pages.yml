@@ -1,6 +1,14 @@
 name: Deploy font catalog
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - pages/**
+      - scripts/build_pages.py
+      - scripts/fetch_release_previews.py
+      - tests/test_pages_workflow.py
+      - .github/workflows/deploy-pages.yml
   workflow_dispatch:
   workflow_run:
     workflows: ["Publish font release"]
@@ -24,6 +32,7 @@ env:
 jobs:
   build:
     if: >-
+      github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'release' ||
       github.event.workflow_run.conclusion == 'success'
