@@ -233,10 +233,15 @@ class PagesWorkflowTest(unittest.TestCase):
         self.assertNotIn(".downloads {", mobile_css)
 
     def test_card_descriptions_are_compact_and_headings_align(self):
+        html = PAGE_HTML.read_text(encoding="utf-8")
         script = PAGE_JS.read_text(encoding="utf-8")
         css = PAGE_CSS.read_text(encoding="utf-8")
 
         self.assertIn('.replace(displayName, "")', script)
+        self.assertIn('<div class="font-card__title-row">', html)
+        self.assertIn('<p class="description"></p>', html)
+        self.assertIn(".font-card__title-row {\n  display: flex;", css)
+        self.assertNotIn(".font-card__header {\n  display: grid;", css)
         self.assertIn("min-height: 5.75rem;", css)
         self.assertIn("-webkit-line-clamp: 2;", css)
         self.assertIn("overflow: hidden;", css)

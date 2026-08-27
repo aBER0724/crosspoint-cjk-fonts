@@ -412,14 +412,17 @@ main {
 }
 
 .font-card__header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
+  min-height: 5.75rem;
+}
+
+.font-card__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 12px;
 }
 .font-card__heading {
   min-width: 0;
-  min-height: 5.75rem;
 }
 .tags {
   margin: 2px 0 0;
@@ -809,10 +812,6 @@ main {
 
   .font-card {
     padding: 16px;
-  }
-
-  .font-card__header {
-    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .font-card__heading {
