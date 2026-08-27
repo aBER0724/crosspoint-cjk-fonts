@@ -419,6 +419,7 @@ main {
 }
 .font-card__heading {
   min-width: 0;
+  min-height: 5.75rem;
 }
 .tags {
   margin: 2px 0 0;
@@ -450,10 +451,14 @@ main {
 }
 
 .description {
+  display: -webkit-box;
   margin: 4px 0 0;
+  overflow: hidden;
   color: var(--muted-foreground);
   font-size: 0.875rem;
   line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .device-preview {

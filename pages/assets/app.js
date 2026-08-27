@@ -229,8 +229,9 @@ function render() {
     fragment.querySelector("h2").textContent = displayName;
     fragment.querySelector(".family-id").textContent = family.name;
     const description = fragment.querySelector(".description");
-    description.textContent = family.description || "";
-    description.hidden = !family.description;
+    const descriptionText = (family.description || "").replace(displayName, "").replace(/^\s*[-–—:：]?\s*/, "");
+    description.textContent = descriptionText;
+    description.hidden = !descriptionText;
     const device = fragment.querySelector(".device-preview");
     device.classList.remove("device-preview--black", "device-preview--silver");
     device.classList.add(`device-preview--${state.deviceColor}`);
