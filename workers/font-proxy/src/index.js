@@ -29,6 +29,32 @@ export default {
     headers.set("Cache-Control", "public, max-age=31536000, immutable");
     headers.set("X-Content-Type-Options", "nosniff");
     headers.delete("Set-Cookie");
-    return new Response(upstream.body, { status: upstream.status, headers });
+
+    if (request.method === "HEAD" || !upstream.body) {
+      return new Response(null, { status: upstream.status, headers });
+    }
+
+    // ESP32-C3 cannot repeatedly allocate Cloudflare's usual ~16 KiB TLS
+    // records while SD writes fragment its small heap. Re-frame the body as
+    // 2 KiB chunks so each downstream TLS record stays within its stable
+    // contiguous-allocation budget.
+    headers.delete("Content-Length");
+    const reader = upstream.body.getReader();
+    const body = new ReadableStream({
+      async pull(controller) {
+        const { done, value } = await reader.read();
+        if (done) {
+          controller.close();
+          return;
+        }
+        for (let offset = 0; offset < value.byteLength; offset += 2048) {
+          controller.enqueue(value.slice(offset, offset + 2048));
+        }
+      },
+      cancel(reason) {
+        return reader.cancel(reason);
+      },
+    });
+    return new Response(body, { status: upstream.status, headers });
   },
 };
