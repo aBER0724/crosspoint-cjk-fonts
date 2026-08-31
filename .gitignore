@@ -8,3 +8,6 @@ vendor/
 *.cpfont
 fonts.json
 __pycache__/
+
+# Wrangler local state
+workers/**/.wrangler/
