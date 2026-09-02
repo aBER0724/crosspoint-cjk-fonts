@@ -5,7 +5,7 @@ const COPY = {
     searchLabel: "Search fonts", searchPlaceholder: "Name or description", languageLabel: "Language", categoryLabel: "Category", previewLabel: "Preview size", all: "All",
     languages: { "zh-Hans": "Simplified Chinese", "zh-Hant": "Traditional Chinese", ja: "Japanese" },
     categories: { "sans-serif": "Sans serif", serif: "Serif", handwriting: "Handwriting", "rounded-sans": "Rounded sans", display: "Display", fangsong: "Fangsong" },
-    downloads: "Download physical sizes", uiFont: "UI font package", source: "Source", manifest: "Release manifest", maker: "Make a custom font", theme: "Website theme", themeLight: "Light", themeDark: "Dark", themeSystem: "System", deviceColor: "Reader body color", deviceBlack: "Black body", deviceSilver: "Gray body", displayMode: "Reader screen appearance", displayLight: "Light screen", displayDark: "Dark screen",
+    downloads: "Download physical sizes", uiFont: "UI font package", source: "Source", manifest: "Release manifest", maker: "Make a custom font", backToTop: "Back to top", theme: "Website theme", themeLight: "Light", themeDark: "Dark", themeSystem: "System", deviceColor: "Reader body color", deviceBlack: "Black body", deviceSilver: "Gray body", displayMode: "Reader screen appearance", displayLight: "Light screen", displayDark: "Dark screen",
     footer: "Pages hosts only this catalog and compact PNG previews. Font binaries remain on GitHub Release.",
     loading: "Loading catalog…", empty: "No matching fonts.", error: "Catalog unavailable. Try again later.", families: count => `${count} font ${count === 1 ? "family" : "families"}`, lastUpdated: "Last updated", releaseNotes: "Release notes", actualPreview: size => `${size} pt · reader-scale 480×800 preview`,
   },
@@ -15,7 +15,7 @@ const COPY = {
     searchLabel: "搜索字体", searchPlaceholder: "名称或简介", languageLabel: "语言", categoryLabel: "类型", previewLabel: "预览字号", all: "全部",
     languages: { "zh-Hans": "简体中文", "zh-Hant": "繁体中文", ja: "日语" },
     categories: { "sans-serif": "无衬线体", serif: "衬线体", handwriting: "手写体", "rounded-sans": "圆体", display: "展示体", fangsong: "仿宋体" },
-    downloads: "下载物理字号", uiFont: "UI 字体包", source: "字体来源", manifest: "Release 清单", maker: "制作自制字体", theme: "网页主题", themeLight: "浅色", themeDark: "深色", themeSystem: "跟随系统", deviceColor: "阅读器机身颜色", deviceBlack: "黑色机身", deviceSilver: "灰色机身", displayMode: "阅读器屏幕外观", displayLight: "白底黑字", displayDark: "黑底白字",
+    downloads: "下载物理字号", uiFont: "UI 字体包", source: "字体来源", manifest: "Release 清单", maker: "制作自制字体", backToTop: "返回顶部", theme: "网页主题", themeLight: "浅色", themeDark: "深色", themeSystem: "跟随系统", deviceColor: "阅读器机身颜色", deviceBlack: "黑色机身", deviceSilver: "灰色机身", displayMode: "阅读器屏幕外观", displayLight: "白底黑字", displayDark: "黑底白字",
     footer: "Pages 只托管目录和轻量 PNG 预览；字体二进制仍由 GitHub Release 分发。",
     loading: "正在加载字体目录…", empty: "没有匹配的字体。", error: "字体目录暂时不可用，请稍后重试。", families: count => `${count} 个字体家族`, lastUpdated: "最后更新", releaseNotes: "发行说明", actualPreview: size => `${size} pt · 480×800 实机比例预览`,
   },
@@ -25,7 +25,7 @@ const COPY = {
     searchLabel: "フォント検索", searchPlaceholder: "名前または説明", languageLabel: "言語", categoryLabel: "分類", previewLabel: "プレビューサイズ", all: "すべて",
     languages: { "zh-Hans": "簡体字中国語", "zh-Hant": "繁体字中国語", ja: "日本語" },
     categories: { "sans-serif": "ゴシック体", serif: "明朝体", handwriting: "手書き体", "rounded-sans": "丸ゴシック体", display: "ディスプレイ体", fangsong: "仿宋体" },
-    downloads: "物理サイズをダウンロード", uiFont: "UI フォントパッケージ", source: "入手元", manifest: "Release マニフェスト", maker: "個人用フォントを作成", theme: "サイトテーマ", themeLight: "ライト", themeDark: "ダーク", themeSystem: "システム", deviceColor: "リーダー本体カラー", deviceBlack: "ブラック本体", deviceSilver: "グレー本体", displayMode: "リーダー画面表示", displayLight: "白地に黒", displayDark: "黒地に白",
+    downloads: "物理サイズをダウンロード", uiFont: "UI フォントパッケージ", source: "入手元", manifest: "Release マニフェスト", maker: "個人用フォントを作成", backToTop: "ページ上部へ戻る", theme: "サイトテーマ", themeLight: "ライト", themeDark: "ダーク", themeSystem: "システム", deviceColor: "リーダー本体カラー", deviceBlack: "ブラック本体", deviceSilver: "グレー本体", displayMode: "リーダー画面表示", displayLight: "白地に黒", displayDark: "黒地に白",
     footer: "Pages はカタログと軽量 PNG のみを配信し、フォント本体は GitHub Release に置かれます。",
     loading: "カタログを読み込み中…", empty: "該当するフォントはありません。", error: "カタログを読み込めませんでした。", families: count => `${count} ファミリー`, lastUpdated: "最終更新", releaseNotes: "リリースノート", actualPreview: size => `${size} pt · 480×800 実機比率プレビュー`,
   },
@@ -38,7 +38,7 @@ const state = { catalog: null, locale: "en", themeMode: "system", prefersDark: f
 const nodes = {
   catalog: document.querySelector("#catalog"), status: document.querySelector("#status"), search: document.querySelector("#search"),
   language: document.querySelector("#language-filter"), category: document.querySelector("#category-filter"), previewSize: document.querySelector("#preview-size"), theme: document.querySelector("#theme-switcher"),
-  deviceColor: document.querySelector("#device-color"), displayMode: document.querySelector("#display-mode"),
+  deviceColor: document.querySelector("#device-color"), displayMode: document.querySelector("#display-mode"), backToTop: document.querySelector("#back-to-top"),
   template: document.querySelector("#font-card-template"), manifest: document.querySelector("#manifest-link"), lastUpdated: document.querySelector("#last-updated"),
 };
 
@@ -129,6 +129,7 @@ function updateDeviceControlStates() {
 }
 function applyCopy() {
   const copy = COPY[state.locale];
+  nodes.backToTop.title = copy.backToTop;
   document.documentElement.lang = state.locale;
   document.querySelectorAll("[data-copy]").forEach(node => { const value = copy[node.dataset.copy]; if (typeof value === "string") node.textContent = value; });
   document.querySelectorAll("[data-copy-placeholder]").forEach(node => { node.placeholder = copy[node.dataset.copyPlaceholder]; });
@@ -231,7 +232,7 @@ function render() {
     const description = fragment.querySelector(".description");
     const descriptionText = (family.description || "").replace(displayName, "").replace(/^\s*[-–—:：]?\s*/, "");
     description.textContent = descriptionText;
-    description.hidden = !descriptionText;
+    description.toggleAttribute("aria-hidden", !descriptionText);
     const device = fragment.querySelector(".device-preview");
     device.classList.remove("device-preview--black", "device-preview--silver");
     device.classList.add(`device-preview--${state.deviceColor}`);
@@ -298,6 +299,19 @@ nodes.search.addEventListener("input", event => { state.query = event.target.val
 nodes.language.addEventListener("change", event => { state.language = event.target.value; render(); });
 nodes.category.addEventListener("change", event => { state.category = event.target.value; render(); });
 
+
+const updateBackToTopVisibility = () => {
+  const visible = window.scrollY > 480;
+  nodes.backToTop.classList.toggle("is-visible", visible);
+  nodes.backToTop.setAttribute("aria-hidden", String(!visible));
+  nodes.backToTop.tabIndex = visible ? 0 : -1;
+};
+nodes.backToTop.addEventListener("click", () => {
+  const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  window.scrollTo({ top: 0, behavior });
+});
+window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
+updateBackToTopVisibility();
 const colorScheme = window.matchMedia("(prefers-color-scheme: dark)");
 state.prefersDark = colorScheme.matches;
 const handleColorSchemeChange = event => {

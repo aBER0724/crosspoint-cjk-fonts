@@ -440,6 +440,7 @@ main {
 
 .description {
   display: -webkit-box;
+  min-height: calc(2 * 1.45em);
   margin: 4px 0 0;
   overflow: hidden;
   color: var(--muted-foreground);
@@ -678,6 +679,65 @@ main {
   color: var(--foreground);
 }
 
+
+.back-to-top {
+  position: fixed;
+  z-index: 20;
+  right: max(24px, calc((100vw - 1200px) / 2));
+  bottom: 24px;
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0;
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12), var(--shadow-sm);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  cursor: pointer;
+  pointer-events: none;
+  transition: opacity 150ms ease, visibility 150ms ease, transform 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  border-color: var(--primary);
+  background: var(--muted);
+}
+
+.back-to-top:focus-visible {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px rgb(161 161 161 / 0.2), 0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+.back-to-top svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top {
+    transition-duration: 0.01ms;
+  }
+}
+
 @media (max-width: 1024px) {
   .catalog {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -738,6 +798,11 @@ main {
   .site-footer {
     width: min(100% - 16px, 1200px);
   }
+  .back-to-top {
+    right: 16px;
+    bottom: 16px;
+  }
+
 
   .masthead {
     display: grid;
