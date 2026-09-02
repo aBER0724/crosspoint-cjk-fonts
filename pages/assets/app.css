@@ -683,7 +683,7 @@ main {
 .back-to-top {
   position: fixed;
   z-index: 20;
-  right: max(24px, calc((100vw - 1200px) / 2));
+  right: 24px;
   bottom: 24px;
   display: inline-flex;
   width: 44px;
